@@ -382,7 +382,7 @@
 		out += '<tr><th>備考</th><td>' + json.remarks + '</td></tr>';
 		out += '<tr><th>更新日</th><td>' + json.updateDate + '</td></tr>';
 		out += '</table>';
-		out += '<input type="hidden" id="hidJson" value="' + JSON.stringify(json) + '">';
+		out += '<input type="hidden" id="hidJson" value="' + encodeURIComponent(JSON.stringify(json)) + '">';
 		out += '<button type="button" id="btnUpdate" class="btn btn-secondary btn-success btn-block" onclick="sendEntryForm()">登録</span></button>';
 		return out;
 	}
@@ -391,7 +391,7 @@
 	 * 登録フォームメール送信処理
 	 */
 	var sendEntryForm = function() {
-		var strJson = $("#hidJson").val();
+		var strJson = decodeURIComponent($("#hidJson").val());
 		$.ajax({
 			url: "https://formspree.io/fresnes3183@gmail.com",
 			method: "POST",
