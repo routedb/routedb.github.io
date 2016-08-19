@@ -357,7 +357,7 @@
 		successJson += '}';
 		if (!errMsg) {
 			$("#errorMsg").css("display", "none");
-			$("#entryForm").html(createConfirm(successJson));
+			$("#entryForm").html(createConfirm($.parseJSON(successJson)));
 		} else {
 			$("#errorMsg").html(errMsg);
 			$("#errorMsg").css("display", "block");
@@ -369,7 +369,7 @@
 	 * 
 	 * @parme strJson 画面入力値のjson文字列
 	 */
-	var createConfirm = function(strJson) {
+	var createConfirm = function(json) {
 		var json = $.parseJSON(strJson);
 		var out  = '<table class="table table-bordered">';
 		out += '<tr><th>カテゴリー</th><td>' + json.tags + '</td></tr>';
@@ -383,7 +383,7 @@
 		out += '<tr><th>備考</th><td>' + json.remarks + '</td></tr>';
 		out += '<tr><th>更新日</th><td>' + json.updateDate + '</td></tr>';
 		out += '</table>';
-		out += '<input type="hidden" id="hidJson" value="' + strJson + '">';
+		out += '<input type="hidden" id="hidJson" value="' + JSON.stringify(json) + '">';
 		out += '<button type="button" id="btnUpdate" class="btn btn-secondary btn-success btn-block" onclick="sendEntryForm()">登録</span></button>';
 		return out;
 	}
