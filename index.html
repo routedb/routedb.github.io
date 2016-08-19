@@ -370,7 +370,6 @@
 	 * @parme strJson 画面入力値のjson文字列
 	 */
 	var createConfirm = function(json) {
-		var json = $.parseJSON(strJson);
 		var out  = '<table class="table table-bordered">';
 		out += '<tr><th>カテゴリー</th><td>' + json.tags + '</td></tr>';
 		out += '<tr><th>名前</th><td>' + json.value + '</td></tr>';
