@@ -353,7 +353,8 @@
 				successJson += '"' + form[x].id + '":"' + form[x].value.replace(/\r?\n/g, '<br>') + '",'
 			}
 		}
-		successJson = successJson.slice(0, -1);
+		var date = new Date($.now()).toLocaleString();
+		successJson += '"updateDate":"' + date + '"'
 		successJson += '}';
 		if (!errMsg) {
 			$("#errorMsg").css("display", "none");
