@@ -240,7 +240,7 @@
 	 * @parme lv  階層レベル
 	 */
 	var createInfo = function(json, key, lv) {
-		var out = '<table class="table table-bordered">';
+		var out = '<table class="table table-bordered" style="font-size:80%;">';
 		for (var x in json) {
 			if (json[x].key == key) {
 				out += '<tr><th>カテゴリー</th><td><a href="#" target="_blank" class="btn btn-success btn-sm active"><strong>' + json[x].tags + '</strong></a></td></tr>';
