@@ -21,16 +21,68 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12">
-					<div class="list-group" id="listMain" style="overflow: auto;height: 100%;max-height: 80%;">
+					<div class="list-group rowcontent" id="listMain" style="overflow: auto;height: 100%;max-height: 80%;">
 					</div>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-12" id="shopInfo" style="overflow: auto;height: 100%;max-height: 80%;">
+				<div class="col-md-12 rowcontent" id="shopInfo" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-12" id="entryForm" style="overflow: auto;height: 100%;max-height: 80%;">
+				<div class="col-md-12 rowcontent" id="entryForm" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 rowcontent" id="about" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">路線データベースについて</h3>
+						</div>
+						<div class="panel-body">
+							路線データベースについて
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 rowcontent" id="termsofuse" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">利用規約</h3>
+						</div>
+						<div class="panel-body">
+							利用規約
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 rowcontent" id="privacy" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">プライバシーポリシー</h3>
+						</div>
+						<div class="panel-body">
+							プライバシーポリシー
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 rowcontent" id="guideline" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">ガイドライン</h3>
+						</div>
+						<div class="panel-body">
+							ガイドライン
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 rowcontent" id="contact" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
 				</div>
 			</div>
 		</div>
@@ -49,8 +101,20 @@
 						</div><button class="btn btn-default" type="button" id="btnSearch">検索</button>
 					</form>
 					<ul class="nav navbar-nav navbar-right">
-						<li class="active">
-							<a href="#"><strong>お問合せ</strong></a>
+						<li>
+							<a href="#" id="navAbout"><strong>路線データベースについて</strong></a>
+						</li>
+						<li>
+							<a href="#" id="navTermsofuse"><strong>利用規約</strong></a>
+						</li>
+						<li>
+							<a href="#" id="navPrivacy"><strong>プライバシーポリシー</strong></a>
+						</li>
+						<li>
+							<a href="#" id="navGuideline"><strong>ガイドライン</strong></a>
+						</li>
+						<li>
+							<a href="#" id="navContact"><strong>お問合せ</strong></a>
 						</li>
 					</ul>
 				</div>
@@ -82,7 +146,22 @@
 			main(null, 1, null);
 		});
 		$("#btnSearch").click(function() {
-			main(null, 9, null);
+			main(null, 10, this);
+		});
+		$("#navAbout").click(function() {
+			main(null, 11, this);
+		});
+		$("#navTermsofuse").click(function() {
+			main(null, 12, this);
+		});
+		$("#navPrivacy").click(function() {
+			main(null, 13, this);
+		});
+		$("#navGuideline").click(function() {
+			main(null, 14, this);
+		});
+		$("#navContact").click(function() {
+			main(null, 15, this);
 		});
 	});
 
@@ -95,59 +174,70 @@
 	 */
 	var main = function(key, lv, obj) {
 		$("#btnList").html(createBtn(key, lv, obj));
+		initContents();
 		var resultJson = "";
-		if (lv == 1) {
-			$("#shopInfo").css("display", "none");
-			$("#entryForm").css("display", "none");
-			$("#listMain").css("display", "block");
-			resultJson = prefecturesJson;
-			$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
-		} else if (lv == 2 || lv == 3) {
-			$("#shopInfo").css("display", "none");
-			$("#entryForm").css("display", "none");
-			$("#listMain").css("display", "block");
-			var s     = document.getElementsByTagName("head")[0].appendChild(document.createElement("script"));
-			s.type    = "text/javascript";
-			s.charset = "utf-8";
-			if (lv == 2) {
-				s.src = "https://www.ekidata.jp/api/p/" + key + ".json";
-			} else if (lv == 3) {
-				s.src = "https://www.ekidata.jp/api/l/" + key + ".json";
+		if (lv > 9) {
+			if (lv == 10) {
+				$("#listMain").css("display", "block");
+			} else if (lv == 11) {
+				$("#about").css("display", "block");
+			} else if (lv == 12) {
+				$("#termsofuse").css("display", "block");
+			} else if (lv == 13) {
+				$("#privacy").css("display", "block");
+			} else if (lv == 14) {
+				$("#guideline").css("display", "block");
+			} else if (lv == 15) {
+				$("#contact").css("display", "block");
 			}
-
-			xml.onload = function(data) {
-				var line      = data["line"];
-				var station_l = data["station_l"];
-				resultJson = '[';
-				if (line != null) {
-					for (x = 0; x < line.length; x++) {
-						resultJson += '{"key":"' + line[x].line_cd + '","levels":"3","value":"' + line[x].line_name + '"},';
-					}
-				}
-				if (station_l != null) {
-					for (x = 0; x < station_l.length; x++) {
-						resultJson += '{"key":"' + station_l[x].station_cd + '","levels":"4","value":"' + station_l[x].station_name + '"},';
-					}
-				}
-				resultJson = resultJson.slice(0, -1);
-				resultJson += ']';
+		} else {
+			if (lv == 1) {
+				$("#listMain").css("display", "block");
+				resultJson = prefecturesJson;
 				$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
+			} else if (lv == 2 || lv == 3) {
+				$("#shopInfo").css("display", "none");
+				$("#entryForm").css("display", "none");
+				$("#listMain").css("display", "block");
+				var s     = document.getElementsByTagName("head")[0].appendChild(document.createElement("script"));
+				s.type    = "text/javascript";
+				s.charset = "utf-8";
+				if (lv == 2) {
+					s.src = "https://www.ekidata.jp/api/p/" + key + ".json";
+				} else if (lv == 3) {
+					s.src = "https://www.ekidata.jp/api/l/" + key + ".json";
+				}
+
+				xml.onload = function(data) {
+					var line      = data["line"];
+					var station_l = data["station_l"];
+					resultJson = '[';
+					if (line != null) {
+						for (x = 0; x < line.length; x++) {
+							resultJson += '{"key":"' + line[x].line_cd + '","levels":"3","value":"' + line[x].line_name + '"},';
+						}
+					}
+					if (station_l != null) {
+						for (x = 0; x < station_l.length; x++) {
+							resultJson += '{"key":"' + station_l[x].station_cd + '","levels":"4","value":"' + station_l[x].station_name + '"},';
+						}
+					}
+					resultJson = resultJson.slice(0, -1);
+					resultJson += ']';
+					$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
+				}
+			} else if (lv == 4) {
+				$("#listMain").css("display", "block");
+				resultJson = shopJson;
+				$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
+			} else if (lv == 5) {
+				$("#shopInfo").css("display", "block");
+				resultJson = shopJson;
+				$("#shopInfo").html(createInfo($.parseJSON(resultJson), key, lv));
+				new google.maps.Geocoder().geocode({
+					'address': $("#streetAddress").html()
+				}, callbackRender);
 			}
-		} else if (lv == 4) {
-			$("#shopInfo").css("display", "none");
-			$("#entryForm").css("display", "none");
-			$("#listMain").css("display", "block");
-			resultJson = shopJson;
-			$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
-		} else if (lv == 5) {
-			$("#listMain").css("display", "none");
-			$("#entryForm").css("display", "none");
-			$("#shopInfo").css("display", "block");
-			resultJson = shopJson;
-			$("#shopInfo").html(createInfo($.parseJSON(resultJson), key, lv));
-			new google.maps.Geocoder().geocode({
-				'address': $("#streetAddress").html()
-			}, callbackRender);
 		}
 	};
 
@@ -161,7 +251,7 @@
 	var createBtn = function(key, lv, obj) {
 		var out       = "";
 		var btnValue  = '<span style="font-weight: bold;" id="list' + key + '">HOME</span>';
-		if (lv == 9) {
+		if (lv > 9) {
 			out += '<div class="col-md-6">';
 			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)">' + btnValue + '</button>';
 			out += '</div>';
@@ -297,7 +387,7 @@
 		$("#shopInfo").css("display", "none");
 		$("#listMain").css("display", "none");
 		$("#entryForm").css("display", "block");
-		var out = '<div class="alert alert-danger" style="display:none;" role="alert" id="errorMsg"></div>';
+		var out = '<div class="panel panel-default"><div class="alert alert-danger" style="display:none;" role="alert" id="errorMsg"></div>';
 		out += '<form class="form-horizontal" role="form">';
 		out += '<input type="hidden" class="form-control entryForm" id="prefecturesCode" value="' + $("#hidKey2").val() + '">';
 		out += '<input type="hidden" class="form-control entryForm" id="lineCode" value="' + $("#hidKey3").val() + '">';
@@ -315,7 +405,7 @@
 		out += '<div class="form-group"><label class="col-sm-2 control-label" style="text-align:center" id="lblexternalLink">外部リンク</label><div class="col-sm-10"><textarea class="form-control entryForm" rows="3" id="externalLink"></textarea></div></div>';
 		out += '<div class="form-group"><label class="col-sm-2 control-label" style="text-align:center" id="lblremarks">備考</label><div class="col-sm-10"><textarea class="form-control entryForm" rows="3" id="remarks"></textarea></div></div>';
 		out += '</form>';
-		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="checkForm()">確認</span></button>';
+		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="checkForm()">確認</span></button></div>';
 		$("#entryForm").html(out);
 	}
 
@@ -462,6 +552,13 @@
 	var adjustMapSize = function() {
 		var mapCanvas = $('#map-canvas');
 		mapCanvas.css("height", ($(window).height() - mapCanvas.offset().top) + "px");
+	}
+	
+	var initContents = function() {
+		var contents = $(".rowcontent");
+		for (var x = 0; x < contents.length; x++) {
+			$("#" + contents[x].id).css("display", "none");
+		}
 	}
 	</script>
 </body>
