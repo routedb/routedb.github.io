@@ -251,6 +251,7 @@
 	var createBtn = function(key, lv, obj) {
 		var out       = "";
 		var btnValue  = '<span style="font-weight: bold;" id="list' + key + '">HOME</span>';
+		var btnStatus = "info";
 		if (lv > 9) {
 			out += '<div class="col-md-6">';
 			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)">' + btnValue + '</button>';
@@ -259,7 +260,6 @@
 			var colSize   = 12 / lv;
 			var btnKey    = null;
 			var btnLv     = 1;
-			var btnStatus = "info";
 			for (var x = 1; x <= lv; x++) {
 				if (x == lv) {
 					if (obj != null) {
@@ -553,7 +553,7 @@
 		var mapCanvas = $('#map-canvas');
 		mapCanvas.css("height", ($(window).height() - mapCanvas.offset().top) + "px");
 	}
-	
+
 	var initContents = function() {
 		var contents = $(".rowcontent");
 		for (var x = 0; x < contents.length; x++) {
