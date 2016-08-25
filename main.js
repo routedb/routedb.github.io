@@ -166,7 +166,7 @@ var createBtn = function(key, lv, obj) {
 var createList = function(json, key, lv) {
 	var out = "";
 	for (var x in json) {
-		var cnt = countData(json, json[x].key, lv);
+		var cnt = countData(json[x].key, lv);
 		var spanBadge = "";
 		if (cnt > 0) {
 			spanBadge = '<span class="badge" style="background-color:#2e6da4;">' + cnt + '</span>';
@@ -218,23 +218,25 @@ var createInfo = function(json, key, lv) {
  * @parme key キー値
  * @parme lv  階層レベル
  */
-var countData = function(json, key, lv) {
+var countData = function(key, lv) {
 	var cnt = 0;
-	for (var x in json) {
-		if (lv == 1) {
-			if (json[x].prefecturesCode == key) {
-				cnt++;
-			}
-		} else if (lv == 2) {
-			if (json[x].lineCode == key) {
-				cnt++;
-			}
-		} else if (lv == 3) {
-			if (json[x].stationCode == key) {
-				cnt++;
+	$.getJSON("shop.json", function(data) {
+		for (var x in data) {
+			if (lv == 1) {
+				if (data[x].prefecturesCode == key) {
+					cnt++;
+				}
+			} else if (lv == 2) {
+				if (data[x].lineCode == key) {
+					cnt++;
+				}
+			} else if (lv == 3) {
+				if (data[x].stationCode == key) {
+					cnt++;
+				}
 			}
 		}
-	}
+	});
 	return cnt
 }
 
