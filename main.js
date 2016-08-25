@@ -76,9 +76,9 @@ var main = function(key, lv, obj) {
 			s.type    = "text/javascript";
 			s.charset = "utf-8";
 			if (lv == 2) {
-				s.src = "https://www.ekidata.jp/api/p/" + key + ".json";
+				s.src = "http://www.ekidata.jp/api/p/" + key + ".json";
 			} else if (lv == 3) {
-				s.src = "https://www.ekidata.jp/api/l/" + key + ".json";
+				s.src = "http://www.ekidata.jp/api/l/" + key + ".json";
 			}
 
 			xml.onload = function(data) {
