@@ -1,17 +1,4 @@
 var xml = {};
-var shopJson        = '[' +
-	'{"prefecturesCode":"13","lineCode":"11302","stationCode":"1130210","key":"1000000001","levels":"5","tags":"ラーメン","value":"渡なべ","streetAddress":"東京都新宿区高田馬場2-1-4","phoneNumber":"03-3209-5615","businessHours":"11:00～21:00","regularHoliday":"無休","smoking":"","parkingLot":"無","externalLink":"http://www.watanabestyle.com/","remarks":"ＪＲ山手線 高田馬場駅 徒歩４分<br>東京メトロ東西線 高田馬場駅 徒歩３分<br>東京メトロ副都心線 西早稲田駅 徒歩４分","updateDate":"2016/07/20"},' +
-	'{"prefecturesCode":"13","lineCode":"11302","stationCode":"1130210","key":"1000000002","levels":"5","tags":"鰻","value":"愛川","streetAddress":"東京都新宿区高田馬場1-17-22","phoneNumber":"03-3200-3717","businessHours":"11:30～13:30（火〜土、日）<br>17:00～19:00（日のみ・L.O 18:00）","regularHoliday":"月曜（ただし祝日の場合は次の日振替休日）","smoking":"","parkingLot":"無","externalLink":"http://tabelog.com/tokyo/A1305/A130503/13029734/","remarks":"JR・西武新宿線 高田馬場駅 歩5分<br>東京メトロ東西線 高田馬場駅7番口 歩2分<br>高田馬場駅から365m","updateDate":"2016/07/20"},' +
-	'{"prefecturesCode":"13","lineCode":"26005","stationCode":"2600514","key":"1000000003","levels":"5","tags":"ラーメン","value":"麺処 にそう","streetAddress":"東京都大田区東矢口3-1-11","phoneNumber":"非公開","businessHours":"11:00～15:30","regularHoliday":"日曜","smoking":"","parkingLot":"無","externalLink":"https://twitter.com/rojiura3111","remarks":"東急池上線・蓮沼駅から徒歩10秒<br>蓮沼駅から11m","updateDate":"2016/07/20"},' +
-	'{"prefecturesCode":"11","lineCode":"22007","stationCode":"2200729","key":"1000000004","levels":"5","tags":"ラーメン","value":"つけそば丸永 川越店","streetAddress":"埼玉県川越市仲町10-13","phoneNumber":"非公開","businessHours":"11:00〜スープ切れ次第終了","regularHoliday":"水曜","smoking":"","parkingLot":"無","externalLink":"http://tabelog.com/saitama/A1103/A110303/11038582/<br>https://twitter.com/tsukesobamaruei","remarks":"西武新宿線本川越駅より徒歩15分<br>JR・東武東上線川越駅、本川越駅より東武バス仲町バス停降車徒歩3分<br>松本醤油敷地","updateDate":"2016/07/20"},' +
-	'{"prefecturesCode":"44","lineCode":"11906","stationCode":"1190635","key":"1000000005","levels":"5","tags":"焼鳥","value":"炭仙人","streetAddress":"大分県速見郡日出町大神4108-2","phoneNumber":"0977-73-2783","businessHours":"11:00～14:00（L.O.13:30）<br>17:00～22:00（L.O.21:30）","regularHoliday":"水曜日・第3木曜日","smoking":"","parkingLot":"有(20台)","externalLink":"http://tabelog.com/oita/A4403/A440301/44006384/","remarks":"","updateDate":"2016/07/29"},' +
-	'{"prefecturesCode":"12","lineCode":"99335","stationCode":"9933503","key":"1000000006","levels":"5","tags":"海鮮","value":"久六","streetAddress":"千葉県銚子市新生町1-36-49","phoneNumber":"0479-22-1038","businessHours":"11:30～17:00","regularHoliday":"火曜日","smoking":"","parkingLot":"無(店舗前、市場駐車場に駐車可)","externalLink":"http://tabelog.com/chiba/A1205/A120501/12000082/","remarks":"銚子駅より徒歩18分くらい<br>観音駅から558m","updateDate":""},' +
-	'{"prefecturesCode":"43","lineCode":"11924","stationCode":"1192411","key":"1000000007","levels":"5","tags":"焼肉","value":"たなか畜産","streetAddress":"熊本県天草市五和町城河原2-101-1","phoneNumber":"0969-34-0288","businessHours":"「販売」※土・日・祝日<br>９：００～１９：００<br>（毎月第一金、土、日は売り出しです）<br><br>「食事」※月・火（祝日の場合）水・木・金・土・日<br>１１：３０～２２：００<br>ランチ営業、日曜営業","regularHoliday":"火曜（祝日の場合は営業）","smoking":"全面喫煙可","parkingLot":"有(30台)","externalLink":"http://tabelog.com/kumamoto/A4305/A430501/43007266/","remarks":"本渡バスセンターより車で１５分<br>天草空港より車で３分","updateDate":""},' +
-	'{"prefecturesCode":"13","lineCode":"99302","stationCode":"9930219","key":"1000000008","levels":"5","tags":"鰻","value":"鰻禅","streetAddress":"東京都墨田区吾妻橋3-6-18","phoneNumber":"03-3624-0475","businessHours":"11:00～20:00（売り切れて店仕舞いになることがあります）","regularHoliday":"月曜日（月曜日が祝祭日の場合、翌日が定休日）","smoking":"全席可能","parkingLot":"無","externalLink":"http://tabelog.com/tokyo/A1312/A131203/13058979/<br>","remarks":"・東武伊勢崎線・東京メトロ銀座線「浅草駅」から徒歩7分<br>・都営浅草線「本所吾妻橋駅」A3出口から徒歩3分<br>本所吾妻橋駅から122m<br>","updateDate":"2016/8/19 17:07:53"},' +
-	'{"prefecturesCode":"","lineCode":"","stationCode":"","key":"","levels":"5","tags":"","value":"","streetAddress":"","phoneNumber":"","businessHours":"","regularHoliday":"","smoking":"","parkingLot":"","externalLink":"","remarks":"","updateDate":""},' +
-	'{"prefecturesCode":"","lineCode":"","stationCode":"","key":"","levels":"5","tags":"","value":"","streetAddress":"","phoneNumber":"","businessHours":"","regularHoliday":"","smoking":"","parkingLot":"","externalLink":"","remarks":"","updateDate":""}' +
-']';
-
 $(function() {
 	main(null, 1, null);
 	$("#navBrand").click(function() {
@@ -101,12 +88,14 @@ var main = function(key, lv, obj) {
 			}
 		} else if (lv == 4) {
 			$("#listMain").css("display", "block");
-			resultJson = shopJson;
-			$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
+			$.getJSON("shop.json", function(data) {
+				$("#listMain").html(createList(data, key, lv));
+			});
 		} else if (lv == 5) {
 			$("#shopInfo").css("display", "block");
-			resultJson = shopJson;
-			$("#shopInfo").html(createInfo($.parseJSON(resultJson), key, lv));
+			$.getJSON("shop.json", function(data) {
+				$("#shopInfo").html(createInfo(data, key, lv));
+			});
 			new google.maps.Geocoder().geocode({
 				'address': $("#streetAddress").html()
 			}, callbackRender);
