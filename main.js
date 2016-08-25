@@ -222,17 +222,17 @@ var createInfo = function(json, key, lv) {
  */
 var countData = function(key, lv) {
 	var cnt = 0;
-	for (var x in data) {
+	for (var x in shopJson) {
 		if (lv == 1) {
-			if (data[x].prefecturesCode == key) {
+			if (shopJson[x].prefecturesCode == key) {
 				cnt++;
 			}
 		} else if (lv == 2) {
-			if (data[x].lineCode == key) {
+			if (shopJson[x].lineCode == key) {
 				cnt++;
 			}
 		} else if (lv == 3) {
-			if (data[x].stationCode == key) {
+			if (shopJson[x].stationCode == key) {
 				cnt++;
 			}
 		}
