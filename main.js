@@ -166,7 +166,7 @@ var createBtn = function(key, lv, obj) {
 var createList = function(json, key, lv) {
 	var out = "";
 	for (var x in json) {
-		var cnt = countData(json[x].key, lv);
+		var cnt = countData(json, json[x].key, lv);
 		var spanBadge = "";
 		if (cnt > 0) {
 			spanBadge = '<span class="badge" style="background-color:#2e6da4;">' + cnt + '</span>';
@@ -218,8 +218,7 @@ var createInfo = function(json, key, lv) {
  * @parme key キー値
  * @parme lv  階層レベル
  */
-var countData = function(key, lv) {
-	var json = $.parseJSON(shopJson);
+var countData = function(json, key, lv) {
 	var cnt = 0;
 	for (var x in json) {
 		if (lv == 1) {
