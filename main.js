@@ -284,10 +284,10 @@ var createKey = function() {
 	$.ajaxSetup({async: false});
 	$.getJSON("shop.json", function(data) {
 		var arrkey = [];
-		for (var x in json) {
-			for (var key in json[x]) {
-				if (key == "key" && json[x].key.length != 0) {
-					arrkey.push(json[x].key);
+		for (var x in data) {
+			for (var key in data[x]) {
+				if (key == "key" && data[x].key.length != 0) {
+					arrkey.push(data[x].key);
 				}
 			}
 		}
