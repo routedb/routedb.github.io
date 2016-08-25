@@ -1,5 +1,13 @@
 var xml = {};
+var prefecturesJson, shopJson;
 $(function() {
+	$.ajaxSetup({async: false});
+	$.getJSON("prefectures.json", function(data) {
+		prefecturesJson = data;
+	});
+	$.getJSON("shop.json", function(data) {
+		shopJson = data;
+	});
 	main(null, 1, null);
 	$("#navBrand").click(function() {
 		main(null, 1, null);
@@ -52,9 +60,7 @@ var main = function(key, lv, obj) {
 	} else {
 		if (lv == 1) {
 			$("#listMain").css("display", "block");
-			$.getJSON("prefectures.json", function(data) {
-				$("#listMain").html(createList(data, key, lv));
-			});
+			$("#listMain").html(createList(prefecturesJson, key, lv));
 		} else if (lv == 2 || lv == 3) {
 			$("#shopInfo").css("display", "none");
 			$("#entryForm").css("display", "none");
@@ -88,14 +94,10 @@ var main = function(key, lv, obj) {
 			}
 		} else if (lv == 4) {
 			$("#listMain").css("display", "block");
-			$.getJSON("shop.json", function(data) {
-				$("#listMain").html(createList(data, key, lv));
-			});
+			$("#listMain").html(createList(shopJson, key, lv));
 		} else if (lv == 5) {
 			$("#shopInfo").css("display", "block");
-			$.getJSON("shop.json", function(data) {
-				$("#shopInfo").html(createInfo(data, key, lv));
-			});
+			$("#shopInfo").html(createInfo(shopJson, key, lv));
 			new google.maps.Geocoder().geocode({
 				'address': $("#streetAddress").html()
 			}, callbackRender);
@@ -220,24 +222,21 @@ var createInfo = function(json, key, lv) {
  */
 var countData = function(key, lv) {
 	var cnt = 0;
-	$.ajaxSetup({async: false});
-	$.getJSON("shop.json", function(data) {
-		for (var x in data) {
-			if (lv == 1) {
-				if (data[x].prefecturesCode == key) {
-					cnt++;
-				}
-			} else if (lv == 2) {
-				if (data[x].lineCode == key) {
-					cnt++;
-				}
-			} else if (lv == 3) {
-				if (data[x].stationCode == key) {
-					cnt++;
-				}
+	for (var x in data) {
+		if (lv == 1) {
+			if (data[x].prefecturesCode == key) {
+				cnt++;
+			}
+		} else if (lv == 2) {
+			if (data[x].lineCode == key) {
+				cnt++;
+			}
+		} else if (lv == 3) {
+			if (data[x].stationCode == key) {
+				cnt++;
 			}
 		}
-	});
+	}
 	return cnt
 }
 
@@ -281,19 +280,16 @@ var createEntryForm = function() {
  */
 var createKey = function() {
 	var newKey = 0;
-	$.ajaxSetup({async: false});
-	$.getJSON("shop.json", function(data) {
-		var arrkey = [];
-		for (var x in data) {
-			for (var key in data[x]) {
-				if (key == "key" && data[x].key.length != 0) {
-					arrkey.push(data[x].key);
-				}
+	var arrkey = [];
+	for (var x in shopJson) {
+		for (var key in shopJson[x]) {
+			if (key == "key" && shopJson[x].key.length != 0) {
+				arrkey.push(shopJson[x].key);
 			}
 		}
-		arrkey.reverse();
-		newKey = Number(arrkey[0]) + 1;
-	});
+	}
+	arrkey.reverse();
+	newKey = Number(arrkey[0]) + 1;
 	return newKey;
 }
 
