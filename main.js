@@ -147,7 +147,7 @@ var createBtn = function(key, lv, obj) {
 				}
 			}
 			out += '<div class="col-md-' + colSize + '">';
-			out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)">' + btnValue + '</button>';
+			out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)"><strong>' + btnValue + '</strong></button>';
 			out += '<input type="hidden" id="hidKey' + x + '" value=' + btnKey + '>';
 			out += '<input type="hidden" id="hidLv' + x + '" value=' + btnLv + '>';
 			out += '</div>';
