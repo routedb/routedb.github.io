@@ -280,17 +280,20 @@ var createEntryForm = function() {
  * 店舗データからkeyの最大値を取得しインクリメントして返す
  */
 var createKey = function() {
-	var json = $.parseJSON(shopJson);
-	var arrkey = [];
-	for (var x in json) {
-		for (var key in json[x]) {
-			if (key == "key" && json[x].key.length != 0) {
-				arrkey.push(json[x].key);
+	var newKey = 0;
+	$.ajaxSetup({async: false});
+	$.getJSON("shop.json", function(data) {
+		var arrkey = [];
+		for (var x in json) {
+			for (var key in json[x]) {
+				if (key == "key" && json[x].key.length != 0) {
+					arrkey.push(json[x].key);
+				}
 			}
 		}
-	}
-	arrkey.reverse();
-	var newKey = Number(arrkey[0]) + 1;
+		arrkey.reverse();
+		newKey = Number(arrkey[0]) + 1;
+	});
 	return newKey;
 }
 
