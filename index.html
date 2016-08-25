@@ -1,129 +1,128 @@
-
 <html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta content="width=device-width, intial-scale=1" name="viewport"/>
-	<title>路線データベース</title>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-	<style type="text/css">
-	.mainContents {
-		min-height: calc(100vh - 50px);
-	}
-	.stickyFooter {
-		min-height: 50px;
-	}
-	</style>
-</head>
-<body>
-	<div class="mainContents">
-		<div class="container-fluid">
-			<div class="row" id="btnList">
-			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<div class="list-group rowcontent" id="listMain" style="overflow: auto;height: 100%;max-height: 80%;">
-					</div>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta content="width=device-width, intial-scale=1" name="viewport"/>
+		<title>路線データベース</title>
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+		<style type="text/css">
+		.mainContents {
+			min-height: calc(100vh - 50px);
+		}
+		.stickyFooter {
+			min-height: 50px;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="mainContents">
+			<div class="container-fluid">
+				<div class="row" id="btnList">
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12 rowcontent" id="shopInfo" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12 rowcontent" id="entryForm" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12 rowcontent" id="about" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
-					<div class="panel panel-info">
-						<div class="panel-heading">
-							<h3 class="panel-title"><strong>路線データベースについて</strong></h3>
-						</div>
-						<div class="panel-body">
-							路線データベースについて
+				<div class="row">
+					<div class="col-md-12">
+						<div class="list-group rowcontent" id="listMain" style="overflow: auto;height: 100%;max-height: 80%;">
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12 rowcontent" id="termsofuse" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
-					<div class="panel panel-info">
-						<div class="panel-heading">
-							<h3 class="panel-title"><strong>利用規約</strong></h3>
-						</div>
-						<div class="panel-body">
-							利用規約
+				<div class="row">
+					<div class="col-md-12 rowcontent" id="shopInfo" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12 rowcontent" id="entryForm" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12 rowcontent" id="about" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title"><strong>路線データベースについて</strong></h3>
+							</div>
+							<div class="panel-body">
+								路線データベースについて
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12 rowcontent" id="privacy" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
-					<div class="panel panel-info">
-						<div class="panel-heading">
-							<h3 class="panel-title"><strong>プライバシーポリシー</strong></h3>
-						</div>
-						<div class="panel-body">
-							プライバシーポリシー
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12 rowcontent" id="guideline" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
-					<div class="panel panel-info">
-						<div class="panel-heading">
-							<h3 class="panel-title"><strong>ガイドライン</strong></h3>
-						</div>
-						<div class="panel-body">
-							ガイドライン
+				<div class="row">
+					<div class="col-md-12 rowcontent" id="termsofuse" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title"><strong>利用規約</strong></h3>
+							</div>
+							<div class="panel-body">
+								利用規約
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12 rowcontent" id="contact" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
+				<div class="row">
+					<div class="col-md-12 rowcontent" id="privacy" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title"><strong>プライバシーポリシー</strong></h3>
+							</div>
+							<div class="panel-body">
+								プライバシーポリシー
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12 rowcontent" id="guideline" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title"><strong>ガイドライン</strong></h3>
+							</div>
+							<div class="panel-body">
+								ガイドライン
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12 rowcontent" id="contact" style="display:none;overflow: auto;height: 100%;max-height: 80%;">
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="stickyFooter">
-		<nav class="navbar navbar-default navbar-fixed-bottom">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<button aria-expanded="false" class="collapsed navbar-toggle" data-target="#bs-example-navbar-collapse-7" data-toggle="collapse" type="button"><span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button> <a class="navbar-brand" href="#" id="navBrand"><strong>路線データベース</strong></a>
+		<div class="stickyFooter">
+			<nav class="navbar navbar-default navbar-fixed-bottom">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<button aria-expanded="false" class="collapsed navbar-toggle" data-target="#bs-example-navbar-collapse-7" data-toggle="collapse" type="button"><span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button> <a class="navbar-brand" href="#" id="navBrand"><strong>路線データベース</strong></a>
+					</div>
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-7">
+						<form class="navbar-form navbar-left">
+							<div class="form-group">
+								<input class="form-control" placeholder="Search" id="search">
+							</div><button class="btn btn-default" type="button" id="btnSearch">検索</button>
+						</form>
+						<ul class="nav navbar-nav navbar-right">
+							<li>
+								<a href="#" id="navAbout"><strong>路線データベースについて</strong></a>
+							</li>
+							<li>
+								<a href="#" id="navTermsofuse"><strong>利用規約</strong></a>
+							</li>
+							<li>
+								<a href="#" id="navPrivacy"><strong>プライバシーポリシー</strong></a>
+							</li>
+							<li>
+								<a href="#" id="navGuideline"><strong>ガイドライン</strong></a>
+							</li>
+							<li>
+								<a href="#" id="navContact"><strong>お問合せ</strong></a>
+							</li>
+						</ul>
+					</div>
 				</div>
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-7">
-					<form class="navbar-form navbar-left">
-						<div class="form-group">
-							<input class="form-control" placeholder="Search" id="search">
-						</div><button class="btn btn-default" type="button" id="btnSearch">検索</button>
-					</form>
-					<ul class="nav navbar-nav navbar-right">
-						<li>
-							<a href="#" id="navAbout"><strong>路線データベースについて</strong></a>
-						</li>
-						<li>
-							<a href="#" id="navTermsofuse"><strong>利用規約</strong></a>
-						</li>
-						<li>
-							<a href="#" id="navPrivacy"><strong>プライバシーポリシー</strong></a>
-						</li>
-						<li>
-							<a href="#" id="navGuideline"><strong>ガイドライン</strong></a>
-						</li>
-						<li>
-							<a href="#" id="navContact"><strong>お問合せ</strong></a>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</nav>
-	</div>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-	<script src="//maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&key=AIzaSyCM0J8a1CGDpi6sqI_xKksKQrNLByH3OTE" async="" defer="defer" type="text/javascript"></script>
-	<script type="text/javascript" src="main.js"></script>
-</body>
+			</nav>
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script src="//maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&key=AIzaSyCM0J8a1CGDpi6sqI_xKksKQrNLByH3OTE" async="" defer="defer" type="text/javascript"></script>
+		<script type="text/javascript" src="main.js"></script>
+	</body>
 </html>

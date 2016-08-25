@@ -1,5 +1,4 @@
 var xml = {};
-var prefecturesJson = '[{"key":"1","levels":"2","value":"北海道"},{"key":"2","levels":"2","value":"青森県"},{"key":"3","levels":"2","value":"岩手県"},{"key":"4","levels":"2","value":"宮城県"},{"key":"5","levels":"2","value":"秋田県"},{"key":"6","levels":"2","value":"山形県"},{"key":"7","levels":"2","value":"福島県"},{"key":"8","levels":"2","value":"茨城県"},{"key":"9","levels":"2","value":"栃木県"},{"key":"10","levels":"2","value":"群馬県"},{"key":"11","levels":"2","value":"埼玉県"},{"key":"12","levels":"2","value":"千葉県"},{"key":"13","levels":"2","value":"東京都"},{"key":"14","levels":"2","value":"神奈川県"},{"key":"16","levels":"2","value":"富山県"},{"key":"17","levels":"2","value":"石川県"},{"key":"18","levels":"2","value":"福井県"},{"key":"19","levels":"2","value":"山梨県"},{"key":"20","levels":"2","value":"長野県"},{"key":"21","levels":"2","value":"岐阜県"},{"key":"22","levels":"2","value":"静岡県"},{"key":"23","levels":"2","value":"愛知県"},{"key":"24","levels":"2","value":"三重県"},{"key":"25","levels":"2","value":"滋賀県"},{"key":"26","levels":"2","value":"京都府"},{"key":"27","levels":"2","value":"大阪府"},{"key":"28","levels":"2","value":"兵庫県"},{"key":"29","levels":"2","value":"奈良県"},{"key":"30","levels":"2","value":"和歌山県"},{"key":"31","levels":"2","value":"鳥取県"},{"key":"32","levels":"2","value":"島根県"},{"key":"33","levels":"2","value":"岡山県"},{"key":"34","levels":"2","value":"広島県"},{"key":"35","levels":"2","value":"山口県"},{"key":"36","levels":"2","value":"徳島県"},{"key":"37","levels":"2","value":"香川県"},{"key":"38","levels":"2","value":"愛媛県"},{"key":"39","levels":"2","value":"高知県"},{"key":"40","levels":"2","value":"福岡県"},{"key":"41","levels":"2","value":"佐賀県"},{"key":"42","levels":"2","value":"長崎県"},{"key":"43","levels":"2","value":"熊本県"},{"key":"44","levels":"2","value":"大分県"},{"key":"45","levels":"2","value":"宮崎県"},{"key":"46","levels":"2","value":"鹿児島県"},{"key":"47","levels":"2","value":"沖縄県"}]';
 var shopJson        = '[' +
 	'{"prefecturesCode":"13","lineCode":"11302","stationCode":"1130210","key":"1000000001","levels":"5","tags":"ラーメン","value":"渡なべ","streetAddress":"東京都新宿区高田馬場2-1-4","phoneNumber":"03-3209-5615","businessHours":"11:00～21:00","regularHoliday":"無休","smoking":"","parkingLot":"無","externalLink":"http://www.watanabestyle.com/","remarks":"ＪＲ山手線 高田馬場駅 徒歩４分<br>東京メトロ東西線 高田馬場駅 徒歩３分<br>東京メトロ副都心線 西早稲田駅 徒歩４分","updateDate":"2016/07/20"},' +
 	'{"prefecturesCode":"13","lineCode":"11302","stationCode":"1130210","key":"1000000002","levels":"5","tags":"鰻","value":"愛川","streetAddress":"東京都新宿区高田馬場1-17-22","phoneNumber":"03-3200-3717","businessHours":"11:30～13:30（火〜土、日）<br>17:00～19:00（日のみ・L.O 18:00）","regularHoliday":"月曜（ただし祝日の場合は次の日振替休日）","smoking":"","parkingLot":"無","externalLink":"http://tabelog.com/tokyo/A1305/A130503/13029734/","remarks":"JR・西武新宿線 高田馬場駅 歩5分<br>東京メトロ東西線 高田馬場駅7番口 歩2分<br>高田馬場駅から365m","updateDate":"2016/07/20"},' +
@@ -66,8 +65,9 @@ var main = function(key, lv, obj) {
 	} else {
 		if (lv == 1) {
 			$("#listMain").css("display", "block");
-			resultJson = prefecturesJson;
-			$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
+			$.getJSON("prefectures.json", function(data) {
+				$("#listMain").html(createList(data, key, lv));
+			});
 		} else if (lv == 2 || lv == 3) {
 			$("#shopInfo").css("display", "none");
 			$("#entryForm").css("display", "none");
