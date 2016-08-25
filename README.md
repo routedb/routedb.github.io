@@ -4,7 +4,7 @@
 
 ***DEMO:***
 
-![Demo](https://routedb.github.io/)
+<a href="https://routedb.github.io/" target="_blank">路線データベース</a>
 
 ## Features
 
