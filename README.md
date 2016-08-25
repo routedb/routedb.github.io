@@ -1,6 +1,5 @@
 # routedb.github.io
-***DEMO:
-<a href="https://routedb.github.io/" target="_blank">路線データベース</a>
+DEMO:<a href="https://routedb.github.io/" target="_blank">路線データベース</a>
 
 ## Description
 
