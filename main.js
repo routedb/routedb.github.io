@@ -219,8 +219,9 @@ var createInfo = function(json, key, lv) {
  * @parme lv  階層レベル
  */
 var countData = function(key, lv) {
+	var cnt = 0;
+	$.ajaxSetup({async: false});
 	$.getJSON("shop.json", function(data) {
-		var cnt = 0;
 		for (var x in data) {
 			if (lv == 1) {
 				if (data[x].prefecturesCode == key) {
@@ -236,8 +237,8 @@ var countData = function(key, lv) {
 				}
 			}
 		}
-		return cnt
 	});
+	return cnt
 }
 
 /**
