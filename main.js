@@ -177,10 +177,10 @@ var createList = function(json, key, lv) {
 		}
 		if (lv == 4) {
 			if (json[x].stationCode == key) {
-				out += '<a href="#" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '(' + json[x].key + ')</span><span class="label label-success" style="float: right;font-size: 100%;">' + json[x].tags + '</span></a>';
+				out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '(' + json[x].key + ')</span><span class="label label-success" style="float: right;font-size: 100%;">' + json[x].tags + '</span></a>';
 			}
 		} else {
-			out += '<a href="#" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '(' + json[x].key + ')</span>' + spanBadge + '</a>';
+			out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '(' + json[x].key + ')</span>' + spanBadge + '</a>';
 		}
 	}
 	if (lv == 4) {
@@ -200,7 +200,7 @@ var createInfo = function(json, key, lv) {
 	var out = '<table class="table table-bordered">';
 	for (var x in json) {
 		if (json[x].key == key) {
-			out += '<tr><th style="width:20%;">カテゴリー</th><td><a href="#" target="_blank" class="btn btn-success btn-sm active"><strong>' + json[x].tags + '</strong></a></td></tr>';
+			out += '<tr><th style="width:20%;">カテゴリー</th><td><a href="javascript:void(0)" target="_blank" class="btn btn-success btn-sm active"><strong>' + json[x].tags + '</strong></a></td></tr>';
 			out += '<tr><th>住所</th><td><span id="streetAddress">' + json[x].streetAddress + '</span><br><div id="map-canvas"><div/></td></tr>';
 			out += '<tr><th>電話番号</th><td>' + json[x].phoneNumber + '</td></tr>';
 			out += '<tr><th>営業時間</th><td>' + json[x].businessHours + '</td></tr>';
