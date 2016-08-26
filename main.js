@@ -1,7 +1,9 @@
 var xml = {};
 var prefecturesJson, shopJson;
 $(function() {
-	$.ajaxSetup({async: false});
+	$.ajaxSetup({
+		async: false
+	});
 	$.getJSON("prefectures.json", function(data) {
 		prefecturesJson = data;
 	});
@@ -257,7 +259,7 @@ var createEntryForm = function() {
 	out += '<input type="hidden" class="form-control entryForm" id="lineCode" value="' + $("#hidKey3").val() + '">';
 	out += '<input type="hidden" class="form-control entryForm" id="stationCode" value="' + $("#hidKey4").val() + '">';
 	out += '<input type="hidden" class="form-control entryForm" id="key" value="' + key + '">';
-	out += '<input type="hidden" class="form-control entryForm" id="level" value="5">';
+	out += '<input type="hidden" class="form-control entryForm" id="levels" value="5">';
 	out += '<div class="form-group"><label class="col-sm-2 control-label" style="text-align:center" id="lbltags">カテゴリー</label><div class="col-sm-10"><input class="form-control entryForm" id="tags"></div></div>';
 	out += '<div class="form-group"><label class="col-sm-2 control-label" style="text-align:center" id="lblvalue">名前</label><div class="col-sm-10"><input class="form-control entryForm" id="value"></div></div>';
 	out += '<div class="form-group"><label class="col-sm-2 control-label" style="text-align:center" id="lblstreetAddress">住所</label><div class="col-sm-10"><input class="form-control entryForm" id="streetAddress"></div></div>';
