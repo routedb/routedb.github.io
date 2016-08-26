@@ -380,7 +380,7 @@ var formatterLink = function(externalLink) {
 		} else if (arrLink[x].match(regTwitter)) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>twitter</strong></a>';
 		} else {
-			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>ホームページ</strong></a>';
+			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>関連ページ</strong></a>';
 		}
 	}
 	return out;
