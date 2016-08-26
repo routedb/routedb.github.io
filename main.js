@@ -43,10 +43,9 @@ $(function() {
  */
 var main = function(key, lv, obj) {
 	console.log("main start!");
-	console.log("key:");
-	console.log("lv:");
-	console.log("obj:");
-	console.log(obj);
+	console.log("key:" + key);
+	console.log("lv:" + lv);
+	console.log("obj:" + obj);
 	$("#btnList").html(createBtn(key, lv, obj));
 	initContents();
 	var resultJson = "";
