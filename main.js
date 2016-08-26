@@ -362,6 +362,7 @@ var sendEntryForm = function() {
 	});
 	var out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのご登録ありがとうございました。</h3></div><div class="panel-body">ご登録いただいた店舗データについて内容を精査するため反映までに最大1週間ほどかかります。<br>1週間以上反映が無い場合、内容に不備があったものとしてお手数ですが再度ご登録お願いします。</div></div>';
 	$("#entryForm").html(out);
+	console.log(strJson);
 }
 
 /**
@@ -420,6 +421,10 @@ var adjustMapSize = function() {
 	mapCanvas.css("height", ($(window).height() - mapCanvas.offset().top) + "px");
 }
 
+/**
+ * 画面コンテンツを初期化する。
+ *
+ */
 var initContents = function() {
 	var contents = $(".rowcontent");
 	for (var x = 0; x < contents.length; x++) {
