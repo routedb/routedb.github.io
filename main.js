@@ -26,11 +26,8 @@ $(function() {
 	$("#navPrivacy").click(function() {
 		main(null, 13, this);
 	});
-	$("#navGuideline").click(function() {
-		main(null, 14, this);
-	});
 	$("#navContact").click(function() {
-		main(null, 15, this);
+		main(null, 99, this);
 	});
 });
 
@@ -58,9 +55,7 @@ var main = function(key, lv, obj) {
 			$("#termsofuse").css("display", "block");
 		} else if (lv == 13) {
 			$("#privacy").css("display", "block");
-		} else if (lv == 14) {
-			$("#guideline").css("display", "block");
-		} else if (lv == 15) {
+		} else if (lv == 99) {
 			$("#contact").css("display", "block");
 		}
 	} else {
