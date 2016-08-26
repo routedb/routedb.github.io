@@ -42,6 +42,11 @@ $(function() {
  * @parme obj ターゲット要素
  */
 var main = function(key, lv, obj) {
+	console.log("main start!");
+	console.log("key:");
+	console.log("lv:");
+	console.log("obj:");
+	console.table(obj);
 	$("#btnList").html(createBtn(key, lv, obj));
 	initContents();
 	var resultJson = "";
@@ -105,6 +110,7 @@ var main = function(key, lv, obj) {
 			}, callbackRender);
 		}
 	}
+	console.log("main end!");
 };
 
 /**
@@ -169,7 +175,9 @@ var createBtn = function(key, lv, obj) {
  */
 var createList = function(json, key, lv) {
 	var out = "";
+	console.log("createList start!");
 	for (var x in json) {
+		console.log(json[x]);
 		var cnt = countData(json[x].key, lv);
 		var spanBadge = "";
 		if (cnt > 0) {
@@ -186,6 +194,7 @@ var createList = function(json, key, lv) {
 	if (lv == 4) {
 		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-danger btn-block" onclick="createEntryForm()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>';
 	}
+	console.log("createList end!")
 	return out;
 }
 
@@ -363,6 +372,7 @@ var sendEntryForm = function() {
 	var out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのご登録ありがとうございました。</h3></div><div class="panel-body">ご登録いただいた店舗データについて内容を精査するため反映までに最大1週間ほどかかります。<br>1週間以上反映が無い場合、内容に不備があったものとしてお手数ですが再度ご登録お願いします。</div></div>';
 	$("#entryForm").html(out);
 	console.log(strJson);
+	console.table($.parseJSON(strJson));
 }
 
 /**
