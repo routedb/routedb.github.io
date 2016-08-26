@@ -177,7 +177,7 @@ var createList = function(json, key, lv) {
 	var out = "";
 	console.log("createList start!");
 	for (var x in json) {
-		console.log(json[x]);
+		console.table(json[x]);
 		var cnt = countData(json[x].key, lv);
 		var spanBadge = "";
 		if (cnt > 0) {
