@@ -81,8 +81,8 @@ var main = function(key, lv, obj) {
 				timeout: 1000,
 				success: function(data, dataType) {
 					console.log("ok", xml.data);
-					var line      = data["line"];
-					var station_l = data["station_l"];
+					var line      = xml.data["line"];
+					var station_l = xml.data["station_l"];
 					resultJson = '[';
 					if (line != null) {
 						for (x = 0; x < line.length; x++) {
