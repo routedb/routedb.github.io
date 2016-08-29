@@ -70,12 +70,12 @@ var main = function(key, lv, obj) {
 			var pUrl = 'https://www.ekidata.jp/api/p/';
 			var lUrl = 'https://www.ekidata.jp/api/p/';
 			if (lv == 2) {
-				url = pUrl + key + '.json'
+				url = pUrl + key + '.json';
 			} else if (lv == 3) {
-				url = lUrl + key + '.json'
+				url = lUrl + key + '.json';
 			}
 			$.ajax({
-				url: url + key + '.json',
+				url: url,
 				type: 'GET',
 				dataType: 'script',
 				timeout: 1000,
