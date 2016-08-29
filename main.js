@@ -66,33 +66,42 @@ var main = function(key, lv, obj) {
 			$("#shopInfo").css("display", "none");
 			$("#entryForm").css("display", "none");
 			$("#listMain").css("display", "block");
-			var s     = document.getElementsByTagName("head")[0].appendChild(document.createElement("script"));
-			s.type    = "text/javascript";
-			s.charset = "utf-8";
+			var url;
+			var pUrl = 'https://www.ekidata.jp/api/p/';
+			var lUrl = 'https://www.ekidata.jp/api/p/';
 			if (lv == 2) {
-				s.src = "https://www.ekidata.jp/api/p/" + key + ".json";
+				url = pUrl + key + '.json'
 			} else if (lv == 3) {
-				s.src = "https://www.ekidata.jp/api/l/" + key + ".json";
+				url = lUrl + key + '.json'
 			}
-
-			xml.onload = function(data) {
-				var line      = data["line"];
-				var station_l = data["station_l"];
-				resultJson = '[';
-				if (line != null) {
-					for (x = 0; x < line.length; x++) {
-						resultJson += '{"key":"' + line[x].line_cd + '","levels":"3","value":"' + line[x].line_name + '"},';
+			$.ajax({
+				url: url + key + '.json',
+				type: 'GET',
+				dataType: 'script',
+				timeout: 1000,
+				success: function(data, dataType) {
+					console.log("ok", xml.data);
+					var line      = data["line"];
+					var station_l = data["station_l"];
+					resultJson = '[';
+					if (line != null) {
+						for (x = 0; x < line.length; x++) {
+							resultJson += '{"key":"' + line[x].line_cd + '","levels":"3","value":"' + line[x].line_name + '"},';
+						}
 					}
-				}
-				if (station_l != null) {
-					for (x = 0; x < station_l.length; x++) {
-						resultJson += '{"key":"' + station_l[x].station_cd + '","levels":"4","value":"' + station_l[x].station_name + '"},';
+					if (station_l != null) {
+						for (x = 0; x < station_l.length; x++) {
+							resultJson += '{"key":"' + station_l[x].station_cd + '","levels":"4","value":"' + station_l[x].station_name + '"},';
+						}
 					}
+					resultJson = resultJson.slice(0, -1);
+					resultJson += ']';
+					$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					console.log("ng", XMLHttpRequest, textStatus, errorThrown);
 				}
-				resultJson = resultJson.slice(0, -1);
-				resultJson += ']';
-				$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
-			}
+			});				
 		} else if (lv == 4) {
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(shopJson, key, lv));
