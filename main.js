@@ -67,8 +67,8 @@ var main = function(key, lv, obj) {
 			$("#entryForm").css("display", "none");
 			$("#listMain").css("display", "block");
 			var url = null;
-			var pUrl = 'https://www.ekidata.jp/api/p/';
-			var lUrl = 'https://www.ekidata.jp/api/l/';
+			var pUrl = '//www.ekidata.jp/api/p/';
+			var lUrl = '//www.ekidata.jp/api/l/';
 			if (lv == 2) {
 				url = pUrl + key + '.json';
 			} else if (lv == 3) {
