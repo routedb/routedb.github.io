@@ -66,7 +66,7 @@ var main = function(key, lv, obj) {
 			$("#shopInfo").css("display", "none");
 			$("#entryForm").css("display", "none");
 			$("#listMain").css("display", "block");
-			var url;
+			var url = null;
 			var pUrl = 'https://www.ekidata.jp/api/p/';
 			var lUrl = 'https://www.ekidata.jp/api/p/';
 			if (lv == 2) {
@@ -80,7 +80,6 @@ var main = function(key, lv, obj) {
 				dataType: 'script',
 				timeout: 1000,
 				success: function(data, dataType) {
-					console.log("ok", xml.data);
 					var line      = xml.data["line"];
 					var station_l = xml.data["station_l"];
 					resultJson = '[';
