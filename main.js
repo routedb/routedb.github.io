@@ -179,15 +179,19 @@ var createBtn = function(key, lv, obj) {
 					colSize = 2	;
 				}
 			}
-			out += '<div class="col-md-' + colSize + '">';
 			if (lv == 5) {
+				out += '<div class="col-md-' + colSize + '">';
 				out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block"><strong>' + btnValue + '</strong></button>';
+				out += '<input type="hidden" id="hidKey' + x + '" value=' + btnKey + '>';
+				out += '<input type="hidden" id="hidLv' + x + '" value=' + btnLv + '>';
+				out += '</div>';
 			} else {
+				out += '<div class="col-md-' + colSize + '">';
 				out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)"><strong>' + btnValue + '</strong></button>';
+				out += '<input type="hidden" id="hidKey' + x + '" value=' + btnKey + '>';
+				out += '<input type="hidden" id="hidLv' + x + '" value=' + btnLv + '>';
+				out += '</div>';
 			}
-			out += '<input type="hidden" id="hidKey' + x + '" value=' + btnKey + '>';
-			out += '<input type="hidden" id="hidLv' + x + '" value=' + btnLv + '>';
-			out += '</div>';
 		}
 	}
 	return out;
