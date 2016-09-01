@@ -194,6 +194,8 @@ var createList = function(json, key, lv) {
 			if (json[x].stationCode == key) {
 				out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '(' + json[x].key + ')</span><span class="label label-success" style="float: right;font-size: 100%;">' + json[x].tags + '</span></a>';
 			}
+		} else if (lv == 10) {
+			out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '(' + json[x].key + ')</span><span class="label label-success" style="float: right;font-size: 100%;">' + json[x].tags + '</span></a>';
 		} else {
 			out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '(' + json[x].key + ')</span>' + spanBadge + '</a>';
 		}
