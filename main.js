@@ -1,31 +1,40 @@
-var xml = {};
 var prefecturesJson, shopJson;
 $(function() {
+	// 非同期処理解除
 	$.ajaxSetup({
 		async: false
 	});
+	// 都道府県データを取得
 	$.getJSON("prefectures.json", function(data) {
 		prefecturesJson = data;
 	});
+	// 店舗データを取得
 	$.getJSON("shop.json", function(data) {
 		shopJson = data;
 	});
+	// 初期表示
 	main(null, 1, null);
+	// フッタータイトル押下イベント
 	$("#navBrand").click(function() {
 		main(null, 1, null);
 	});
+	// 検索押下イベント
 	$("#btnSearch").click(function() {
 		main(null, 10, null);
 	});
+	// 路線データベースについて押下イベント
 	$("#navAbout").click(function() {
 		main(null, 11, this);
 	});
+	// 利用規約押下イベント
 	$("#navTermsofuse").click(function() {
 		main(null, 12, this);
 	});
+	// プライバシーポリシー押下イベント
 	$("#navPrivacy").click(function() {
 		main(null, 13, this);
 	});
+	// お問合せ押下イベント
 	$("#navContact").click(function() {
 		main(null, 99, this);
 	});
@@ -43,44 +52,57 @@ var main = function(key, lv, obj) {
 	console.log("key:" + key);
 	console.log("lv:" + lv);
 	console.log("obj:" + obj);
+	// ボタン生成
 	$("#btnList").html(createBtn(key, lv, obj));
+	// コンテンツ初期化
 	initContents();
+	// リスト用json文字列
 	var resultJson = "";
 	if (lv > 9) {
+		// 階層レベルが2桁の場合は、フッター処理
 		if (lv == 10) {
+			// 検索ボタン押下
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(searchJson($("#keyword").val()), key, lv));
 		} else if (lv == 101) {
+			// 検索結果リスト押下
 			$("#shopInfo").css("display", "block");
 			$("#shopInfo").html(createInfo(shopJson, key, lv));
 			new google.maps.Geocoder().geocode({
 				'address': $("#streetAddress").html()
 			}, callbackRender);
 		} else if (lv == 11) {
+			// 路線データベースについて押下
 			$("#about").css("display", "block");
 		} else if (lv == 12) {
+			// 利用規約押下
 			$("#termsofuse").css("display", "block");
 		} else if (lv == 13) {
+			// プライバシーポリシー押下
 			$("#privacy").css("display", "block");
 		} else if (lv == 99) {
+			// お問合せ押下
 			$("#contact").css("display", "block");
 		}
 	} else {
+		// 階層レベルが2桁の場合は、コンテンツ処理
 		if (lv == 1) {
+			// 都道府県リスト生成
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(prefecturesJson, key, lv));
 		} else if (lv == 2 || lv == 3) {
-			$("#shopInfo").css("display", "none");
-			$("#entryForm").css("display", "none");
+			// 路線リストまたは駅リスト生成
 			$("#listMain").css("display", "block");
+			// 駅データAPI取得先
 			var url = null;
-			var pUrl = '//www.ekidata.jp/api/p/';
-			var lUrl = '//www.ekidata.jp/api/l/';
 			if (lv == 2) {
-				url = pUrl + key + '.json';
+				// 駅データAPI(路線)取得先生成
+				url = '//www.ekidata.jp/api/p/' + key + '.json';
 			} else if (lv == 3) {
-				url = lUrl + key + '.json';
+				// 駅データAPI(駅)取得先生成
+				url = '//www.ekidata.jp/api/l/' + key + '.json';
 			}
+			// 駅データ取得
 			$.ajax({
 				url: url,
 				type: 'GET',
@@ -91,17 +113,20 @@ var main = function(key, lv, obj) {
 					var station_l = xml.data["station_l"];
 					resultJson = '[';
 					if (line != null) {
+						// 路線情報の場合
 						for (x = 0; x < line.length; x++) {
 							resultJson += '{"key":"' + line[x].line_cd + '","levels":"3","value":"' + line[x].line_name + '"},';
 						}
 					}
 					if (station_l != null) {
+						// 駅情報の場合
 						for (x = 0; x < station_l.length; x++) {
 							resultJson += '{"key":"' + station_l[x].station_cd + '","levels":"4","value":"' + station_l[x].station_name + '"},';
 						}
 					}
 					resultJson = resultJson.slice(0, -1);
 					resultJson += ']';
+					// リスト出力
 					$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
 				},
 				error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -109,9 +134,11 @@ var main = function(key, lv, obj) {
 				}
 			});				
 		} else if (lv == 4) {
+			// 店舗リスト生成
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(shopJson, key, lv));
 		} else if (lv == 5) {
+			// 店舗詳細生成
 			$("#shopInfo").css("display", "block");
 			$("#shopInfo").html(createInfo(shopJson, key, lv));
 			new google.maps.Geocoder().geocode({
@@ -128,6 +155,7 @@ var main = function(key, lv, obj) {
  * @parme key キー値
  * @parme lv  階層レベル
  * @parme obj ターゲット要素
+ * @return out ボタン用HTML文字列
  */
 var createBtn = function(key, lv, obj) {
 	var out       = "";
@@ -195,6 +223,7 @@ var createBtn = function(key, lv, obj) {
  * @parme json jsonデータ
  * @parme key キー値
  * @parme lv  階層レベル
+ * @return out リスト用HTML文字列
  */
 var createList = function(json, key, lv) {
 	var out = "";
@@ -229,6 +258,7 @@ var createList = function(json, key, lv) {
  * @parme json jsonデータ
  * @parme key キー値
  * @parme lv  階層レベル
+ * @return out 店舗詳細用HTML文字列
  */
 var createInfo = function(json, key, lv) {
 	var out = '<table class="table table-bordered">';
@@ -255,6 +285,7 @@ var createInfo = function(json, key, lv) {
  *
  * @parme key キー値
  * @parme lv  階層レベル
+ * @return cnt パッチ用件数
  */
 var countData = function(key, lv) {
 	var cnt = 0;
@@ -313,6 +344,7 @@ var createEntryForm = function() {
  * key値生成処理
  *
  * 店舗データからkeyの最大値を取得しインクリメントして返す
+ * @return newKey 生成されたkey値
  */
 var createKey = function() {
 	var newKey = 0;
@@ -361,6 +393,7 @@ var checkForm = function() {
  * 確認画面生成処理
  *
  * @parme strJson 画面入力値のjson文字列
+ * @return out 確認画面用HTML文字列
  */
 var createConfirm = function(json) {
 	var out  = '<table class="table table-bordered">';
@@ -404,6 +437,7 @@ var sendEntryForm = function() {
  * 外部リンク生成処理
  *
  * @parme externalLink 外部リンク文字列
+ * @return out 外部リンク用HTML文字列
  */
 var regTabelog = new RegExp("tabelog");
 var regTwitter = new RegExp("twitter");
@@ -426,6 +460,7 @@ var formatterLink = function(externalLink) {
  * 検索処理
  *
  * @parme keyword 検索文字列
+ * @return resultJson 検索結果格納済jsonオブジェクト
  */
 var searchJson = function(keyword) {
 	var resultJson = [];
