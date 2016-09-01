@@ -140,7 +140,7 @@ var createBtn = function(key, lv, obj) {
 			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-info btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
 			out += '</div>';
 			out += '<div class="col-md-4">';
-			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(' + btnKey + ',' + lv + ', this)"><strong>' +  obj.innerHTML + '</strong></button>';
+			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block"><strong>' +  obj.innerHTML + '</strong></button>';
 			out += '</div>';
 		} else {
 			out += '<div class="col-md-6"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="main(null,1, this)"><span style="font-weight: bold;" id="listnull">HOME</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
@@ -180,7 +180,11 @@ var createBtn = function(key, lv, obj) {
 				}
 			}
 			out += '<div class="col-md-' + colSize + '">';
-			out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)"><strong>' + btnValue + '</strong></button>';
+			if (lv == 5) {
+				out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block"><strong>' + btnValue + '</strong></button>';
+			} else {
+				out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)"><strong>' + btnValue + '</strong></button>';
+			}
 			out += '<input type="hidden" id="hidKey' + x + '" value=' + btnKey + '>';
 			out += '<input type="hidden" id="hidLv' + x + '" value=' + btnLv + '>';
 			out += '</div>';
