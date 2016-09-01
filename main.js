@@ -50,6 +50,12 @@ var main = function(key, lv, obj) {
 		if (lv == 10) {
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(searchJson($("#keyword").val()), key, lv));
+		} else if (lv == 101) {
+			$("#shopInfo").css("display", "block");
+			$("#shopInfo").html(createInfo(shopJson, key, lv));
+			new google.maps.Geocoder().geocode({
+				'address': $("#streetAddress").html()
+			}, callbackRender);
 		} else if (lv == 11) {
 			$("#about").css("display", "block");
 		} else if (lv == 12) {
@@ -128,14 +134,24 @@ var createBtn = function(key, lv, obj) {
 	var btnValue  = '<span style="font-weight: bold;" id="list' + key + '">HOME</span>';
 	var btnStatus = "info";
 	if (lv > 9) {
-		out += '<div class="col-md-6"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="main(null,1, this)"><span style="font-weight: bold;" id="listnull">HOME</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
-		out += '<div class="col-md-6">';
-		if (lv == 10) {
-			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
+		if (lv == 101) {
+			out += '<div class="col-md-4"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="main(null,1, this)"><span style="font-weight: bold;" id="listnull">HOME</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
+			out += '<div class="col-md-4">';
+			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-info btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
+			out += '</div>';
+			out += '<div class="col-md-4">';
+			out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-primary btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)"><strong>' + btnValue + '</strong></button>';
+			out += '</div>';
 		} else {
-			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)">' + obj.innerHTML + '</button>';
+			out += '<div class="col-md-6"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="main(null,1, this)"><span style="font-weight: bold;" id="listnull">HOME</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
+			out += '<div class="col-md-6">';
+			if (lv == 10) {
+				out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
+			} else {
+				out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)">' + obj.innerHTML + '</button>';
+			}
+			out += '</div>';
 		}
-		out += '</div>';
 	} else {
 		var colSize   = 12 / lv;
 		var btnKey    = null;
@@ -195,7 +211,7 @@ var createList = function(json, key, lv) {
 				out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '(' + json[x].key + ')</span><span class="label label-success" style="float: right;font-size: 100%;">' + json[x].tags + '</span></a>';
 			}
 		} else if (lv == 10) {
-			out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '(' + json[x].key + ')</span><span class="label label-success" style="float: right;font-size: 100%;">' + json[x].tags + '</span></a>';
+			out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', 101, this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '(' + json[x].key + ')</span><span class="label label-success" style="float: right;font-size: 100%;">' + json[x].tags + '</span></a>';
 		} else {
 			out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '(' + json[x].key + ')</span>' + spanBadge + '</a>';
 		}
