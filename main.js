@@ -49,7 +49,7 @@ var main = function(key, lv, obj) {
 	if (lv > 9) {
 		if (lv == 10) {
 			$("#listMain").css("display", "block");
-			$("#listMain").html(createList(searchJson(obj), key, lv));
+			$("#listMain").html(createList(searchJson($("#keyword").val()), key, lv));
 		} else if (lv == 11) {
 			$("#about").css("display", "block");
 		} else if (lv == 12) {
@@ -405,7 +405,7 @@ var formatterLink = function(externalLink) {
  *
  * @parme keyword 検索文字列
  */
-var searchJson = function(obj) {
+var searchJson = function(keyword) {
 	var arrkey = [];
 	for (var x in shopJson) {
 		for (var key in shopJson[x]) {
