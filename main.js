@@ -406,12 +406,16 @@ var formatterLink = function(externalLink) {
  * @parme keyword 検索文字列
  */
 var searchJson = function(keyword) {
-	var arrkey = [];
+	var resultJson = [];
 	for (var x in shopJson) {
 		for (var key in shopJson[x]) {
-			shopJson[x][key];
+			if (shopJson[x][key].indexOf(keyword) != -1) {
+				resultJson.push(shopJson[x]);
+				break;
+			}
 		}
 	}
+	return resultJson;
 }
 /**
  * ジオコーダの結果を取得したときに実行するコールバック関数。
