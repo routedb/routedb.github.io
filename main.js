@@ -49,6 +49,7 @@ var main = function(key, lv, obj) {
 	if (lv > 9) {
 		if (lv == 10) {
 			$("#listMain").css("display", "block");
+			$("#listMain").html(createList(searchJson(obj), key, lv));
 		} else if (lv == 11) {
 			$("#about").css("display", "block");
 		} else if (lv == 12) {
@@ -399,6 +400,19 @@ var formatterLink = function(externalLink) {
 	return out;
 }
 
+/**
+ * 検索処理
+ *
+ * @parme keyword 検索文字列
+ */
+var searchJson = function(obj) {
+	var arrkey = [];
+	for (var x in shopJson) {
+		for (var key in shopJson[x]) {
+			shopJson[x][key];
+		}
+	}
+}
 /**
  * ジオコーダの結果を取得したときに実行するコールバック関数。
  * この関数内で GoogleMap を出力する。
