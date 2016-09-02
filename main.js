@@ -265,7 +265,7 @@ var createInfo = function(json, key, lv) {
 	for (var x in json) {
 		if (json[x].key == key) {
 			out += '<tr><th style="width:20%;">カテゴリー</th><td><a href="javascript:void(0)" target="_blank" class="btn btn-success btn-sm active"><strong>' + json[x].tags + '</strong></a></td></tr>';
-			out += '<tr><th>住所</th><td><span id="streetAddress">' + json[x].streetAddress + '</span><br><div id="map-canvas"><div/></td></tr>';
+			out += '<tr><th>住所</th><td><span id="streetAddress">' + formatterStreetAddress(json[x].streetAddress) + '</span><br><div id="map-canvas"><div/></td></tr>';
 			out += '<tr><th>電話番号</th><td>' + json[x].phoneNumber + '</td></tr>';
 			out += '<tr><th>営業時間</th><td>' + json[x].businessHours + '</td></tr>';
 			out += '<tr><th>定休日</th><td>' + json[x].regularHoliday + '</td></tr>';
@@ -456,6 +456,16 @@ var formatterLink = function(externalLink) {
 	return out;
 }
 
+/**
+ * 住所リンク生成処理
+ *
+ * @parme streetAddress 住所文字列
+ * @return out 住所リンク用HTML文字列
+ */
+var formatterStreetAddress = function(streetAddress) {
+	var out = 'a href ="https://maps.apple.com/?q=' + streetAddress + '" target="_blank">' + streetAddress + '</a>';
+	return out;
+}
 /**
  * 検索処理
  *
