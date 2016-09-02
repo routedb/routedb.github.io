@@ -463,7 +463,7 @@ var formatterLink = function(externalLink) {
  * @return out 住所リンク用HTML文字列
  */
 var formatterStreetAddress = function(streetAddress) {
-	var out = 'a href ="https://maps.apple.com/?q=' + streetAddress + '" target="_blank">' + streetAddress + '</a>';
+	var out = '<a href ="https://maps.apple.com/?q=' + streetAddress + '" target="_blank">' + streetAddress + '</a>';
 	return out;
 }
 /**
