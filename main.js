@@ -418,8 +418,12 @@ var createConfirm = function(json) {
  * 登録フォームメール送信処理
  */
 var sendEntryForm = function() {
+	var out = null;
 	var strJson = decodeURIComponent($("#hidJson").val());
-	$.ajax({
+	var request = $.ajax({
+		xhrFields: {
+			withCredentials: true
+		},
 		url: "//formspree.io/fresnes3183@gmail.com",
 		method: "POST",
 		data: {
@@ -427,10 +431,17 @@ var sendEntryForm = function() {
 		},
 		dataType: "json"
 	});
-	var out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのご登録ありがとうございました。</h3></div><div class="panel-body">ご登録いただいた店舗データについて内容を精査するため反映までに最大1週間ほどかかります。<br>1週間以上反映が無い場合、内容に不備があったものとしてお手数ですが再度ご登録お願いします。</div></div>';
+	request.done(function(data) {
+		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのご登録ありがとうございました。</h3></div><div class="panel-body">ご登録いただいた店舗データについて内容を精査するため反映までに最大1週間ほどかかります。<br>1週間以上反映が無い場合、内容に不備があったものとしてお手数ですが再度ご登録お願いします。</div></div>';
+		console.log("Request done: " +data);
+		console.log(strJson);
+		console.log($.parseJSON(strJson));
+	});
+	request.fail(function(jqXHR, textStatus) {
+		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">送信処理に失敗しました。</h3></div><div class="panel-body">お手数おかけしますがお問合せください。</div></div>';
+		console.log("Request failed: " + textStatus);
+	});
 	$("#entryForm").html(out);
-	console.log(strJson);
-	console.log($.parseJSON(strJson));
 }
 
 /**
