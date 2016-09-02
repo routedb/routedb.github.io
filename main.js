@@ -421,9 +421,6 @@ var sendEntryForm = function() {
 	var out = null;
 	var strJson = decodeURIComponent($("#hidJson").val());
 	var request = $.ajax({
-		xhrFields: {
-			withCredentials: true
-		},
 		url: "//formspree.io/fresnes3183@gmail.com",
 		method: "POST",
 		data: {
