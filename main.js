@@ -69,7 +69,7 @@ var main = function(key, lv, obj) {
 			$("#shopInfo").css("display", "block");
 			$("#shopInfo").html(createInfo(shopJson, key, lv));
 			new google.maps.Geocoder().geocode({
-				'address': $("#streetAddress").html()
+				'address': $("#streetAddress").text()
 			}, callbackRender);
 		} else if (lv == 11) {
 			// 路線データベースについて押下
@@ -142,7 +142,7 @@ var main = function(key, lv, obj) {
 			$("#shopInfo").css("display", "block");
 			$("#shopInfo").html(createInfo(shopJson, key, lv));
 			new google.maps.Geocoder().geocode({
-				'address': $("#streetAddress").html()
+				'address': $("#streetAddress").text()
 			}, callbackRender);
 		}
 	}
