@@ -420,7 +420,7 @@ var createConfirm = function(json) {
 var sendEntryForm = function() {
 	var strJson = decodeURIComponent($("#hidJson").val());
 	$.ajax({
-		url: "https://formspree.io/fresnes3183@gmail.com",
+		url: "//formspree.io/fresnes3183@gmail.com",
 		method: "POST",
 		data: {
 			message: strJson
