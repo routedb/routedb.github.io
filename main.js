@@ -246,7 +246,7 @@ var createList = function(json, key, lv) {
 		}
 	}
 	if (lv == 4) {
-		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-danger btn-block" onclick="createEntryForm()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>';
+		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-danger btn-block" onclick="createEntryForm()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></button>';
 	}
 	console.log("createList end!")
 	return out;
@@ -336,7 +336,7 @@ var createEntryForm = function() {
 	out += '<div class="form-group"><label class="col-sm-2 control-label" style="text-align:center" id="lblexternalLink">外部リンク</label><div class="col-sm-10"><textarea class="form-control entryForm" rows="3" id="externalLink"></textarea></div></div>';
 	out += '<div class="form-group"><label class="col-sm-2 control-label" style="text-align:center" id="lblremarks">備考</label><div class="col-sm-10"><textarea class="form-control entryForm" rows="3" id="remarks"></textarea></div></div>';
 	out += '</form>';
-	out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="checkForm()">確認</span></button></div>';
+	out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="checkForm()">確認</button></div>';
 	$("#entryForm").html(out);
 }
 
@@ -410,7 +410,7 @@ var createConfirm = function(json) {
 	out += '<tr><th>更新日</th><td>' + json.updateDate + '</td></tr>';
 	out += '</table>';
 	out += '<input type="hidden" id="hidJson" value="' + encodeURIComponent(JSON.stringify(json)) + '">';
-	out += '<button type="button" id="btnUpdate" class="btn btn-secondary btn-success btn-block" onclick="sendEntryForm()">登録</span></button>';
+	out += '<button type="button" id="btnUpdate" class="btn btn-secondary btn-success btn-block" onclick="sendEntryForm()">送信</button>';
 	return out;
 }
 
