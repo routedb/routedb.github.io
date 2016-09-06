@@ -491,10 +491,12 @@ var searchJson = function(keyword) {
 			for (var y in arrKeyword) {
 				if (shopJson[x][key].indexOf(arrKeyword[y]) != -1) {
 					isExistCount++;
-					break;
+					if (isExistCount >= arrKeyword.length) {
+						break;
+					}
 				}
 			}
-			if (isExistCount >= arrKeyword.length) {
+			if (isExistCount == arrKeyword.length) {
 				resultJson.push(shopJson[x]);
 				break;
 			}
