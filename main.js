@@ -485,8 +485,8 @@ var searchJson = function(keyword) {
 	var separator = /\s+/;
 	var arrKeyword = keyword.split(separator);	
 	for (var x in shopJson) {
+		var isExist = false;
 		for (var key in shopJson[x]) {
-			var isExist = false;
 			for (var y in arrKeyword) {
 				if (shopJson[x][key].indexOf(arrKeyword[y]) != -1) {
 					isExist = true;
@@ -494,10 +494,10 @@ var searchJson = function(keyword) {
 					isExist = false;
 				}
 			}
-			if (isExist) {
-				resultJson.push(shopJson[x]);
-				break;
-			}
+		}
+		if (isExist) {
+			resultJson.push(shopJson[x]);
+			break;
 		}
 	}
 	return resultJson;
