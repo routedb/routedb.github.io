@@ -482,9 +482,19 @@ var formatterStreetAddress = function(streetAddress) {
  */
 var searchJson = function(keyword) {
 	var resultJson = [];
+	var separator = /\s+/;
+	var arrKeyword = keyword.split(separator);	
 	for (var x in shopJson) {
 		for (var key in shopJson[x]) {
-			if (shopJson[x][key].indexOf(keyword) != -1) {
+			var isExist = false;
+			for (var y in arrKeyword) {
+				if (shopJson[x][key].indexOf(arrKeyword[y]) != -1) {
+					isExist = true;
+				} else {
+					isExist = false;
+				}
+			}
+			if (isExist) {
 				resultJson.push(shopJson[x]);
 				break;
 			}
