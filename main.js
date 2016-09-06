@@ -486,8 +486,8 @@ var searchJson = function(keyword) {
 	var separator = /\s+/;
 	var arrKeyword = keyword.split(separator);	
 	for (var x in shopJson) {
-		var isExistCount = 0;
 		for (var key in shopJson[x]) {
+			var isExistCount = 0;
 			for (var y in arrKeyword) {
 				if (shopJson[x][key].indexOf(arrKeyword[y]) != -1) {
 					isExistCount++;
