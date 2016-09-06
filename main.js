@@ -491,6 +491,7 @@ var searchJson = function(keyword) {
 			for (var y in arrKeyword) {
 				if (shopJson[x][key].indexOf(arrKeyword[y]) != -1) {
 					isExistCount++;
+					break;
 				}
 			}
 			if (isExistCount >= arrKeyword.length) {
