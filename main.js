@@ -486,14 +486,14 @@ var searchJson = function(keyword) {
 	var separator = /\s+/;
 	var arrKeyword = keyword.split(separator);	
 	for (var x in shopJson) {
+		var isExistCount = 0;
 		for (var key in shopJson[x]) {
 			for (var y in arrKeyword) {
-				var arrIsExist = [];
 				if (shopJson[x][key].indexOf(arrKeyword[y]) != -1) {
-					arrIsExist.push(arrKeyword[y]);
+					isExistCount++;
 				}
 			}
-			if (arrIsExist.length == arrKeyword.length) {
+			if (isExistCount == arrKeyword.length) {
 				resultJson.push(shopJson[x]);
 				break;
 			}
