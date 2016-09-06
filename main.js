@@ -493,7 +493,7 @@ var searchJson = function(keyword) {
 					isExistCount++;
 				}
 			}
-			if (isExistCount == arrKeyword.length) {
+			if (isExistCount >= arrKeyword.length) {
 				resultJson.push(shopJson[x]);
 				break;
 			}
