@@ -246,7 +246,7 @@ var createList = function(json, key, lv) {
 		}
 	}
 	if (lv == 4) {
-		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-danger btn-block" onclick="createEntryForm()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></button>';
+		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-danger btn-block" onclick="createEntryForm()"><strong>追加</strong></button>';
 	}
 	console.log("createList end!")
 	return out;
