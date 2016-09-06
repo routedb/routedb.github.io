@@ -474,6 +474,7 @@ var formatterStreetAddress = function(streetAddress) {
 	var out = '<a href ="https://maps.apple.com/?q=' + streetAddress + '" target="_blank">' + streetAddress + '</a>';
 	return out;
 }
+
 /**
  * 検索処理
  *
@@ -486,15 +487,13 @@ var searchJson = function(keyword) {
 	var arrKeyword = keyword.split(separator);	
 	for (var x in shopJson) {
 		for (var key in shopJson[x]) {
-			var isExist = false;
 			for (var y in arrKeyword) {
+				var arrIsExist = [];
 				if (shopJson[x][key].indexOf(arrKeyword[y]) != -1) {
-					isExist = true;
-				} else {
-					isExist = false;
+					arrIsExist.push(arrKeyword[y]);
 				}
 			}
-			if (isExist) {
+			if (arrIsExist.length == arrKeyword.length) {
 				resultJson.push(shopJson[x]);
 				break;
 			}
@@ -502,6 +501,7 @@ var searchJson = function(keyword) {
 	}
 	return resultJson;
 }
+
 /**
  * ジオコーダの結果を取得したときに実行するコールバック関数。
  * この関数内で GoogleMap を出力する。
