@@ -1,4 +1,4 @@
-var prefecturesJson, shopJson;
+var prefecturesJson, lineJson, stationJson, shopJson;
 $(function() {
 	// 非同期処理解除
 	$.ajaxSetup({
@@ -7,6 +7,14 @@ $(function() {
 	// 都道府県データを取得
 	$.getJSON("prefectures.json", function(data) {
 		prefecturesJson = data;
+	});
+	// 路線データを取得
+	$.getJSON("line.json", function(data) {
+		lineJson = data;
+	});
+	// 駅データを取得
+	$.getJSON("station.json", function(data) {
+		stationJson = data;
 	});
 	// 店舗データを取得
 	$.getJSON("shop.json", function(data) {
@@ -56,7 +64,7 @@ var main = function(key, lv, obj) {
 	$("#btnList").html(createBtn(key, lv, obj));
 	// コンテンツ初期化
 	initContents();
-	// リスト用json文字列
+	// リスト出力用json文字列
 	var resultJson = "";
 	if (lv > 9) {
 		// 階層レベルが2桁の場合は、フッター処理
@@ -93,46 +101,31 @@ var main = function(key, lv, obj) {
 		} else if (lv == 2 || lv == 3) {
 			// 路線リストまたは駅リスト生成
 			$("#listMain").css("display", "block");
-			// 駅データAPI取得先
-			var url = null;
+			// 路線または駅データ格納用オブジェクト
+			var filterData = [];
+			// リスト出力用json文字列を生成
+			resultJson = '[';
 			if (lv == 2) {
-				// 駅データAPI(路線)取得先生成
-				url = '//www.ekidata.jp/api/p/' + key + '.json';
-			} else if (lv == 3) {
-				// 駅データAPI(駅)取得先生成
-				url = '//www.ekidata.jp/api/l/' + key + '.json';
-			}
-			// 駅データ取得
-			$.ajax({
-				url: url,
-				type: 'GET',
-				dataType: 'script',
-				timeout: 1000,
-				success: function(data, dataType) {
-					var line      = xml.data["line"];
-					var station_l = xml.data["station_l"];
-					resultJson = '[';
-					if (line != null) {
-						// 路線情報の場合
-						for (x = 0; x < line.length; x++) {
-							resultJson += '{"key":"' + line[x].line_cd + '","levels":"3","value":"' + line[x].line_name + '"},';
-						}
-					}
-					if (station_l != null) {
-						// 駅情報の場合
-						for (x = 0; x < station_l.length; x++) {
-							resultJson += '{"key":"' + station_l[x].station_cd + '","levels":"4","value":"' + station_l[x].station_name + '"},';
-						}
-					}
-					resultJson = resultJson.slice(0, -1);
-					resultJson += ']';
-					// リスト出力
-					$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
-				},
-				error: function(XMLHttpRequest, textStatus, errorThrown) {
-					console.log("ng", XMLHttpRequest, textStatus, errorThrown);
+				// 路線情報を取得
+				filterData = $.grep(lineJson, function(key) {
+					return lineJson.company_cd === key;
+				});
+				for (x = 0; x < filterData.length; x++) {
+					resultJson += '{"key":"' + filterData[x].line_cd + '","levels":"3","value":"' + filterData[x].line_name + '"},';
 				}
-			});				
+			} else if (lv == 3) {
+				// 駅情報を取得
+				filterData = $.grep(stationJson, function(key) {
+					return stationJson.line_cd === key;
+				});
+				for (x = 0; x < filterData.length; x++) {
+					resultJson += '{"key":"' + filterData[x].station_cd + '","levels":"4","value":"' + filterData[x].station_name + '"},';
+				}
+			}
+			resultJson = resultJson.slice(0, -1);
+			resultJson += ']';
+			// リスト出力
+			$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
 		} else if (lv == 4) {
 			// 店舗リスト生成
 			$("#listMain").css("display", "block");
