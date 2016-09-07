@@ -487,15 +487,15 @@ var searchJson = function(keyword) {
 	var arrKeyword = keyword.split(separator);	
 	for (var row in shopJson) {
 		var isExistCount = 0;
-		for (var idx in arrKeyword) {
-			for (var key in shopJson[row]) {
+		for (var key in shopJson[row]) {
+			for (var idx in arrKeyword) {
 				if (shopJson[row][key].indexOf(arrKeyword[idx]) != -1) {
 					isExistCount++;
-					break;
 				}
-				if (isExistCount == arrKeyword.length) {
-					resultJson.push(shopJson[row]);
-				}
+			}
+			if (isExistCount == arrKeyword.length) {
+				resultJson.push(shopJson[row]);
+				break;
 			}
 		}
 	}
