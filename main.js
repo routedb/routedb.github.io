@@ -106,9 +106,14 @@ var main = function(key, lv, obj) {
 			// リスト出力用json文字列を生成
 			resultJson = '[';
 			if (lv == 2) {
+				var preData =[];
+				// 駅情報から都道府県コードで取得
+				preData = $.grep(stationJson, function(elem) {
+					return elem.pref_cd == key;
+				});
 				// 路線情報を取得
-				filterData = $.grep(lineJson, function(elem) {
-					return elem.company_cd == key;
+				filterData = $.grep(preData, function(elem) {
+					return elem.line_cd == preData.line_cd;
 				});
 				for (x = 0; x < filterData.length; x++) {
 					resultJson += '{"key":"' + filterData[x].line_cd + '","levels":"3","value":"' + filterData[x].line_name + '"},';
