@@ -485,20 +485,17 @@ var searchJson = function(keyword) {
 	var resultJson = [];
 	var separator = /\s+/;
 	var arrKeyword = keyword.split(separator);	
-	for (var x in shopJson) {
+	for (var row in shopJson) {
 		var isExistCount = 0;
-		for (var key in shopJson[x]) {
-			for (var y in arrKeyword) {
-				if (shopJson[x][key].indexOf(arrKeyword[y]) != -1) {
+		for (var idx in arrKeyword) {
+			for (var key in shopJson[row]) {
+				if (shopJson[row][key].indexOf(arrKeyword[idx]) != -1) {
 					isExistCount++;
-					if (isExistCount >= arrKeyword.length) {
-						break;
-					}
+					break;
 				}
-			}
-			if (isExistCount == arrKeyword.length) {
-				resultJson.push(shopJson[x]);
-				break;
+				if (isExistCount == arrKeyword.length) {
+					resultJson.push(shopJson[row]);
+				}
 			}
 		}
 	}
