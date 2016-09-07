@@ -107,16 +107,16 @@ var main = function(key, lv, obj) {
 			resultJson = '[';
 			if (lv == 2) {
 				// 路線情報を取得
-				filterData = $.grep(lineJson, function(key) {
-					return lineJson.company_cd === key;
+				filterData = $.grep(lineJson, function(elem) {
+					return elem.company_cd === key;
 				});
 				for (x = 0; x < filterData.length; x++) {
 					resultJson += '{"key":"' + filterData[x].line_cd + '","levels":"3","value":"' + filterData[x].line_name + '"},';
 				}
 			} else if (lv == 3) {
 				// 駅情報を取得
-				filterData = $.grep(stationJson, function(key) {
-					return stationJson.line_cd === key;
+				filterData = $.grep(stationJson, function(elem) {
+					return elem.line_cd === key;
 				});
 				for (x = 0; x < filterData.length; x++) {
 					resultJson += '{"key":"' + filterData[x].station_cd + '","levels":"4","value":"' + filterData[x].station_name + '"},';
