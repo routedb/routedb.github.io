@@ -127,7 +127,7 @@ var main = function(key, lv, obj) {
 					filterData.push(lineCdList)
 				}
 				for (x = 0; x < filterData.length; x++) {
-					resultJson += '{"key":"' + filterData[x].line_cd + '","levels":"3","value":"' + filterData[x].line_name + '"},';
+					resultJson += '{"key":"' + filterData[x][0].line_cd + '","levels":"3","value":"' + filterData[x][0].line_name + '"},';
 				}
 			} else if (lv == 3) {
 				// 駅情報を取得
