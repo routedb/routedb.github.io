@@ -331,7 +331,7 @@ var createEntryForm = function() {
 	$("#shopInfo").css("display", "none");
 	$("#listMain").css("display", "none");
 	$("#entryForm").css("display", "block");
-	var out = '<div class="panel panel-default"><div class="alert alert-danger" style="display:none;" role="alert" id="errorMsg"></div>';
+	var out = '<div class="panel panel-default"><div class="alert alert-danger" style="display:none;" role="alert" id="errorEntryMsg"></div>';
 	out += '<form class="form-horizontal" role="form">';
 	out += '<input type="hidden" class="form-control entryForm" id="prefecturesCode" value="' + $("#hidKey2").val() + '">';
 	out += '<input type="hidden" class="form-control entryForm" id="lineCode" value="' + $("#hidKey3").val() + '">';
@@ -394,11 +394,11 @@ var checkEntryForm = function() {
 	successJson += '"updateDate":"' + date + '"'
 	successJson += '}';
 	if (!errMsg) {
-		$("#errorMsg").css("display", "none");
+		$("#errorEntryMsg").css("display", "none");
 		$("#entryForm").html(createEntryConfirm($.parseJSON(successJson)));
 	} else {
-		$("#errorMsg").html(errMsg);
-		$("#errorMsg").css("display", "block");
+		$("#errorEntryMsg").html(errMsg);
+		$("#errorEntryMsg").css("display", "block");
 	}
 }
 
@@ -479,11 +479,11 @@ var checkContactForm = function() {
 	successJson += '"sendDate":"' + date + '"'
 	successJson += '}';
 	if (!errMsg) {
-		$("#errorMsg").css("display", "none");
+		$("#errorContactMsg").css("display", "none");
 		$("#ContactForm").html(createContactConfirm($.parseJSON(successJson)));
 	} else {
-		$("#errorMsg").html(errMsg);
-		$("#errorMsg").css("display", "block");
+		$("#errorContactMsg").html(errMsg);
+		$("#errorContactMsg").css("display", "block");
 	}
 }
 
