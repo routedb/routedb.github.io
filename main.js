@@ -432,7 +432,7 @@ var createConfirm = function(json) {
  */
 var sendEntryForm = function() {
 	var out = null;
-	var strJson = decodeURIComponent($("#hidJson").val());
+	var strJson = decodeURIComponent($("#hidJson").val()) + ",";
 	var url = 'https://slack.com/api/chat.postMessage';
 	var data = {
 		token: 'xoxp-77168113330-77158153301-77366846502-ae1f289f61',
@@ -467,6 +467,7 @@ var sendEntryForm = function() {
  */
 var regTabelog = new RegExp("tabelog");
 var regTwitter = new RegExp("twitter");
+var regFacebook = new RegExp("facebook");
 var formatterLink = function(externalLink) {
 	var out = '';
 	var arrLink = externalLink.split("<br>");
@@ -475,6 +476,8 @@ var formatterLink = function(externalLink) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>食べログ</strong></a>';
 		} else if (arrLink[x].match(regTwitter)) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>twitter</strong></a>';
+		} else if (arrLink[x].match(regFacebook)) {
+			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>facebook</strong></a>';
 		} else {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>関連ページ</strong></a>';
 		}
