@@ -349,7 +349,7 @@ var createEntryForm = function() {
 	out += '<div class="form-group"><label class="col-sm-2 control-label" style="text-align:center" id="lblexternalLink">外部リンク</label><div class="col-sm-10"><textarea class="form-control entryForm" rows="3" id="externalLink"></textarea></div></div>';
 	out += '<div class="form-group"><label class="col-sm-2 control-label" style="text-align:center" id="lblremarks">備考</label><div class="col-sm-10"><textarea class="form-control entryForm" rows="3" id="remarks"></textarea></div></div>';
 	out += '</form>';
-	out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="checkForm()">確認</button></div>';
+	out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="checkEntryForm()">確認</button></div>';
 	$("#entryForm").html(out);
 }
 
@@ -379,7 +379,7 @@ var createKey = function() {
  *
  * エラーがあればエラーメッセージ出力、なければjson文字列を生成し確認画面を作成する
  */
-var checkForm = function() {
+var checkEntryForm = function() {
 	var form = $(".entryForm");
 	var errMsg = "";
 	var successJson = '{';
@@ -395,7 +395,7 @@ var checkForm = function() {
 	successJson += '}';
 	if (!errMsg) {
 		$("#errorMsg").css("display", "none");
-		$("#entryForm").html(createConfirm($.parseJSON(successJson)));
+		$("#entryForm").html(createEntryConfirm($.parseJSON(successJson)));
 	} else {
 		$("#errorMsg").html(errMsg);
 		$("#errorMsg").css("display", "block");
@@ -403,12 +403,12 @@ var checkForm = function() {
 }
 
 /**
- * 確認画面生成処理
+ * 登録フォーム確認画面生成処理
  *
  * @parme strJson 画面入力値のjson文字列
  * @return out 確認画面用HTML文字列
  */
-var createConfirm = function(json) {
+var createEntryConfirm = function(json) {
 	var out  = '<table class="table table-bordered">';
 	out += '<tr><th>カテゴリー</th><td>' + json.tags + '</td></tr>';
 	out += '<tr><th>名前</th><td>' + json.value + '</td></tr>';
@@ -422,7 +422,7 @@ var createConfirm = function(json) {
 	out += '<tr><th>備考</th><td>' + json.remarks + '</td></tr>';
 	out += '<tr><th>更新日</th><td>' + json.updateDate + '</td></tr>';
 	out += '</table>';
-	out += '<input type="hidden" id="hidJson" value="' + encodeURIComponent(JSON.stringify(json)) + '">';
+	out += '<input type="hidden" id="hidEntryJson" value="' + encodeURIComponent(JSON.stringify(json)) + '">';
 	out += '<button type="button" id="btnUpdate" class="btn btn-secondary btn-success btn-block" onclick="sendEntryForm()">送信</button>';
 	return out;
 }
@@ -432,7 +432,7 @@ var createConfirm = function(json) {
  */
 var sendEntryForm = function() {
 	var out = null;
-	var strJson = decodeURIComponent($("#hidJson").val()) + ",";
+	var strJson = decodeURIComponent($("#hidEntryJson").val()) + ",";
 	var url = 'https://slack.com/api/chat.postMessage';
 	var data = {
 		token: 'xoxp-77168113330-77158153301-77366846502-ae1f289f61',
@@ -455,6 +455,82 @@ var sendEntryForm = function() {
 	request.fail(function(jqXHR, textStatus) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">送信処理に失敗しました。</h3></div><div class="panel-body">お手数おかけしますがお問合せください。</div></div>';
 		$("#entryForm").html(out);
+		console.log("Request failed: " + textStatus);
+	});
+}
+
+/**
+ * 問合せフォーム入力チェック処理
+ *
+ * エラーがあればエラーメッセージ出力、なければjson文字列を生成し確認画面を作成する
+ */
+var checkContactForm = function() {
+	var form = $(".contactForm");
+	var errMsg = "";
+	var successJson = '{';
+	for (var x = 0; x < form.length; x++) {
+		if (!form[x].value) {
+			errMsg += '<strong>' + $("#lbl" + form[x].id).html() + '</strong>が入力されていません。<br>';
+		} else {
+			successJson += '"' + form[x].id + '":"' + form[x].value.replace(/\r?\n/g, '<br>') + '",'
+		}
+	}
+	var date = new Date($.now()).toLocaleString();
+	successJson += '"sendDate":"' + date + '"'
+	successJson += '}';
+	if (!errMsg) {
+		$("#errorMsg").css("display", "none");
+		$("#ContactForm").html(createContactConfirm($.parseJSON(successJson)));
+	} else {
+		$("#errorMsg").html(errMsg);
+		$("#errorMsg").css("display", "block");
+	}
+}
+
+/**
+ * 問合せフォーム確認画面生成処理
+ *
+ * @parme strJson 画面入力値のjson文字列
+ * @return out 確認画面用HTML文字列
+ */
+var createContactConfirm = function(json) {
+	var out  = '<table class="table table-bordered">';
+	out += '<tr><th>メールアドレス</th><td>' + json.mail + '</td></tr>';
+	out += '<tr><th>問合せ内容</th><td>' + json.mailbody + '</td></tr>';
+	out += '</table>';
+	out += '<input type="hidden" id="hidContactJson" value="' + encodeURIComponent(JSON.stringify(json)) + '">';
+	out += '<button type="button" id="btnUpdate" class="btn btn-secondary btn-success btn-block" onclick="sendContactForm()">送信</button>';
+	return out;
+}
+
+/**
+ * 問合せフォーム送信処理
+ */
+var sendContactForm = function() {
+	var out = null;
+	var strJson = decodeURIComponent($("#hidContactJson").val());
+	var url = 'https://slack.com/api/chat.postMessage';
+	var data = {
+		token: 'xoxp-77168113330-77158153301-77366846502-ae1f289f61',
+		channel: '#routedb-contact',
+		username: 'routedb.github.io',
+		text: strJson
+	};
+	var request = $.ajax({
+		type: 'GET',
+		url: url,
+		data: data
+	});
+	request.done(function(data) {
+		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのお問合せありがとうございました。</h3></div><div class="panel-body">お問合せいただいた内容について返信までに最大1週間ほどかかります。<br>何卒、ご了承いただきますようお願いします。</div></div>';
+		$("#ContactForm").html(out);
+		console.log("Request done.");
+		console.log(strJson);
+		console.log($.parseJSON(strJson));
+	});
+	request.fail(function(jqXHR, textStatus) {
+		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">送信処理に失敗しました。</h3></div><div class="panel-body">お手数おかけしますがお問合せください。</div></div>';
+		$("#ContactForm").html(out);
 		console.log("Request failed: " + textStatus);
 	});
 }
