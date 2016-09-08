@@ -480,7 +480,7 @@ var checkContactForm = function() {
 	successJson += '}';
 	if (!errMsg) {
 		$("#errorContactMsg").css("display", "none");
-		$("#ContactForm").html(createContactConfirm($.parseJSON(successJson)));
+		$("#contactForm").html(createContactConfirm($.parseJSON(successJson)));
 	} else {
 		$("#errorContactMsg").html(errMsg);
 		$("#errorContactMsg").css("display", "block");
@@ -523,14 +523,14 @@ var sendContactForm = function() {
 	});
 	request.done(function(data) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのお問合せありがとうございました。</h3></div><div class="panel-body">お問合せいただいた内容について返信までに最大1週間ほどかかります。<br>何卒、ご了承いただきますようお願いします。</div></div>';
-		$("#ContactForm").html(out);
+		$("#contactForm").html(out);
 		console.log("Request done.");
 		console.log(strJson);
 		console.log($.parseJSON(strJson));
 	});
 	request.fail(function(jqXHR, textStatus) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">送信処理に失敗しました。</h3></div><div class="panel-body">お手数おかけしますがお問合せください。</div></div>';
-		$("#ContactForm").html(out);
+		$("#contactForm").html(out);
 		console.log("Request failed: " + textStatus);
 	});
 }
