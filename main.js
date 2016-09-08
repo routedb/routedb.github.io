@@ -424,18 +424,22 @@ var createConfirm = function(json) {
 }
 
 /**
- * 登録フォームメール送信処理
+ * 登録フォーム送信処理
  */
 var sendEntryForm = function() {
 	var out = null;
 	var strJson = decodeURIComponent($("#hidJson").val());
+	var url = 'https://slack.com/api/chat.postMessage';
+	var data = {
+		token: 'xoxp-77168113330-77158153301-77366846502-ae1f289f61',
+		channel: '#routedb-entry',
+		username: 'routedb.github.io',
+		text: strJson
+	};
 	var request = $.ajax({
-		url: "//formspree.io/fresnes3183@gmail.com",
-		method: "POST",
-		data: {
-			message: strJson
-		},
-		dataType: "json"
+		type: 'GET',
+		url: url,
+		data: data
 	});
 	request.done(function(data) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのご登録ありがとうございました。</h3></div><div class="panel-body">ご登録いただいた店舗データについて内容を精査するため反映までに最大1週間ほどかかります。<br>1週間以上反映が無い場合、内容に不備があったものとしてお手数ですが再度ご登録お願いします。</div></div>';
