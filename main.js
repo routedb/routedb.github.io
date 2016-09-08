@@ -94,7 +94,7 @@ var main = function(key, lv, obj) {
 			$("#privacy").css("display", "block");
 		} else if (lv == 99) {
 			// お問合せ押下
-			$("#contact").css("display", "block");
+			$("#contactForm").css("display", "block");
 		}
 	} else {
 		// 階層レベルが2桁の場合は、コンテンツ処理
