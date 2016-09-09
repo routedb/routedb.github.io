@@ -583,16 +583,9 @@ var formatterStreetAddress = function(streetAddress) {
  */
 var searchJson = function(keyword) {
 	var resultJson = [];
-	var separator = /\s+/;
-	var arrKeyword = keyword.split(separator);	
 	for (var row in shopJson) {
-		var isExistCount = 0;
-		var isExist = true;
-		for (var key in shopJson[row]) {
-			if (andSearch(shopJson[row], keyword)) {
-				resultJson.push(shopJson[row]);
-				break;
-			}
+		if (andSearch(shopJson[row], keyword)) {
+			resultJson.push(shopJson[row]);
 		}
 	}
 	return resultJson;
@@ -601,14 +594,17 @@ var searchJson = function(keyword) {
 /**
  * and検索判定
  *
- * @parme target 対象jsonオブジェクト
+ * @parme target 対象オブジェクト
+ * @parme keyword キーワード(半角or全角スペース区切り)
  * @return 全てのキーワードが含まれている場合はtrue、以外はfalse
  */
 var andSearch = function(target, keyword) {
+	// 対象オブジェクトのvalueをカンマ区切り文字列に変換
 	var targetString = Object.keys(target).map(function(key) {
 		return target[key]
 	}).join(',');
 	var separator = /\s+/;
+	// キーワードを配列に格納
 	var arrKeyword = keyword.split(separator);	
 	for (var idx in arrKeyword) {
 		if (targetString.indexOf(arrKeyword[idx]) == -1) return false;
