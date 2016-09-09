@@ -544,6 +544,7 @@ var sendContactForm = function() {
 var regTabelog = new RegExp("tabelog");
 var regTwitter = new RegExp("twitter");
 var regFacebook = new RegExp("facebook");
+var regWikipedia = new RegExp("wikipedia");
 var formatterLink = function(externalLink) {
 	var out = '';
 	var arrLink = externalLink.split("<br>");
@@ -554,6 +555,8 @@ var formatterLink = function(externalLink) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>twitter</strong></a>';
 		} else if (arrLink[x].match(regFacebook)) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>facebook</strong></a>';
+		} else if (arrLink[x].match(regWikipedia)) {
+			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>wikipedia</strong></a>';
 		} else {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>関連ページ</strong></a>';
 		}
