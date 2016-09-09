@@ -571,7 +571,7 @@ var formatterLink = function(externalLink) {
  * @return out 住所リンク用HTML文字列
  */
 var formatterStreetAddress = function(streetAddress) {
-	var out = streetAddress + '<a href ="https://maps.apple.com/?q=' + streetAddress + '" target="_blank" class="btn btn-warning btn-sm active">' + アプリで開く + '</a>';
+	var out = streetAddress + '<a href ="https://maps.apple.com/?q=' + streetAddress + '" target="_blank" class="btn btn-warning btn-sm active">アプリで開く</a>';
 	return out;
 }
 
