@@ -604,10 +604,11 @@ var searchJson = function(keyword) {
  * @return 全てのキーワードが含まれている場合はtrue、以外はfalse
  */
 var andSearch = function(target, keyword) {
-	var csv = target.map(function(d) {
-		return Object.keys(d).map(function(key) {
-			return d[key];
-		}).join(',');
+	var fields = Object.keys(target);
+	var csv = target.map(function(row) {
+		return fields.map(function(fieldName) {
+			return JSON.stringify(row[fieldName] || '');
+		});
 	});
 	var separator = /\s+/;
 	var arrKeyword = keyword.split(separator);	
