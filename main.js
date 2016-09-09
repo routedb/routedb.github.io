@@ -591,6 +591,7 @@ var searchJson = function(keyword) {
 		for (var key in shopJson[row]) {
 			if (andSearch(shopJson[row], keyword)) {
 				resultJson.push(shopJson[row]);
+				break;
 			}
 		}
 	}
