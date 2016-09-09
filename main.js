@@ -558,7 +558,7 @@ var formatterLink = function(externalLink) {
 		} else if (arrLink[x].match(regWikipedia)) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>wikipedia</strong></a>';
 		} else {
-			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>関連ページ</strong></a>';
+			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>HPまたは関連ページ</strong></a>';
 		}
 	}
 	return out;
@@ -571,7 +571,7 @@ var formatterLink = function(externalLink) {
  * @return out 住所リンク用HTML文字列
  */
 var formatterStreetAddress = function(streetAddress) {
-	var out = streetAddress + '<a href ="https://maps.apple.com/?q=' + streetAddress + '" target="_blank" class="btn btn-warning btn-sm active">アプリで開く</a>';
+	var out = streetAddress + '<a href ="https://maps.apple.com/?q=' + streetAddress + '" target="_blank" class="btn btn-success btn-sm active">アプリで開く</a>';
 	return out;
 }
 
