@@ -589,7 +589,7 @@ var searchJson = function(keyword) {
 		var isExistCount = 0;
 		var isExist = true;
 		for (var key in shopJson[row]) {
-			if (andSearch(shopJson[row][key], keyword)) {
+			if (andSearch(shopJson[row], keyword)) {
 				resultJson.push(shopJson[row]);
 			}
 		}
@@ -604,10 +604,15 @@ var searchJson = function(keyword) {
  * @return 全てのキーワードが含まれている場合はtrue、以外はfalse
  */
 var andSearch = function(target, keyword) {
+	var csv = target.map(function(d) {
+		return Object.keys(d).map(function(key) {
+			return d[key];
+		}).join(',');
+	});
 	var separator = /\s+/;
 	var arrKeyword = keyword.split(separator);	
 	for (var idx in arrKeyword) {
-		if (target.indexOf(arrKeyword[idx]) == -1) return false;
+		if (csv.indexOf(arrKeyword[idx]) == -1) return false;
 	}
 	return true;
 }
