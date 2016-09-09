@@ -587,19 +587,29 @@ var searchJson = function(keyword) {
 	var arrKeyword = keyword.split(separator);	
 	for (var row in shopJson) {
 		var isExistCount = 0;
+		var isExist = true;
 		for (var key in shopJson[row]) {
-			for (var idx in arrKeyword) {
-				if (shopJson[row][key].indexOf(arrKeyword[idx]) != -1) {
-					isExistCount++;
-				}
-			}
-			if (isExistCount == arrKeyword.length) {
+			if (andSearch(shopJson[row][key], keyword)) {
 				resultJson.push(shopJson[row]);
-				break;
 			}
 		}
 	}
 	return resultJson;
+}
+
+/**
+ * and検索判定
+ *
+ * @parme target 対象json文字列
+ * @return 全てのキーワードが含まれている場合はtrue、以外はfalse
+ */
+var andSearch = function(target, keyword) {
+	var separator = /\s+/;
+	var arrKeyword = keyword.split(separator);	
+	for (var idx in arrKeyword) {
+		if (target.indexOf(arrKeyword[idx]) == -1) return false;
+	}
+	return true;
 }
 
 /**
