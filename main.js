@@ -606,8 +606,7 @@ var searchJson = function(keyword) {
 var andSearch = function(target, keyword) {
 	var fields = Object.keys(target);
 	var csv = fields.map(function(fieldName) {
-			return JSON.stringify(target[fieldName] || '');
-		});
+		return JSON.stringify(target[fieldName] || '');
 	});
 	var separator = /\s+/;
 	var arrKeyword = keyword.split(separator);	
