@@ -600,18 +600,14 @@ var searchJson = function(keyword) {
 /**
  * and検索判定
  *
- * @parme target 対象json文字列
+ * @parme target 対象jsonオブジェクト
  * @return 全てのキーワードが含まれている場合はtrue、以外はfalse
  */
 var andSearch = function(target, keyword) {
-	var fields = Object.keys(target);
-	var csv = fields.map(function(fieldName) {
-		return target[fieldName];
-	});
 	var separator = /\s+/;
 	var arrKeyword = keyword.split(separator);	
 	for (var idx in arrKeyword) {
-		if (csv.indexOf(arrKeyword[idx]) == -1) return false;
+		if (target.indexOf(arrKeyword[idx]) == -1) return false;
 	}
 	return true;
 }
