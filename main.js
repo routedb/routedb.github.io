@@ -604,10 +604,13 @@ var searchJson = function(keyword) {
  * @return 全てのキーワードが含まれている場合はtrue、以外はfalse
  */
 var andSearch = function(target, keyword) {
+	var targetString = Object.keys(target).map(function(key) {
+		return target[key]
+	}).join(',');
 	var separator = /\s+/;
 	var arrKeyword = keyword.split(separator);	
 	for (var idx in arrKeyword) {
-		if (target.indexOf(arrKeyword[idx]) == -1) return false;
+		if (targetString.indexOf(arrKeyword[idx]) == -1) return false;
 	}
 	return true;
 }
