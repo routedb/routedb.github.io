@@ -177,7 +177,7 @@ var main = function(key, lv, obj) {
  */
 var createBtn = function(key, lv, obj) {
 	var out       = "";
-	var btnValue  = '<span style="font-weight: bold;" id="list' + key + '">HOME</span>';
+	var btnValue  = '<span style="font-weight: bold;" id="list' + key + '">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span>';
 	var btnStatus = "info";
 	if (lv > 9) {
 		if (lv == 101) {
