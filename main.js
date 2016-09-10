@@ -181,7 +181,7 @@ var createBtn = function(key, lv, obj) {
 	var btnStatus = "info";
 	if (lv > 9) {
 		if (lv == 101) {
-			out += '<div class="col-md-4"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="main(null,1, this)"><span style="font-weight: bold;" id="listnull">HOME</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
+			out += '<div class="col-md-4"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="main(null,1, this)"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
 			out += '<div class="col-md-4">';
 			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-info btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
 			out += '</div>';
@@ -189,7 +189,7 @@ var createBtn = function(key, lv, obj) {
 			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block"><strong>' +  obj.childNodes[0].innerHTML + '</strong></button>';
 			out += '</div>';
 		} else {
-			out += '<div class="col-md-6"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="main(null,1, this)"><span style="font-weight: bold;" id="listnull">HOME</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
+			out += '<div class="col-md-6"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="main(null,1, this)"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
 			out += '<div class="col-md-6">';
 			if (lv == 10) {
 				out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
@@ -283,7 +283,7 @@ var createInfo = function(json, key, lv) {
 	for (var x in json) {
 		if (json[x].key == key) {
 			out += '<tr><th style="width:20%;">カテゴリー</th><td>' + formattertags(json[x].tags) + '</td></tr>';
-			out += '<tr><th>住所</th><td><span id="streetAddress">' + formatterStreetAddress(json[x].streetAddress) + '</span><br><div id="map-canvas"><div/></td></tr>';
+			out += '<tr><th>住所</th><td><span id="streetAddress">' + formatterStreetAddress(json[x].streetAddress) + '<div id="map-canvas"><div/></td></tr>';
 			out += '<tr><th>電話番号</th><td>' + json[x].phoneNumber + '</td></tr>';
 			out += '<tr><th>営業時間</th><td>' + json[x].businessHours + '</td></tr>';
 			out += '<tr><th>定休日</th><td>' + json[x].regularHoliday + '</td></tr>';
@@ -436,7 +436,7 @@ var createEntryConfirm = function(json) {
  * 登録フォーム送信処理
  */
 var sendEntryForm = function() {
-	var out = null;
+	var out = ””;
 	var strJson = decodeURIComponent($("#hidEntryJson").val()) + ",";
 	var url = 'https://slack.com/api/chat.postMessage';
 	var data = {
@@ -512,7 +512,7 @@ var createContactConfirm = function(json) {
  * 問合せフォーム送信処理
  */
 var sendContactForm = function() {
-	var out = null;
+	var out = ””;
 	var strJson = decodeURIComponent($("#hidContactJson").val());
 	var url = 'https://slack.com/api/chat.postMessage';
 	var data = {
@@ -547,7 +547,7 @@ var sendContactForm = function() {
  * @return out ジャンル用HTML文字列
  */
 var formattertags = function(tags) {
-	var out = null;
+	var out = ””;
 	var arrtags = tags.split(separator);
   for (var x in arrtags) {
 		out += '<a href="javascript:void(0)" target="_blank" class="btn btn-success btn-sm active"><strong>' + arrtags[x] + '</strong></a>';
@@ -562,7 +562,7 @@ var formattertags = function(tags) {
  * @return out 外部リンク用HTML文字列
  */
 var formatterLink = function(externalLink) {
-	var out = null;
+	var out = ””;
 	var arrLink = externalLink.split("<br>");
 	for (var x = 0; x < arrLink.length; x++) {
 		if (arrLink[x].match(regTabelog)) {
@@ -587,7 +587,7 @@ var formatterLink = function(externalLink) {
  * @return out 住所リンク用HTML文字列
  */
 var formatterStreetAddress = function(streetAddress) {
-	var out = streetAddress + '<a href ="https://maps.apple.com/?q=' + streetAddress + '" target="_blank" class="btn btn-success btn-sm active">アプリで開く</a>';
+	var out = streetAddress + '</span><a href ="https://maps.apple.com/?q=' + streetAddress + '" target="_blank" class="btn btn-success btn-sm active">アプリで開く</a>';
 	return out;
 }
 
