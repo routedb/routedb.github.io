@@ -1,3 +1,8 @@
+var separator = /\s+/;
+var regTabelog = new RegExp("tabelog");
+var regTwitter = new RegExp("twitter");
+var regFacebook = new RegExp("facebook");
+var regWikipedia = new RegExp("wikipedia");
 var prefecturesJson, lineJson, stationJson, shopJson;
 $(function() {
 	// 非同期処理解除
@@ -277,7 +282,7 @@ var createInfo = function(json, key, lv) {
 	var out = '<table class="table table-bordered">';
 	for (var x in json) {
 		if (json[x].key == key) {
-			out += '<tr><th style="width:20%;">カテゴリー</th><td><a href="javascript:void(0)" target="_blank" class="btn btn-success btn-sm active"><strong>' + json[x].tags + '</strong></a></td></tr>';
+			out += '<tr><th style="width:20%;">カテゴリー</th><td>' + formattertags(json[x].tags) + '</td></tr>';
 			out += '<tr><th>住所</th><td><span id="streetAddress">' + formatterStreetAddress(json[x].streetAddress) + '</span><br><div id="map-canvas"><div/></td></tr>';
 			out += '<tr><th>電話番号</th><td>' + json[x].phoneNumber + '</td></tr>';
 			out += '<tr><th>営業時間</th><td>' + json[x].businessHours + '</td></tr>';
@@ -536,17 +541,28 @@ var sendContactForm = function() {
 }
 
 /**
+ * ジャンル用HTML生成処理
+ *
+ * @parme tags ジャンル
+ * @return out ジャンル用HTML文字列
+ */
+var formattertags = function(tags) {
+	var out = null;
+	var arrtags = tags.split(separator);
+  for (var x in arrtags) {
+		out += '<a href="javascript:void(0)" target="_blank" class="btn btn-success btn-sm active"><strong>' + arrtags[x] + '</strong></a>';
+	}
+	return out;
+}
+
+/**
  * 外部リンク生成処理
  *
  * @parme externalLink 外部リンク文字列
  * @return out 外部リンク用HTML文字列
  */
-var regTabelog = new RegExp("tabelog");
-var regTwitter = new RegExp("twitter");
-var regFacebook = new RegExp("facebook");
-var regWikipedia = new RegExp("wikipedia");
 var formatterLink = function(externalLink) {
-	var out = '';
+	var out = null;
 	var arrLink = externalLink.split("<br>");
 	for (var x = 0; x < arrLink.length; x++) {
 		if (arrLink[x].match(regTabelog)) {
@@ -603,9 +619,8 @@ var andSearch = function(target, keyword) {
 	var targetString = Object.keys(target).map(function(key) {
 		return target[key]
 	}).join(',');
-	var separator = /\s+/;
 	// キーワードを配列に格納
-	var arrKeyword = keyword.split(separator);	
+	var arrKeyword = keyword.split(separator);
 	for (var idx in arrKeyword) {
 		if (targetString.indexOf(arrKeyword[idx]) == -1) return false;
 	}
