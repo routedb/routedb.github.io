@@ -436,7 +436,7 @@ var createEntryConfirm = function(json) {
  * 登録フォーム送信処理
  */
 var sendEntryForm = function() {
-	var out = ””;
+	var out = "";
 	var strJson = decodeURIComponent($("#hidEntryJson").val()) + ",";
 	var url = 'https://slack.com/api/chat.postMessage';
 	var data = {
@@ -512,7 +512,7 @@ var createContactConfirm = function(json) {
  * 問合せフォーム送信処理
  */
 var sendContactForm = function() {
-	var out = ””;
+	var out = "";
 	var strJson = decodeURIComponent($("#hidContactJson").val());
 	var url = 'https://slack.com/api/chat.postMessage';
 	var data = {
@@ -547,7 +547,7 @@ var sendContactForm = function() {
  * @return out ジャンル用HTML文字列
  */
 var formattertags = function(tags) {
-	var out = ””;
+	var out = "";
 	var arrtags = tags.split(separator);
   for (var x in arrtags) {
 		out += '<a href="javascript:void(0)" target="_blank" class="btn btn-success btn-sm active"><strong>' + arrtags[x] + '</strong></a>';
@@ -562,7 +562,7 @@ var formattertags = function(tags) {
  * @return out 外部リンク用HTML文字列
  */
 var formatterLink = function(externalLink) {
-	var out = ””;
+	var out = "";
 	var arrLink = externalLink.split("<br>");
 	for (var x = 0; x < arrLink.length; x++) {
 		if (arrLink[x].match(regTabelog)) {
