@@ -208,7 +208,10 @@ var createBtn = function(key, lv, obj) {
 					if (obj.type == "button") {
 						btnValue  = obj.innerHTML;
 					} else {
-						btnValue  = $("#list" + key).html() + '&nbsp;</span><span class="badge badge-info">' + $("#badge" + key).html() + '</span>';
+						btnValue  = $("#list" + key).html();
+						if (!$("#badge" + key).length) {
+							btnValue  +=  '&nbsp;</span><span class="badge badge-info">' + $("#badge" + key).html() + '</span>';
+						}
 					}
 					btnKey = key;
 					btnLv  = lv;
