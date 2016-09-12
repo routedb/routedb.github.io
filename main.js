@@ -339,7 +339,7 @@ var createEntryForm = function() {
 	$("#shopInfo").css("display", "none");
 	$("#listMain").css("display", "none");
 	$("#entryForm").css("display", "block");
-	var out = '<div class="panel panel-default"><div class="alert alert-danger" style="display:none;" role="alert" id="errorEntryMsg"></div>';
+	var out = '<div class="panel panel-default" style="padding:5px;"><div class="alert alert-danger" style="display:none;" role="alert" id="errorEntryMsg"></div>';
 	out += '<form class="form-horizontal" role="form">';
 	out += '<input type="hidden" class="form-control entryForm" id="prefecturesCode" value="' + $("#hidKey2").val() + '">';
 	out += '<input type="hidden" class="form-control entryForm" id="lineCode" value="' + $("#hidKey3").val() + '">';
