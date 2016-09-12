@@ -208,7 +208,7 @@ var createBtn = function(key, lv, obj) {
 					if (obj.type == "button") {
 						btnValue  = obj.innerHTML;
 					} else {
-						btnValue  = $("#list" + key).html();
+						btnValue  = $("#list" + key).html() + '&nbsp;</span><span class="badge badge-info">' + $("#badge" + key).html() + '</span>';
 					}
 					btnKey = key;
 					btnLv  = lv;
@@ -251,7 +251,7 @@ var createList = function(json, key, lv) {
 		var cnt = countData(json[x].key, lv);
 		var spanBadge = "";
 		if (cnt > 0) {
-			spanBadge = '<span class="badge" style="background-color:#2e6da4;">' + cnt + '</span>';
+			spanBadge = '<span class="badge" style="background-color:#2e6da4;" id="badge' + json[x].key + '">' + cnt + '</span>';
 		}
 		if (lv == 4) {
 			if (json[x].stationCode == key) {
