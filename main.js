@@ -209,7 +209,7 @@ var createBtn = function(key, lv, obj) {
 						btnValue  = obj.innerHTML;
 					} else {
 						btnValue  = $("#list" + key).html();
-						if (!$("#badge" + key).length) {
+						if ($("#badge" + key).length) {
 							btnValue  +=  '&nbsp;</span><span class="badge badge-info">' + $("#badge" + key).html() + '</span>';
 						}
 					}
