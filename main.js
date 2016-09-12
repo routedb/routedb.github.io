@@ -392,7 +392,7 @@ var checkEntryForm = function() {
 	var errMsg = "";
 	var successJson = '{';
 	for (var x = 0; x < form.length; x++) {
-		if (!form[x].value) {
+		if (!form[x].value && form[x].required) {
 			errMsg += '<strong>' + $("#lbl" + form[x].id).html() + '</strong>が入力されていません。<br>';
 		} else {
 			successJson += '"' + form[x].id + '":"' + form[x].value.replace(/\r?\n/g, '<br>') + '",'
