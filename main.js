@@ -494,6 +494,7 @@ var checkContactForm = function() {
 		$("#errorContactMsg").html(errMsg);
 		$("#errorContactMsg").css("display", "block");
 	}
+	return false;
 }
 
 /**
