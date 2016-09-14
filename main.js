@@ -165,6 +165,7 @@ var main = function(key, lv, obj) {
 		}
 	}
 	console.log("main end!");
+	return false;
 };
 
 /**
