@@ -636,10 +636,20 @@ var andSearch = function(target, keyword) {
 }
 
 var getValue = function(target, key) {
+	var isLine = false;
 	filterData = $.grep(target, function(elem) {
-		return elem.line_cd == key;
+		if (target.length == 617) {
+			isLine = true;
+			return elem.line_cd == key;
+		} else {
+			return elem.station_cd == key;
+		}
 	});
-	return filterData.line_name;
+	if (isLine) {
+		return filterData.line_name;
+	} else {
+		return filterData.station_name;
+	}
 }
 
 /**
