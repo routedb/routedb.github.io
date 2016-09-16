@@ -603,12 +603,15 @@ var formatterStreetAddress = function(streetAddress) {
  * @return resultJson 検索結果格納済jsonオブジェクト
  */
 var searchJson = function(keyword) {
+  var out = "";
 	var resultJson = [];
 	for (var row in shopJson) {
 		if (andSearch(shopJson[row], keyword)) {
 			resultJson.push(shopJson[row]);
+			out += shopJson[row].value + " #" + getValue(lineJson, shopJson[row].lineCode) + " #" + getValue(stationJson, shopJson[row].stationCode) + "\r\n"
 		}
 	}
+	console.log(out);
 	return resultJson;
 }
 
@@ -630,6 +633,13 @@ var andSearch = function(target, keyword) {
 		if (targetString.indexOf(arrKeyword[idx]) == -1) return false;
 	}
 	return true;
+}
+
+var getValue = function(target, key) {
+	filterData = $.grep(target, function(elem) {
+		return elem.line_cd == key;
+	});
+	return filterData.line_name;
 }
 
 /**
