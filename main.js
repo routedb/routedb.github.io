@@ -66,9 +66,9 @@ $(function() {
  */
 var main = function(key, lv, obj) {
 	console.log("main start!");
-	console.log("key:" + key);
-	console.log("lv:" + lv);
-	console.log("obj:" + obj);
+	//console.log("key:" + key);
+	//console.log("lv:" + lv);
+	//console.log("obj:" + obj);
 	// ボタン生成
 	$("#btnList").html(createBtn(key, lv, obj));
 	// コンテンツ初期化
@@ -251,7 +251,7 @@ var createList = function(json, key, lv) {
 	var out = "";
 	console.log("createList start!");
 	for (var x in json) {
-		console.log(json[x]);
+		//console.log(json[x]);
 		var cnt = countData(json[x].key, lv);
 		var spanBadge = "";
 		if (cnt > 0) {
@@ -646,9 +646,9 @@ var getValue = function(target, key) {
 		}
 	});
 	if (isLine) {
-		return filterData.line_name;
+		return filterData[0].line_name;
 	} else {
-		return filterData.station_name;
+		return filterData[0].station_name;
 	}
 }
 
