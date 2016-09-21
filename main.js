@@ -445,7 +445,7 @@ var sendEntryForm = function() {
     	type: 'post',
     	data: 'payload=' + JSON.stringify({
     		"channel": "#routedb-entry",
-    		"username": "rotedb.github.io",
+    		"username": "routedb.github.io",
     		"text": strJson
     	})
     });
@@ -518,7 +518,7 @@ var sendContactForm = function() {
     	type: 'post',
     	data: 'payload=' + JSON.stringify({
     		"channel": "#routedb-contact",
-    		"username": "rotedb.github.io",
+    		"username": "routedb.github.io",
     		"text": strJson
     	})
     });
