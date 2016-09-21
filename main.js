@@ -512,11 +512,15 @@ var createContactConfirm = function(json) {
 var sendContactForm = function() {
 	var out = "";
 	var strJson = decodeURIComponent($("#hidContactJson").val());
-	var requestURL = 'https://hooks.slack.com/services/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';
+	var requestURL = 'https://hooks.slack.com/services/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';
     var request = $.ajax({
       url: requestURL,
       type: 'post',
-      data: 'payload=' + strJson
+      data: 'payload=' + JSON.stringify({
+        "channel": "#routedb-entry",
+        "username": "rotedb.github.io",
+        "text": strJson
+      })
     });
 	request.done(function(data) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのお問合せありがとうございました。</h3></div><div class="panel-body">お問合せいただいた内容について返信までに最大1週間ほどかかります。<br>何卒、ご了承いただきますようお願いします。</div></div>';
