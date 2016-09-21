@@ -66,9 +66,6 @@ $(function() {
  */
 var main = function(key, lv, obj) {
 	console.log("main start!");
-	//console.log("key:" + key);
-	//console.log("lv:" + lv);
-	//console.log("obj:" + obj);
 	// ボタン生成
 	$("#btnList").html(createBtn(key, lv, obj));
 	// コンテンツ初期化
@@ -458,8 +455,6 @@ var sendEntryForm = function() {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのご登録ありがとうございました。</h3></div><div class="panel-body">ご登録いただいた店舗データについて内容を精査するため反映までに最大1週間ほどかかります。<br>1週間以上反映が無い場合、内容に不備があったものとしてお手数ですが再度ご登録お願いします。</div></div>';
 		$("#entryForm").html(out);
 		console.log("Request done.");
-		console.log(strJson);
-		console.log($.parseJSON(strJson));
 	});
 	request.fail(function(jqXHR, textStatus) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">送信処理に失敗しました。</h3></div><div class="panel-body">お手数おかけしますがお問合せください。</div></div>';
@@ -535,8 +530,6 @@ var sendContactForm = function() {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのお問合せありがとうございました。</h3></div><div class="panel-body">お問合せいただいた内容について返信までに最大1週間ほどかかります。<br>何卒、ご了承いただきますようお願いします。</div></div>';
 		$("#contactForm").html(out);
 		console.log("Request done.");
-		console.log(strJson);
-		console.log($.parseJSON(strJson));
 	});
 	request.fail(function(jqXHR, textStatus) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">送信処理に失敗しました。</h3></div><div class="panel-body">お手数おかけしますがお問合せください。</div></div>';
@@ -635,6 +628,13 @@ var andSearch = function(target, keyword) {
 	return true;
 }
 
+/**
+ * 対象オブジェクトからvalue項目を取得する
+ *
+ * @parme target 対象オブジェクト
+ * @parme key キー値
+ * @return value値
+ */
 var getValue = function(target, key) {
 	var isLine = false;
 	filterData = $.grep(target, function(elem) {
