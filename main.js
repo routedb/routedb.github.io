@@ -441,7 +441,7 @@ var sendEntryForm = function() {
 	var strJson = decodeURIComponent($("#hidEntryJson").val()) + ",";
 	var url = 'https://slack.com/api/chat.postMessage';
 	var data = {
-		token: 'xoxb-82080869696-4dj6r1l1lIDoFMsLs8koRY2N',
+		token: 'xoxp-77168113330-77158153301-82091422789-18207f4d1807c081191f66dfcc1c6163',
 		channel: '#routedb-entry',
 		username: 'routedb.github.io',
 		text: strJson
@@ -516,7 +516,7 @@ var sendContactForm = function() {
 	var strJson = decodeURIComponent($("#hidContactJson").val());
 	var url = 'https://slack.com/api/chat.postMessage';
 	var data = {
-		token: 'xoxb-82080869696-4dj6r1l1lIDoFMsLs8koRY2N',
+		token: 'xoxp-77168113330-77158153301-82091422789-18207f4d1807c081191f66dfcc1c6163',
 		channel: '#routedb-contact',
 		username: 'routedb.github.io',
 		text: strJson
