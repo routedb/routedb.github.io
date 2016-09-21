@@ -439,18 +439,12 @@ var createEntryConfirm = function(json) {
 var sendEntryForm = function() {
 	var out = "";
 	var strJson = decodeURIComponent($("#hidEntryJson").val()) + ",";
-	var url = 'https://slack.com/api/chat.postMessage';
-	var data = {
-		token: 'xoxp-77168113330-77158153301-82091422789-18207f4d1807c081191f66dfcc1c6163',
-		channel: '#routedb-entry',
-		username: 'routedb.github.io',
-		text: strJson
-	};
-	var request = $.ajax({
-		type: 'GET',
-		url: url,
-		data: data
-	});
+	var requestURL = 'https://hooks.slack.com/services/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';
+    var request = $.ajax({
+      url: requestURL,
+      type: 'post',
+      data: 'payload=' + strJson
+    });
 	request.done(function(data) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのご登録ありがとうございました。</h3></div><div class="panel-body">ご登録いただいた店舗データについて内容を精査するため反映までに最大1週間ほどかかります。<br>1週間以上反映が無い場合、内容に不備があったものとしてお手数ですが再度ご登録お願いします。</div></div>';
 		$("#entryForm").html(out);
@@ -514,18 +508,12 @@ var createContactConfirm = function(json) {
 var sendContactForm = function() {
 	var out = "";
 	var strJson = decodeURIComponent($("#hidContactJson").val());
-	var url = 'https://slack.com/api/chat.postMessage';
-	var data = {
-		token: 'xoxp-77168113330-77158153301-82091422789-18207f4d1807c081191f66dfcc1c6163',
-		channel: '#routedb-contact',
-		username: 'routedb.github.io',
-		text: strJson
-	};
-	var request = $.ajax({
-		type: 'GET',
-		url: url,
-		data: data
-	});
+	var requestURL = 'https://hooks.slack.com/services/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';
+    var request = $.ajax({
+      url: requestURL,
+      type: 'post',
+      data: 'payload=' + strJson
+    });
 	request.done(function(data) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのお問合せありがとうございました。</h3></div><div class="panel-body">お問合せいただいた内容について返信までに最大1週間ほどかかります。<br>何卒、ご了承いただきますようお願いします。</div></div>';
 		$("#contactForm").html(out);
