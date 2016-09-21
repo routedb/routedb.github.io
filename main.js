@@ -443,9 +443,13 @@ var sendEntryForm = function() {
     var request = $.ajax({
       url: requestURL,
       type: 'post',
-      data: 'payload=' + strJson
+      data: 'payload=' + JSON.stringify({
+        "channel": "#routedb-entry",
+        "username": "rotedb.github.io",
+        "text": strJson
+      })
     });
-	request.done(function(data) {
+    request.done(function(data) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのご登録ありがとうございました。</h3></div><div class="panel-body">ご登録いただいた店舗データについて内容を精査するため反映までに最大1週間ほどかかります。<br>1週間以上反映が無い場合、内容に不備があったものとしてお手数ですが再度ご登録お願いします。</div></div>';
 		$("#entryForm").html(out);
 		console.log("Request done.");
