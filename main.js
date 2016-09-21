@@ -517,7 +517,7 @@ var sendContactForm = function() {
       url: requestURL,
       type: 'post',
       data: 'payload=' + JSON.stringify({
-        "channel": "#routedb-entry",
+        "channel": "#routedb-contact",
         "username": "rotedb.github.io",
         "text": strJson
       })
