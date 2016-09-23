@@ -294,7 +294,7 @@ var createJoinLineList = function(stationCode) {
 		var temp = $.grep(lineJson, function(elem) {
 			return elem.line_cd == joinLineList[x].line_cd;
 		});
-		lineCdList.add(temp);
+		lineCdList.push(temp);
 	}
 	for (var x in lineCdList) {
 		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="createEntryForm()"><strong>' + lineCdList[x].line_name + '</strong></button>';
