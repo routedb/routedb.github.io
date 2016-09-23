@@ -292,7 +292,7 @@ var createJoinLineList = function(stationCode) {
 	// 路線情報を取得
 	for (var x in joinLineList) {
 		var temp = $.grep(lineJson, function(elem) {
-			return elem.line_cd == joinLineList[x].line_cd && stationCode != joinLineList[x].station_cd;
+			return (elem.line_cd == joinLineList[x].line_cd && stationCode != joinLineList[x].station_cd);
 		});
 		lineCdList.push(temp);
 	}
