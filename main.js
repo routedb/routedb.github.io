@@ -281,13 +281,24 @@ var createList = function(json, key, lv) {
  * @return out 乗換情報用HTML文字列
  */
 var createJoinLineList = function(stationCode) {
+	var out = "";
 	var groupCode = getGroupCode(stationCode);
 	var joinLineList = [];
 	// 駅情報から駅グループコードで乗換路線情報を取得
 	joinLineList = $.grep(stationJson, function(elem) {
 		return elem.station_g_cd == groupCode;
 	});
-	return joinLineList;
+	var lineCdList = [];
+	// 路線情報を取得
+	for (var x in joinLineList) {
+		lineCdList = $.grep(lineJson, function(elem) {
+			return elem.line_cd == uniqueLineCd[x];
+		});
+	}
+	for (var x in lineCdList) {
+		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="createEntryForm()"><strong>' + lineCdList[x].line_name + '</strong></button>';
+	}
+	return out;
 }
 /**
  * グループコード取得処理
