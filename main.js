@@ -247,6 +247,7 @@ var createBtn = function(key, lv, obj) {
 var createList = function(json, key, lv) {
 	var out = "";
 	console.log("createList start!");
+	out += createJoinLineList(key);
 	for (var x in json) {
 		//console.log(json[x]);
 		var cnt = countData(json[x].key, lv);
@@ -256,7 +257,6 @@ var createList = function(json, key, lv) {
 		}
 		if (lv == 4) {
 			if (json[x].stationCode == key) {
-				out += createJoinLineList(json[x]);
 				out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '</span><span class="label label-success" style="padding:.3em .6em .2em;float: right;font-size: 85%;">' + json[x].tags + '</span></a>';
 			}
 		} else if (lv == 10) {
@@ -275,16 +275,28 @@ var createList = function(json, key, lv) {
 /**
  * 乗換情報一覧生成処理
  *
- * @parme data 駅データ
+ * @parme stationCode 駅コード
  * @return out 乗換情報用HTML文字列
  */
-var createJoinLineList = function(data) {
+var createJoinLineList = function(stationCode) {
 	var joinLineList = [];
 	// 駅情報から駅グループコードで乗換路線情報を取得
 	joinLineList = $.grep(stationJson, function(elem) {
-		return elem.station_g_cd == data.station_g_cd;
+		return elem.station_g_cd == getGroupCode(stationCode);
 	});
 	return joinLineList;
+}
+/**
+ * グループコード取得処理
+ *
+ * @parme stationCode 駅コード
+ * @return groupCode グループコード
+ */
+var getGroupCode = function(stationCode) {
+	var stationData = $.grep(stationJson, function(elem) {
+		return elem.station_cd == stationCode;
+	});
+	return stationData.station_g_cd;
 }
 
 /**
