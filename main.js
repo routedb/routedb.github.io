@@ -297,7 +297,7 @@ var createJoinLineList = function(stationCode) {
 		lineCdList.push(temp);
 	}
 	for (var x in lineCdList) {
-		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="createEntryForm()"><strong>' + lineCdList[x][0].line_name + '</strong></button>';
+		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="main(' + lineCdList[x][0].line_cd + ', 3, this)"><strong>' + lineCdList[x][0].line_name + '</strong></button>';
 	}
 	return out;
 }
