@@ -281,10 +281,11 @@ var createList = function(json, key, lv) {
  * @return out 乗換情報用HTML文字列
  */
 var createJoinLineList = function(stationCode) {
+	var groupCode = getGroupCode(stationCode);
 	var joinLineList = [];
 	// 駅情報から駅グループコードで乗換路線情報を取得
 	joinLineList = $.grep(stationJson, function(elem) {
-		return elem.station_g_cd == getGroupCode(stationCode);
+		return elem.station_g_cd == groupCode;
 	});
 	return joinLineList;
 }
