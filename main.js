@@ -297,7 +297,12 @@ var createJoinLineList = function(stationCode) {
 		lineCdList.push(temp);
 	}
 	for (var x in lineCdList) {
-		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="main(' + lineCdList[x][0].line_cd + ', 3, this)"><strong>' + lineCdList[x][0].line_name + '&nbsp;<span class="badge badge-info">' + countData(lineCdList[x][0].line_cd, 2) + '</span></strong></button>';
+		var badge = "";
+		var cnt = countData(lineCdList[x][0].line_cd, 2);
+		if (cnt != 0) {
+			badge = '&nbsp;<span class="badge badge-info">' + cnt + '</span>'
+		}
+		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="main(' + lineCdList[x][0].line_cd + ', 3, this)"><strong>' + lineCdList[x][0].line_name + badge +'</strong></button>';
 	}
 	return out;
 }
