@@ -247,7 +247,9 @@ var createBtn = function(key, lv, obj) {
 var createList = function(json, key, lv) {
 	var out = "";
 	console.log("createList start!");
-	out += createJoinLineList(key);
+	if (lv == 4) {
+		out += createJoinLineList(key);
+	}
 	for (var x in json) {
 		//console.log(json[x]);
 		var cnt = countData(json[x].key, lv);
@@ -296,7 +298,7 @@ var getGroupCode = function(stationCode) {
 	var stationData = $.grep(stationJson, function(elem) {
 		return elem.station_cd == stationCode;
 	});
-	return stationData.station_g_cd;
+	return stationData[0].station_g_cd;
 }
 
 /**
