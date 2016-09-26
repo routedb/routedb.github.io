@@ -618,7 +618,7 @@ var formatterLink = function(externalLink) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>facebook</strong></a>';
 		} else if (arrLink[x].match(regWikipedia)) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>wikipedia</strong></a>';
-		} else {
+		} else if (externalLink.length != 0) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>HPまたは関連ページ</strong></a>';
 		}
 	}
@@ -648,7 +648,7 @@ var searchJson = function(keyword) {
 	for (var row in shopJson) {
 		if (andSearch(shopJson[row], keyword)) {
 			resultJson.push(shopJson[row]);
-			out += shopJson[row].value + " #" + getValue(lineJson, shopJson[row].lineCode) + " #" + getValue(stationJson, shopJson[row].stationCode) + "\r\n"
+			out += shopJson[row].value + " #" + shopJson[row].tags + " #" + getValue(lineJson, shopJson[row].lineCode) + " #" + getValue(stationJson, shopJson[row].stationCode) + "\r\n"
 		}
 	}
 	console.log(out);
