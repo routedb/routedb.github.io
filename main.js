@@ -272,7 +272,7 @@ var createList = function(json, key, lv) {
 			out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', 101, this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '</span><span class="label label-success" style="padding:.3em .6em .2em;float: right;font-size: 85%;">' + json[x].tags + '</span></a>';
 		} else {
 			var mark = "";
-			if (createJoinLineList(json[x].key) != "") {
+			if (lv == 3 && createJoinLineList(json[x].key) != "") {
 				mark = "<strong>*</strong>";
 			}
 			out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + mark + json[x].value + '</span>' + spanBadge + '</a>';
