@@ -101,6 +101,7 @@ var main = function(key, lv, obj) {
 	} else {
 		// 階層レベルが2桁の場合は、コンテンツ処理
 		if (lv == 1) {
+			location.reload();
 			// 都道府県リスト生成
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(prefecturesJson, key, lv));
