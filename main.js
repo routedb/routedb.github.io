@@ -29,7 +29,7 @@ $(function() {
 	main(null, 1, null);
 	// フッタータイトル押下イベント
 	$("#navBrand").click(function() {
-		location.reload();
+		location.href = "index.html";
 	});
 	// 検索押下イベント
 	$("#btnSearch").click(function() {
