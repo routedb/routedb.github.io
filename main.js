@@ -5,7 +5,7 @@ var regFacebook = new RegExp("facebook");
 var regWikipedia = new RegExp("wikipedia");
 var prefecturesJson, lineJson, stationJson, shopJson;
 var refresh = function() {
-	$("body").load("index.html");
+	location.reload();
 }
 $(function() {
 	// 非同期処理解除
