@@ -4,6 +4,9 @@ var regTwitter = new RegExp("twitter");
 var regFacebook = new RegExp("facebook");
 var regWikipedia = new RegExp("wikipedia");
 var prefecturesJson, lineJson, stationJson, shopJson;
+var refresh = function() {
+	$("body").load("index.html");
+}
 $(function() {
 	// 非同期処理解除
 	$.ajaxSetup({
@@ -29,7 +32,7 @@ $(function() {
 	main(null, 1, null);
 	// フッタータイトル押下イベント
 	$("#navBrand").click(function() {
-		$("body").load("index.html");
+		refresh();
 	});
 	// 検索押下イベント
 	$("#btnSearch").click(function() {
@@ -179,7 +182,7 @@ var createBtn = function(key, lv, obj) {
 	var btnStatus = "info";
 	if (lv > 9) {
 		if (lv == 101) {
-			out += '<div class="col-md-4"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="main(null,1, this)"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
+			out += '<div class="col-md-4"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
 			out += '<div class="col-md-4">';
 			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-info btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
 			out += '</div>';
@@ -187,7 +190,7 @@ var createBtn = function(key, lv, obj) {
 			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block"><strong>' +  obj.childNodes[0].innerHTML + '</strong></button>';
 			out += '</div>';
 		} else {
-			out += '<div class="col-md-6"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="main(null,1, this)"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
+			out += '<div class="col-md-6"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
 			out += '<div class="col-md-6">';
 			if (lv == 10) {
 				out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
@@ -227,7 +230,11 @@ var createBtn = function(key, lv, obj) {
 				}
 			}
 			out += '<div class="col-md-' + colSize + '">';
-			out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)"><strong>' + btnValue + '</strong></button>';
+			if (lv == 1) {
+				out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="refresh()"><strong>' + btnValue + '</strong></button>';
+			} else {
+				out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)"><strong>' + btnValue + '</strong></button>';
+			}
 			out += '<input type="hidden" id="hidKey' + x + '" value=' + btnKey + '>';
 			out += '<input type="hidden" id="hidLv' + x + '" value=' + btnLv + '>';
 			out += '</div>';
