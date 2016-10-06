@@ -97,6 +97,19 @@ var main = function(key, lv, obj) {
 		} else if (lv == 13) {
 			// プライバシーポリシー押下
 			$("#privacy").css("display", "block");
+			var tagsList = [];
+			for (var x in shopJson) {
+				var arrtags = shopJson[x].tags.split(separator);
+				for (var y in arrtags) {
+					tagsList.push(arrtags[y]);
+				}
+			}
+			var uniquetags = tagsList.filter(function (x, i, self) {
+	            return self.indexOf(x) === i;
+	        });
+			for (var x in uniquetags) {
+				console.log("#" + uniquetags[x]);
+			}
 		} else if (lv == 99) {
 			// お問合せ押下
 			$("#contactForm").css("display", "block");
@@ -122,7 +135,7 @@ var main = function(key, lv, obj) {
 				});
 				var lineCd = [];
 				for (var x in preData) {
-					lineCd.push(preData[x].line_cd)
+					lineCd.push(preData[x].line_cd);
 				}
 				var uniqueLineCd = lineCd.filter(function(x, i, self) {
 					return self.indexOf(x) == i;
@@ -133,7 +146,7 @@ var main = function(key, lv, obj) {
 					lineCdList = $.grep(lineJson, function(elem) {
 						return elem.line_cd == uniqueLineCd[x];
 					});
-					filterData.push(lineCdList)
+					filterData.push(lineCdList);
 				}
 				for (x = 0; x < filterData.length; x++) {
 					resultJson += '{"key":"' + filterData[x][0].line_cd + '","levels":"3","value":"' + filterData[x][0].line_name + '"},';
