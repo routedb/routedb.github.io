@@ -13,20 +13,15 @@ $(function() {
 		async: false
 	});
 	// 都道府県データを取得
-	$.getJSON("data/prefectures.json", function(data) {
-		prefecturesJson = data;
-	});
-	// 路線データを取得
-	$.getJSON("data/line.json", function(data) {
-		lineJson = data;
-	});
-	// 駅データを取得
-	$.getJSON("data/station.json", function(data) {
-		stationJson = data;
-	});
-	// 店舗データを取得
-	$.getJSON("data/shop.json", function(data) {
-		shopJson = data;
+	$.getJSON("data/data.json", function(results) {
+		// 都道府県データを取得
+		prefecturesJson = results.data[0]["prefectures"];
+		// 路線データを取得
+		lineJson = results.data[1]["line"];
+		// 駅データを取得
+		stationJson = results.data[2]["station"];
+		// 店舗データを取得
+		shopJson = results.data[3]["shop"];
 	});
 	// 初期表示
 	main(null, 1, null);
