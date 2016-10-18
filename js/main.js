@@ -12,7 +12,7 @@ $(function() {
 	$.ajaxSetup({
 		async: false
 	});
-	// 都道府県データを取得
+	// データを取得
 	$.getJSON("data/data.json", function(results) {
 		// 都道府県データを取得
 		prefecturesJson = results.data[0]["prefectures"];
