@@ -25,7 +25,7 @@ function dispRoute() {
   directions.clear();
 
   str = 'from: ' + from + ' to: ' + to;
-  directions.load(str, {locale: 'ja_JP'});
+  directions.load(str, {locale: 'ja_JP',travelMode: google.maps.DirectionsTravelMode.TRANSIT});
 }       
     </script>
   </head>
