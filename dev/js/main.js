@@ -726,12 +726,13 @@ var getValue = function(target, key) {
  * 乗換検索処理
  */
 var transferSearch = function() {
+	initContents();
 	var out = "";
 	var errMsg = "";
 	// 出発駅情報を取得
-	var targetDepartStation = getStation($("#departFrom").val());
+	var targetDepartStation = getStation($("#departFrom").val(), "station_name");
 	// 到着駅情報を取得
-	var targetArrivalStation = getStation($("#arrivalAt").val());
+	var targetArrivalStation = getStation($("#arrivalAt").val(), "station_name");
 	if ($("#departFrom").val() == $("#arrivalAt").val()) {
 		errMsg = "出発駅と到着駅が同じです。<br>";
 	}
@@ -748,22 +749,60 @@ var transferSearch = function() {
 		for (var x in targetDepartStation) {
 			for (var y in targetArrivalStation) {
 				if (targetDepartStation[x].line_cd == targetArrivalStation[y].line_cd) {
-					// 出発駅と到着駅が同一路線上にある場合
+					// 出発駅と到着駅が同一路線上にある場合、路線全部の駅データを取得
+					var targetLineStation = getStation(targetDepartStation[x].line_cd, "line_cd");
+					// 出力フラグ
+					var isHit = false;
+					if (Number(targetDepartStation[x].station_cd) > Number(targetArrivalStation[y].station_cd)) {
+						// 出発駅コードが到着駅コードより大きい場合、路線全部の駅データを降順に検索する。
+						for (var z = targetLineStation.length - 1; z > 0; z--) {
+							if (targetLineStation[z].station_cd == targetDepartStation[x].station_cd) {
+								isHit = true;
+							}
+							if (isHit) {
+								out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + targetLineStation[x].station_cd + ', 4, this)"><span style="font-weight: bold;" id="' + targetLineStation[z].station_cd + '">' + targetLineStation[z].station_name + '</span></a>';
+							}
+							if (targetLineStation[z].station_cd == targetArrivalStation[y].station_cd) {
+								isHit = false;
+							}
+						}
+					} else {
+						for (var z = 0; z < targetLineStation.length; z++) {
+							if (targetLineStation[z].station_cd == targetDepartStation[x].station_cd) {
+								isHit = true;
+							}
+							if (isHit) {
+								out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + targetLineStation[z].station_cd + ', 4, this)"><span style="font-weight: bold;" id="' + targetLineStation[z].station_cd + '">' + targetLineStation[z].station_name + '</span></a>';
+							}
+							if (targetLineStation[z].station_cd == targetArrivalStation[y].station_cd) {
+								isHit = false;
+							}
+						}
+					}
+					out += "<br>";
 				}
 			}
 		}
 	}
+	$("#listMain").css("display", "block");
+	$("#listMain").html(out);
 };
 
 /**
- * 駅名から駅データを取得する
+ * 駅データを取得する
  *
- * @parme stationName 駅名
+ * @parme key 検索キー
+ * @parme targetCol 検索対象カラム
  * @return value値
  */
-var getStation = function(stationName) {
+var getStation = function(key, targetCol) {
 	var filterStationJson = $.grep(stationJson, function(elem) {
-		return elem.station_name == stationName;
+		if (targetCol == "station_name") {
+			return elem.station_name == key;
+		}
+		if (targetCol == "line_cd") {
+			return elem.line_cd == key;
+		}
 	});
 	return filterStationJson;
 }
