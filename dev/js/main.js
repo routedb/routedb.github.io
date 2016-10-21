@@ -749,6 +749,7 @@ var transferSearch = function() {
 		for (var x in targetDepartStation) {
 			for (var y in targetArrivalStation) {
 				if (targetDepartStation[x].line_cd == targetArrivalStation[y].line_cd) {
+					out += getLine(targetDepartStation[x].line_cd, "line_cd")[0].line_name + "<br>";
 					// 出発駅と到着駅が同一路線上にある場合、路線全部の駅データを取得
 					var targetLineStation = getStation(targetDepartStation[x].line_cd, "line_cd");
 					// 出力フラグ
@@ -779,7 +780,6 @@ var transferSearch = function() {
 							}
 						}
 					}
-					out += "<br>";
 				}
 			}
 		}
@@ -805,6 +805,22 @@ var getStation = function(key, targetCol) {
 		}
 	});
 	return filterStationJson;
+}
+
+/**
+ * 路線データを取得する
+ *
+ * @parme key 検索キー
+ * @parme targetCol 検索対象カラム
+ * @return value値
+ */
+var getLine = function(key, targetCol) {
+	var filterLineJson = $.grep(lineJson, function(elem) {
+		if (targetCol == "line_cd") {
+			return elem.line_cd == key;
+		}
+	});
+	return filterLineJson;
 }
 
 /**
