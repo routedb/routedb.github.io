@@ -25,6 +25,10 @@ $(function() {
 	});
 	// 初期表示
 	main(null, 1, null);
+	// 乗換検索押下イベント
+	$("#btnTransferSearch").click(function() {
+		transferSearch();
+	});
 	// フッタータイトル押下イベント
 	$("#navBrand").click(function() {
 		refresh();
@@ -703,7 +707,7 @@ var andSearch = function(target, keyword) {
  */
 var getValue = function(target, key) {
 	var isLine = false;
-	filterData = $.grep(target, function(elem) {
+	var filterData = $.grep(target, function(elem) {
 		if (target.length == 617) {
 			isLine = true;
 			return elem.line_cd == key;
@@ -716,6 +720,52 @@ var getValue = function(target, key) {
 	} else {
 		return filterData[0].station_name;
 	}
+}
+
+/**
+ * 乗換検索処理
+ */
+var transferSearch = function() {
+	var out = "";
+	var errMsg = "";
+	// 出発駅情報を取得
+	var targetDepartStation = getStation($("#departFrom").val());
+	// 到着駅情報を取得
+	var targetArrivalStation = getStation($("#arrivalAt").val());
+	if ($("#departFrom").val() == $("#arrivalAt").val()) {
+		errMsg = "出発駅と到着駅が同じです。<br>";
+	}
+	if (targetDepartStation.length == 0) {
+		errMsg = "出発駅が存在しません。<br>";
+	}
+	if (targetArrivalStation.length == 0) {
+		errMsg = "到着駅が存在しません。<br>";
+	}
+	if (errMsg.length != 0) {
+		$("#errorTransferMsg").html(errMsg);
+		$("#errorTransferMsg").css("display", "block");
+	} else {
+		for (var x in targetDepartStation) {
+			for (var y in targetArrivalStation) {
+				if (targetDepartStation[x].line_cd == targetArrivalStation[y].line_cd) {
+					// 出発駅と到着駅が同一路線上にある場合
+				}
+			}
+		}
+	}
+};
+
+/**
+ * 駅名から駅データを取得する
+ *
+ * @parme stationName 駅名
+ * @return value値
+ */
+var getStation = function(stationName) {
+	var filterStationJson = $.grep(stationJson, function(elem) {
+		return elem.station_name == stationName;
+	});
+	return filterStationJson;
 }
 
 /**
