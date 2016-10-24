@@ -267,7 +267,17 @@ var createList = function(json, key, lv) {
 	var out = "";
 	console.log("createList start!");
 	if (lv == 4) {
-		out += createJoinLineList(key);
+		var lineCdList = createJoinLineList(key);
+		for (var x in lineCdList) {
+			if (lineCdList[x].length > 0) {
+				var badge = "";
+				var cnt = countData(lineCdList[x][0].line_cd, 2);
+				if (cnt != 0) {
+					badge = '&nbsp;<span class="badge badge-info">' + cnt + '</span>'
+				}
+				out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="main(' + lineCdList[x][0].line_cd + ', 3, this)"><strong>' + lineCdList[x][0].line_name + badge +'</strong></button>';
+			}
+		}
 	}
 	for (var x in json) {
 		//console.log(json[x]);
@@ -304,7 +314,6 @@ var createList = function(json, key, lv) {
  * @return out 乗換情報用HTML文字列
  */
 var createJoinLineList = function(stationCode) {
-	var out = "";
 	var groupCode = getGroupCode(stationCode);
 	var joinLineList = [];
 	// 駅情報から駅グループコードで乗換路線情報を取得
@@ -319,17 +328,7 @@ var createJoinLineList = function(stationCode) {
 		});
 		lineCdList.push(temp);
 	}
-	for (var x in lineCdList) {
-		if (lineCdList[x].length > 0) {
-			var badge = "";
-			var cnt = countData(lineCdList[x][0].line_cd, 2);
-			if (cnt != 0) {
-				badge = '&nbsp;<span class="badge badge-info">' + cnt + '</span>'
-			}
-			out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="main(' + lineCdList[x][0].line_cd + ', 3, this)"><strong>' + lineCdList[x][0].line_name + badge +'</strong></button>';
-		}
-	}
-	return out;
+	return lineCdList;
 }
 
 /**
@@ -727,6 +726,7 @@ var getValue = function(target, key) {
  */
 var transferSearch = function() {
 	initContents();
+	var cnt = 0;
 	var out = "";
 	var errMsg = "";
 	// 出発駅情報を取得
@@ -749,7 +749,9 @@ var transferSearch = function() {
 		for (var x in targetDepartStation) {
 			for (var y in targetArrivalStation) {
 				if (targetDepartStation[x].line_cd == targetArrivalStation[y].line_cd) {
-					out += getLine(targetDepartStation[x].line_cd, "line_cd")[0].line_name + "<br>";
+					cnt++;
+					out += '<br><a href="javascript:void(0)" class="list-group-item disabled list-group-item-success"><span style="font-weight: bold;color:#3c763d;">経路(' + cnt + ')</span></a>';
+					out += '<a href="javascript:void(0)" class="list-group-item disabled list-group-item-warning"><span style="font-weight: bold;color:#8a6d3b;">' + getLine(targetDepartStation[x].line_cd, "line_cd")[0].line_name + '</span></a>';
 					// 出発駅と到着駅が同一路線上にある場合、路線全部の駅データを取得
 					var targetLineStation = getStation(targetDepartStation[x].line_cd, "line_cd");
 					// 出力フラグ
@@ -760,8 +762,17 @@ var transferSearch = function() {
 							if (targetLineStation[z].station_cd == targetDepartStation[x].station_cd) {
 								isHit = true;
 							}
+							var cnt = countData(targetLineStation[z].station_cd, 3);
+							var spanBadge = "";
+							if (cnt > 0) {
+								spanBadge = '<span class="badge" style="background-color:#2e6da4;" id="badge' + targetLineStation[z].station_cd + '">' + cnt + '</span>';
+							}
+							var mark = "";
+							if (createJoinLineList(targetLineStation[z].station_cd).length != 0) {
+								mark = "<strong>*</strong>";
+							}
 							if (isHit) {
-								out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + targetLineStation[x].station_cd + ', 4, this)"><span style="font-weight: bold;" id="' + targetLineStation[z].station_cd + '">' + targetLineStation[z].station_name + '</span></a>';
+								out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + targetLineStation[z].station_cd + ', 4, this)"><span style="font-weight: bold;" id="' + targetLineStation[z].station_cd + '">' + targetLineStation[z].station_name + mark + '</span>' + spanBadge + '</a>';
 							}
 							if (targetLineStation[z].station_cd == targetArrivalStation[y].station_cd) {
 								isHit = false;
@@ -772,14 +783,33 @@ var transferSearch = function() {
 							if (targetLineStation[z].station_cd == targetDepartStation[x].station_cd) {
 								isHit = true;
 							}
+							var cnt = countData(targetLineStation[z].station_cd, 3);
+							var spanBadge = "";
+							if (cnt > 0) {
+								spanBadge = '<span class="badge" style="background-color:#2e6da4;" id="badge' + targetLineStation[z].station_cd + '">' + cnt + '</span>';
+							}
+							var mark = "";
+							if (createJoinLineList(targetLineStation[z].station_cd).length != 0) {
+								mark = "<strong>*</strong>";
+							}
 							if (isHit) {
-								out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + targetLineStation[z].station_cd + ', 4, this)"><span style="font-weight: bold;" id="' + targetLineStation[z].station_cd + '">' + targetLineStation[z].station_name + '</span></a>';
+								out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + targetLineStation[z].station_cd + ', 4, this)"><span style="font-weight: bold;" id="' + targetLineStation[z].station_cd + '">' + targetLineStation[z].station_name + mark + '</span>' + spanBadge + '</a>';
 							}
 							if (targetLineStation[z].station_cd == targetArrivalStation[y].station_cd) {
 								isHit = false;
 							}
 						}
 					}
+				}
+			}
+		}
+		if (cnt == 0) {
+			// 乗換が必要な場合
+			for (var x in targetDepartStation) {
+				// 路線全部の駅データを取得
+				var targetLineStation = getStation(targetDepartStation[x].line_cd, "line_cd");
+				for (var y in targetLineStation) {
+					var joinStationList = createJoinLineList(targetLineStation[y].station_cd);
 				}
 			}
 		}
