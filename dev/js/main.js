@@ -747,10 +747,9 @@ var recursiveSearch = function (targetDepartStation, targetArrivalStation) {
 	var url = "https://api.trip2.jp/ex/tokyo/v1.0/json?src=" + targetDepartStation + "&dst=" + targetArrivalStation + apiKey
 	$.ajax({
 		url: url,
-		dataType: 'jsonp',
 		type: "GET",
-		success: function(res) {
-			console.log(res);
+		success: function(data) {
+			var resultJson = $.parseJSON(data.responseText.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,""));
 		}
 	});
 };
