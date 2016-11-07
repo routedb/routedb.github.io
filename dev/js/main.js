@@ -733,102 +733,21 @@ var transferSearch = function() {
 	if ($("#departFrom").val() == $("#arrivalAt").val()) {
 		errMsg = "出発駅と到着駅が同じです。<br>";
 	}
-	if (targetDepartStation.length == 0) {
-		errMsg = "出発駅が存在しません。<br>";
-	}
-	if (targetArrivalStation.length == 0) {
-		errMsg = "到着駅が存在しません。<br>";
-	}
 	if (errMsg.length != 0) {
 		$("#errorTransferMsg").html(errMsg);
 		$("#errorTransferMsg").css("display", "block");
 	} else {
 		$("#listMain").css("display", "block");
-		$("#listMain").html(recursiveSearch(targetDepartStation, targetArrivalStation, 0, ""));
+		$("#listMain").html(recursiveSearch($("#departFrom").val(), $("#arrivalAt").val()));
 	}
 };
 
-var recursiveSearch = function (targetDepartStation, targetArrivalStation, limit, out) {
-	var isExist = false;
-	var cnt = 0;
-	if (limit == 3) {
-		out += "乗換回数が3回を超えました。";
-		return out;
-	}
-	for (var x in targetDepartStation) {
-		for (var y in targetArrivalStation) {
-			if (targetDepartStation[x].line_cd == targetArrivalStation[y].line_cd) {
-				// 同一路線上に到着駅がある場合
-				isExist = true;
-				cnt++;
-				out += '<br><a href="javascript:void(0)" class="list-group-item disabled list-group-item-success"><span style="font-weight: bold;color:#3c763d;">経路(' + cnt + ')</span></a>';
-				out += '<a href="javascript:void(0)" class="list-group-item disabled list-group-item-warning"><span style="font-weight: bold;color:#8a6d3b;">' + getLine(targetDepartStation[x].line_cd, "line_cd")[0].line_name + '</span></a>';
-				// 出発駅と到着駅が同一路線上にある場合、路線全部の駅データを取得
-				var targetLineStation = getStation(targetDepartStation[x].line_cd, "line_cd");
-				// 出力フラグ
-				var isHit = false;
-				if (Number(targetDepartStation[x].station_cd) > Number(targetArrivalStation[y].station_cd)) {
-					// 出発駅コードが到着駅コードより大きい場合、路線全部の駅データを降順に検索する。
-					for (var z = targetLineStation.length - 1; z > 0; z--) {
-						if (targetLineStation[z].station_cd == targetDepartStation[x].station_cd) {
-							isHit = true;
-						}
-						var cnt = countData(targetLineStation[z].station_cd, 3);
-						var spanBadge = "";
-						if (cnt > 0) {
-							spanBadge = '<span class="badge" style="background-color:#2e6da4;" id="badge' + targetLineStation[z].station_cd + '">' + cnt + '</span>';
-						}
-						var mark = "";
-						if (createJoinLineList(targetLineStation[z].station_cd) != "") {
-							mark = "<strong>*</strong>";
-						}
-						if (isHit) {
-							out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + targetLineStation[z].station_cd + ', 4, this)"><span style="font-weight: bold;" id="' + targetLineStation[z].station_cd + '">' + targetLineStation[z].station_name + mark + '</span>' + spanBadge + '</a>';
-						}
-						if (targetLineStation[z].station_cd == targetArrivalStation[y].station_cd) {
-							isHit = false;
-						}
-					}
-				} else {
-					for (var z = 0; z < targetLineStation.length; z++) {
-						if (targetLineStation[z].station_cd == targetDepartStation[x].station_cd) {
-							isHit = true;
-						}
-						var cnt = countData(targetLineStation[z].station_cd, 3);
-						var spanBadge = "";
-						if (cnt > 0) {
-							spanBadge = '<span class="badge" style="background-color:#2e6da4;" id="badge' + targetLineStation[z].station_cd + '">' + cnt + '</span>';
-						}
-						var mark = "";
-						if (createJoinLineList(targetLineStation[z].station_cd) != "") {
-							mark = "<strong>*</strong>";
-						}
-						if (isHit) {
-							out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + targetLineStation[z].station_cd + ', 4, this)"><span style="font-weight: bold;" id="' + targetLineStation[z].station_cd + '">' + targetLineStation[z].station_name + mark + '</span>' + spanBadge + '</a>';
-						}
-						if (targetLineStation[z].station_cd == targetArrivalStation[y].station_cd) {
-							isHit = false;
-						}
-					}
-				}
-			}
-		}
-	}
-	if (!isExist) {
-		limit++;
-		for (var x in targetDepartStation) {
-			// 路線全部の駅データを取得
-			var targetLineStation = getStation(targetDepartStation[x].line_cd, "line_cd");
-			for (var y in targetLineStation) {
-				var joinStationList = createJoinLineList(targetLineStation[y].station_cd);
-				if (joinStationList != "") {
-					// 乗継駅から再度検索
-					recursiveSearch(getStation(targetLineStation[y], "station_cd"), targetArrivalStation, limit, out);
-				}
-			}
-		}
-	}
-	return out;
+var recursiveSearch = function (targetDepartStation, targetArrivalStation) {
+	var apiKey = "&key=2_ABaOnuc3YOHvbB0MpcesKYn4O9uZa7iBw9yREMLW8WtO0IkpQBiDww8rOB1LNw";
+	var url = "https://api.trip2.jp/ex/tokyo/v1.0/json?src=" + targetDepartStation + "&dst=" + targetArrivalStation + apiKey
+	$.getJSON(url, function(results) {
+		return results;
+	});
 };
 
 /**
