@@ -745,13 +745,22 @@ var transferSearch = function() {
 var recursiveSearch = function (targetDepartStation, targetArrivalStation) {
 	var apiKey = "&key=2_ABaOnuc3YOHvbB0MpcesKYn4O9uZa7iBw9yREMLW8WtO0IkpQBiDww8rOB1LNw";
 	var url = "https://api.trip2.jp/ex/tokyo/v1.0/json?src=" + targetDepartStation + "&dst=" + targetArrivalStation + apiKey
+	var out = "";
 	$.ajax({
 		url: url,
 		type: "GET",
 		success: function(data) {
-			var resultJson = $.parseJSON(data.responseText.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,""));
+			if (data.responseText != "") {
+				var resultJson = $.parseJSON(data.responseText.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,""));
+				for (var x in resultJson.ways) {
+					out += resultJson.ways[x].line.line_name + resultJson.ways[x].dst_station.station_name + " > " + resultJson.ways[x].src_station.station_name + "<br>";
+				}
+			} else {
+				// 検索結果無
+			}
 		}
 	});
+	return out;
 };
 
 /**
