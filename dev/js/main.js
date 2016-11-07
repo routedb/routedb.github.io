@@ -748,19 +748,18 @@ var recursiveSearch = function (targetDepartStation, targetArrivalStation) {
 	var out = "";
 	$.ajax({
 		url: url,
-		type: "GET",
-		success: function(data) {
-			if (data.responseText != "") {
-				var resultJson = $.parseJSON(data.responseText.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,""));
-				for (var x in resultJson.ways) {
-					out += resultJson.ways[x].line.line_name + resultJson.ways[x].dst_station.station_name + " > " + resultJson.ways[x].src_station.station_name + "<br>";
-				}
-			} else {
-				// 検索結果無
+		type: "GET"
+	}).then(function(response) {
+		if (response.results[0] != "") {
+			var resultJson = $.parseJSON(response.results[0].replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,""));
+			for (var x in resultJson.ways) {
+				out += resultJson.ways[x].line.line_name + resultJson.ways[x].dst_station.station_name + " > " + resultJson.ways[x].src_station.station_name + "<br>";
 			}
+		} else {
+			// 検索結果無
 		}
+		return out;
 	});
-	return out;
 };
 
 /**
