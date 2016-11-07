@@ -745,8 +745,13 @@ var transferSearch = function() {
 var recursiveSearch = function (targetDepartStation, targetArrivalStation) {
 	var apiKey = "&key=2_ABaOnuc3YOHvbB0MpcesKYn4O9uZa7iBw9yREMLW8WtO0IkpQBiDww8rOB1LNw";
 	var url = "https://api.trip2.jp/ex/tokyo/v1.0/json?src=" + targetDepartStation + "&dst=" + targetArrivalStation + apiKey
-	$.getJSON(url, function(results) {
-		return results;
+	$.ajax({
+		url: url,
+		dataType: 'jsonp',
+		type: "GET",
+		success: function(res) {
+			console.log(res);
+		}
 	});
 };
 
