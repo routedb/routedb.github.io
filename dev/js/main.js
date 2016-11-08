@@ -738,27 +738,60 @@ var transferSearch = function() {
 		$("#errorTransferMsg").css("display", "block");
 	} else {
 		$("#listMain").css("display", "block");
-		$("#listMain").html(recursiveSearch($("#departFrom").val(), $("#arrivalAt").val()));
+		recursiveSearch($("#departFrom").val(), $("#arrivalAt").val());
 	}
 };
 
 var recursiveSearch = function (targetDepartStation, targetArrivalStation) {
 	var apiKey = "&key=2_ABaOnuc3YOHvbB0MpcesKYn4O9uZa7iBw9yREMLW8WtO0IkpQBiDww8rOB1LNw";
-	var url = "https://api.trip2.jp/ex/tokyo/v1.0/json?src=" + targetDepartStation + "&dst=" + targetArrivalStation + apiKey
+	var requestURL = "https://api.trip2.jp/ex/tokyo/v1.0/json?src=" + targetDepartStation + "&dst=" + targetArrivalStation + apiKey
 	var out = "";
-	$.ajax({
-		url: url,
+	var request = $.ajax({
+		url: requestURL,
 		type: "GET"
-	}).then(function(response) {
-		if (response.results[0] != "") {
-			var resultJson = $.parseJSON(response.results[0].replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,""));
-			for (var x in resultJson.ways) {
-				out += resultJson.ways[x].line.line_name + resultJson.ways[x].dst_station.station_name + " > " + resultJson.ways[x].src_station.station_name + "<br>";
+	});
+	request.done(function(data) {
+		var resultJson = $.parseJSON(data.results[0].replace(/<("[^"]*"|'[^']*'|[^'">])*>/g, ""));
+		for (var x in resultJson.ways) {
+			var line = getLine(resultJson.ways[x].line.line_name, "line_name");
+			var stationList = getStation(line[0].line_cd, "line_cd");
+			var srcStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].src_station.station_name);
+			var dstStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].dst_station.station_name);
+			var isHit = false;
+			var tmpList = stationList;
+			out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">' + line[0].line_name + '</button>';
+			if (Number(srcStation[0].station_cd) > Number(dstStation[0].station_cd)) {
+				// 出発駅コードが到着駅コードより大きい場合、降順に処理する。
+				stationList = stationList.reverse();
 			}
-		} else {
-			// 検索結果無
+			for (var y = 0; y < stationList.length; y++) {
+				if (stationList[y].station_cd == srcStation[0].station_cd) {
+					isHit = true;
+				}
+				var cnt = countData(stationList[y].station_cd, 3);
+				var spanBadge = "";
+				if (cnt > 0) {
+					spanBadge = '<span class="badge" style="background-color:#2e6da4;" id="badge' + stationList[y].station_cd + '">' + cnt + '</span>';
+				}
+				var mark = "";
+				if (createJoinLineList(stationList[y].station_cd) != "") {
+					mark = "<strong>*</strong>";
+				}
+				if (isHit) {
+					out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + stationList[y].station_cd + ', 4, this)"><span style="font-weight: bold;" id="' + stationList[y].station_cd + '">' + stationList[y].station_name + mark + '</span>' + spanBadge + '</a>';
+				}
+				if (stationList[y].station_cd == dstStation[0].station_cd) {
+					isHit = false;
+				}
+			}
 		}
-		return out;
+		$("#listMain").html(out);
+		console.log("Request done.");
+	});
+	request.fail(function(jqXHR, textStatus) {
+		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">処理に失敗しました。</h3></div><div class="panel-body">お手数おかけしますがお問合せください。</div></div>';
+		$("#contactForm").html(out);
+		console.log("Request failed: " + textStatus);
 	});
 };
 
@@ -784,6 +817,13 @@ var getStation = function(key, targetCol) {
 	return filterStationJson;
 }
 
+var getUniqueStation = function(lineCd, stationName) {
+	var filterStationJson = $.grep(stationJson, function(elem) {
+		return elem.line_cd == lineCd && elem.station_name == stationName;
+	});
+	return filterStationJson;
+}
+
 /**
  * 路線データを取得する
  *
@@ -795,6 +835,9 @@ var getLine = function(key, targetCol) {
 	var filterLineJson = $.grep(lineJson, function(elem) {
 		if (targetCol == "line_cd") {
 			return elem.line_cd == key;
+		}
+		if (targetCol == "line_name") {
+			return elem.line_name == key;
 		}
 	});
 	return filterLineJson;
