@@ -738,11 +738,17 @@ var transferSearch = function() {
 		$("#errorTransferMsg").css("display", "block");
 	} else {
 		$("#listMain").css("display", "block");
-		recursiveSearch($("#departFrom").val(), $("#arrivalAt").val());
+		createTransferResult($("#departFrom").val(), $("#arrivalAt").val());
 	}
 };
 
-var recursiveSearch = function (targetDepartStation, targetArrivalStation) {
+/**
+ * 乗換検索結果出力
+ *
+ * @parme targetDepartStation 出発駅画面入力値
+ * @parme targetArrivalStation 到着駅画面入力値
+ */
+var createTransferResult = function (targetDepartStation, targetArrivalStation) {
 	var apiKey = "&key=2_ABaOnuc3YOHvbB0MpcesKYn4O9uZa7iBw9yREMLW8WtO0IkpQBiDww8rOB1LNw";
 	var requestURL = "https://api.trip2.jp/ex/tokyo/v1.0/json?src=" + targetDepartStation + "&dst=" + targetArrivalStation + apiKey
 	var out = "";
@@ -758,7 +764,6 @@ var recursiveSearch = function (targetDepartStation, targetArrivalStation) {
 			var srcStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].src_station.station_name);
 			var dstStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].dst_station.station_name);
 			var isHit = false;
-			var tmpList = stationList;
 			out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">' + line[0].line_name + '</button>';
 			if (Number(srcStation[0].station_cd) > Number(dstStation[0].station_cd)) {
 				// 出発駅コードが到着駅コードより大きい場合、降順に処理する。
@@ -766,6 +771,7 @@ var recursiveSearch = function (targetDepartStation, targetArrivalStation) {
 			}
 			for (var y = 0; y < stationList.length; y++) {
 				if (stationList[y].station_cd == srcStation[0].station_cd) {
+					// 出力開始
 					isHit = true;
 				}
 				var cnt = countData(stationList[y].station_cd, 3);
@@ -781,6 +787,7 @@ var recursiveSearch = function (targetDepartStation, targetArrivalStation) {
 					out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + stationList[y].station_cd + ', 4, this)"><span style="font-weight: bold;" id="' + stationList[y].station_cd + '">' + stationList[y].station_name + mark + '</span>' + spanBadge + '</a>';
 				}
 				if (stationList[y].station_cd == dstStation[0].station_cd) {
+					// 出力終了
 					isHit = false;
 				}
 			}
@@ -800,7 +807,7 @@ var recursiveSearch = function (targetDepartStation, targetArrivalStation) {
  *
  * @parme key 検索キー
  * @parme targetCol 検索対象カラム
- * @return value値
+ * @return 駅データ
  */
 var getStation = function(key, targetCol) {
 	var filterStationJson = $.grep(stationJson, function(elem) {
@@ -817,6 +824,13 @@ var getStation = function(key, targetCol) {
 	return filterStationJson;
 }
 
+/**
+ * 一意な駅データを取得する
+ *
+ * @parme lineCd 路線コード
+ * @parme stationName 駅名
+ * @return 駅データ
+ */
 var getUniqueStation = function(lineCd, stationName) {
 	var filterStationJson = $.grep(stationJson, function(elem) {
 		return elem.line_cd == lineCd && elem.station_name == stationName;
