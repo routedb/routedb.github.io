@@ -79,6 +79,7 @@ var main = function(key, lv, obj) {
 	// リスト出力用json文字列
 	var resultJson = "";
 	if (lv > 9) {
+		$("#transferSearch").css("display", "none");
 		// 階層レベルが2桁の場合は、フッター処理
 		if (lv == 10) {
 			// 検索ボタン押下
@@ -120,10 +121,12 @@ var main = function(key, lv, obj) {
 	} else {
 		// 階層レベルが2桁の場合は、コンテンツ処理
 		if (lv == 1) {
+			$("#transferSearch").css("display", "block");
 			// 都道府県リスト生成
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(prefecturesJson, key, lv));
 		} else if (lv == 2 || lv == 3) {
+			$("#transferSearch").css("display", "none");
 			// 路線リストまたは駅リスト生成
 			$("#listMain").css("display", "block");
 			// 路線または駅データ格納用オブジェクト
@@ -168,10 +171,12 @@ var main = function(key, lv, obj) {
 			// リスト出力
 			$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
 		} else if (lv == 4) {
+			$("#transferSearch").css("display", "none");
 			// 店舗リスト生成
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(shopJson, key, lv));
 		} else if (lv == 5) {
+			$("#transferSearch").css("display", "none");
 			// 店舗詳細生成
 			$("#shopInfo").css("display", "block");
 			$("#shopInfo").html(createInfo(shopJson, key, lv));
@@ -751,6 +756,7 @@ var transferSearch = function() {
  * @parme targetArrivalStation 到着駅画面入力値
  */
 var createTransferResult = function (targetDepartStation, targetArrivalStation) {
+	$('#myPleaseWait').modal('show');
 	var requestURL = "https://api.trip2.jp/ex/tokyo/v1.0/json?src=" + targetDepartStation + "&dst=" + targetArrivalStation + configJson.trip2ApiKey
 	var out = "";
 	var request = $.ajax({
@@ -758,47 +764,53 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 		type: "GET"
 	});
 	request.done(function(data) {
-		var resultJson = $.parseJSON(data.results[0].replace(/<("[^"]*"|'[^']*'|[^'">])*>/g, ""));
-		for (var x in resultJson.ways) {
-			var line = getLine(resultJson.ways[x].line.line_name, "line_name");
-			var stationList = getStation(line[0].line_cd, "line_cd");
-			var srcStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].src_station.station_name);
-			var dstStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].dst_station.station_name);
-			var isHit = false;
-			out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">' + line[0].line_name + '</button>';
-			if (Number(srcStation[0].station_cd) > Number(dstStation[0].station_cd)) {
-				// 出発駅コードが到着駅コードより大きい場合、降順に処理する。
-				stationList = stationList.reverse();
+		$('#myPleaseWait').modal('hide');
+		if (data.results.length != 0) {
+			$("#errorTransferMsg").css("display", "none");
+			var resultJson = $.parseJSON(data.results[0].replace(/<("[^"]*"|'[^']*'|[^'">])*>/g, ""));
+			for (var x in resultJson.ways) {
+				var line = getLine(resultJson.ways[x].line.line_name, "line_name");
+				var stationList = getStation(line[0].line_cd, "line_cd");
+				var srcStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].src_station.station_name);
+				var dstStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].dst_station.station_name);
+				var isHit = false;
+				out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">' + line[0].line_name + '</button>';
+				if (Number(srcStation[0].station_cd) > Number(dstStation[0].station_cd)) {
+					// 出発駅コードが到着駅コードより大きい場合、降順に処理する。
+					stationList = stationList.reverse();
+				}
+				for (var y = 0; y < stationList.length; y++) {
+					if (stationList[y].station_cd == srcStation[0].station_cd) {
+						// 出力開始
+						isHit = true;
+					}
+					var cnt = countData(stationList[y].station_cd, 3);
+					var spanBadge = "";
+					if (cnt > 0) {
+						spanBadge = '<span class="badge" style="background-color:#2e6da4;" id="badge' + stationList[y].station_cd + '">' + cnt + '</span>';
+					}
+					var mark = "";
+					if (createJoinLineList(stationList[y].station_cd) != "") {
+						mark = "<strong>*</strong>";
+					}
+					if (isHit) {
+						out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + stationList[y].station_cd + ', 4, this)"><span style="font-weight: bold;" id="' + stationList[y].station_cd + '">' + stationList[y].station_name + mark + '</span>' + spanBadge + '</a>';
+					}
+					if (stationList[y].station_cd == dstStation[0].station_cd) {
+						// 出力終了
+						isHit = false;
+					}
+				}
 			}
-			for (var y = 0; y < stationList.length; y++) {
-				if (stationList[y].station_cd == srcStation[0].station_cd) {
-					// 出力開始
-					isHit = true;
-				}
-				var cnt = countData(stationList[y].station_cd, 3);
-				var spanBadge = "";
-				if (cnt > 0) {
-					spanBadge = '<span class="badge" style="background-color:#2e6da4;" id="badge' + stationList[y].station_cd + '">' + cnt + '</span>';
-				}
-				var mark = "";
-				if (createJoinLineList(stationList[y].station_cd) != "") {
-					mark = "<strong>*</strong>";
-				}
-				if (isHit) {
-					out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + stationList[y].station_cd + ', 4, this)"><span style="font-weight: bold;" id="' + stationList[y].station_cd + '">' + stationList[y].station_name + mark + '</span>' + spanBadge + '</a>';
-				}
-				if (stationList[y].station_cd == dstStation[0].station_cd) {
-					// 出力終了
-					isHit = false;
-				}
-			}
+		} else {
+			out += '<div class="alert alert-danger" role="alert" id="errorTransferMsg">検索に失敗しました。<br>※首都圏78の路線、1365の駅を登録しています。4回までの乗り換えに対応しています。</div>';
 		}
 		$("#listMain").html(out);
 		console.log("Request done.");
 	});
 	request.fail(function(jqXHR, textStatus) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">処理に失敗しました。</h3></div><div class="panel-body">お手数おかけしますがお問合せください。</div></div>';
-		$("#contactForm").html(out);
+		$("#listMain").html(out);
 		console.log("Request failed: " + textStatus);
 	});
 };

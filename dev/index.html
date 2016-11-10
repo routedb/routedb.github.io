@@ -19,8 +19,7 @@
       <div class="container-fluid">
         <div class="row" id="btnList" style="padding-top:5px;">
         </div>
-        <div class="row" id="transferSearch" style="padding-top:5px;">
-          <div class="alert alert-danger" style="display:none;" role="alert" id="errorTransferMsg"></div>
+        <div class="row" id="transferSearch" style="padding-top:5px;display:none;">
           <div class="col-md-4">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon3">出発</span>
@@ -226,5 +225,19 @@
       ga('create', 'UA-84217593-1', 'auto');
       ga('send', 'pageview');
     </script>
+  	<div aria-hidden="true" class="modal fade bs-example-modal-sm" data-backdrop="static" id="myPleaseWait" role="dialog" tabindex="-1">
+  		<div class="modal-dialog modal-sm">
+  			<div class="modal-content">
+  				<div class="modal-header">
+  					<h4 class="modal-title"><span class="glyphicon glyphicon-time"></span>Please Wait</h4>
+  				</div>
+  				<div class="modal-body">
+  					<div class="progress">
+  						<div class="progress-bar progress-bar-info progress-bar-striped active" style="width: 100%"></div>
+  					</div>
+  				</div>
+  			</div>
+  		</div>
+  	</div>
     </body>
 </html>
