@@ -68,6 +68,17 @@ $(function() {
  *
  * @parme key キー値
  * @parme lv  階層レベル
+ *            1:都道府県い
+ *            2:路線
+ *            3:駅
+ *            4:店舗
+ *            5:店舗詳細
+ *            9:乗り換え検索
+ *           10:検索
+ *           11:路線データベースについて
+ *           12:利用規約
+ *           13:プライバシーポリシー
+ *           99:お問合せ
  * @parme obj ターゲット要素
  */
 var main = function(key, lv, obj) {
@@ -119,14 +130,14 @@ var main = function(key, lv, obj) {
 			$("#contactForm").css("display", "block");
 		}
 	} else {
-		// 階層レベルが2桁の場合は、コンテンツ処理
+		// 階層レベルが1桁の場合は、コンテンツ処理
 		if (lv == 1) {
 			$("#transferSearch").css("display", "block");
 			// 都道府県リスト生成
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(prefecturesJson, key, lv));
 		} else if (lv == 2 || lv == 3) {
-			$("#transferSearch").css("display", "none");
+			$("#transferSearch").css("display", "block");
 			// 路線リストまたは駅リスト生成
 			$("#listMain").css("display", "block");
 			// 路線または駅データ格納用オブジェクト
@@ -170,8 +181,9 @@ var main = function(key, lv, obj) {
 			resultJson += ']';
 			// リスト出力
 			$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
-		} else if (lv == 4) {
-			$("#transferSearch").css("display", "none");
+		} else if (lv == 4 || lv == 9) {
+			lv = 4;
+			$("#transferSearch").css("display", "block");
 			// 店舗リスト生成
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(shopJson, key, lv));
@@ -794,7 +806,7 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 						mark = "<strong>*</strong>";
 					}
 					if (isHit) {
-						out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + stationList[y].station_cd + ', 4, this)"><span style="font-weight: bold;" id="' + stationList[y].station_cd + '">' + stationList[y].station_name + mark + '</span>' + spanBadge + '</a>';
+						out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + stationList[y].station_cd + ', 9, this)"><span style="font-weight: bold;" id="' + stationList[y].station_cd + '">' + stationList[y].station_name + mark + '</span>' + spanBadge + '</a>';
 					}
 					if (stationList[y].station_cd == dstStation[0].station_cd) {
 						// 出力終了
