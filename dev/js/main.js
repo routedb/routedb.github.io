@@ -3,7 +3,7 @@ var regTabelog = new RegExp("tabelog");
 var regTwitter = new RegExp("twitter");
 var regFacebook = new RegExp("facebook");
 var regWikipedia = new RegExp("wikipedia");
-var prefecturesJson, lineJson, stationJson, shopJson;
+var configJson, prefecturesJson, lineJson, stationJson, shopJson;
 var refresh = function() {
 	location.reload();
 }
@@ -11,6 +11,10 @@ $(function() {
 	// 非同期処理解除
 	$.ajaxSetup({
 		async: false
+	});
+	// 設定を取得
+	$.getJSON("conf/config.json", function(results) {
+		configJson = results;
 	});
 	// データを取得
 	$.getJSON("data/data.json", function(results) {
@@ -511,9 +515,8 @@ var createEntryConfirm = function(json) {
 var sendEntryForm = function() {
 	var out = "";
 	var strJson = decodeURIComponent($("#hidEntryJson").val()) + ",";
-	var requestURL = 'https://hooks.slack.com/services/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';
     var request = $.ajax({
-    	url: requestURL,
+    	url: configJson.slackHookEntryURL,
     	type: 'post',
     	data: 'payload=' + JSON.stringify({
     		"channel": "#routedb-entry",
@@ -584,9 +587,8 @@ var createContactConfirm = function(json) {
 var sendContactForm = function() {
 	var out = "";
 	var strJson = decodeURIComponent($("#hidContactJson").val());
-	var requestURL = 'https://hooks.slack.com/services/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';
     var request = $.ajax({
-    	url: requestURL,
+    	url: configJson.slackHookContactURL,
     	type: 'post',
     	data: 'payload=' + JSON.stringify({
     		"channel": "#routedb-contact",
@@ -749,8 +751,7 @@ var transferSearch = function() {
  * @parme targetArrivalStation 到着駅画面入力値
  */
 var createTransferResult = function (targetDepartStation, targetArrivalStation) {
-	var apiKey = "&key=2_ABaOnuc3YOHvbB0MpcesKYn4O9uZa7iBw9yREMLW8WtO0IkpQBiDww8rOB1LNw";
-	var requestURL = "https://api.trip2.jp/ex/tokyo/v1.0/json?src=" + targetDepartStation + "&dst=" + targetArrivalStation + apiKey
+	var requestURL = "https://api.trip2.jp/ex/tokyo/v1.0/json?src=" + targetDepartStation + "&dst=" + targetArrivalStation + configJson.trip2ApiKey
 	var out = "";
 	var request = $.ajax({
 		url: requestURL,
