@@ -67,7 +67,7 @@ $(function() {
  * 主処理
  *
  * @parme key キー値
- * @parme lv  階層レベル
+ * @parme lv  画面レベル
  *            1:都道府県い
  *            2:路線
  *            3:駅
@@ -91,7 +91,7 @@ var main = function(key, lv, obj) {
 	var resultJson = "";
 	if (lv > 9) {
 		$("#transferSearch").css("display", "none");
-		// 階層レベルが2桁の場合は、フッター処理
+		// 画面レベルが2桁の場合は、フッター処理
 		if (lv == 10) {
 			// 検索ボタン押下
 			$("#listMain").css("display", "block");
@@ -130,7 +130,7 @@ var main = function(key, lv, obj) {
 			$("#contactForm").css("display", "block");
 		}
 	} else {
-		// 階層レベルが1桁の場合は、コンテンツ処理
+		// 画面レベルが1桁の場合は、コンテンツ処理
 		if (lv == 1) {
 			$("#transferSearch").css("display", "block");
 			// 都道府県リスト生成
@@ -182,6 +182,7 @@ var main = function(key, lv, obj) {
 			// リスト出力
 			$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
 		} else if (lv == 4 || lv == 9) {
+			// 画面レベル9から来た場合は4で上書き
 			lv = 4;
 			$("#transferSearch").css("display", "block");
 			// 店舗リスト生成
@@ -189,6 +190,9 @@ var main = function(key, lv, obj) {
 			$("#listMain").html(createList(shopJson, key, lv));
 		} else if (lv == 5) {
 			$("#transferSearch").css("display", "none");
+			if (lv == 5 && $("#hidTransferSearch").val() == "9") {
+				$("#transferSearch").css("display", "block");
+			}
 			// 店舗詳細生成
 			$("#shopInfo").css("display", "block");
 			$("#shopInfo").html(createInfo(shopJson, key, lv));
@@ -205,7 +209,7 @@ var main = function(key, lv, obj) {
  * ボタン生成処理
  *
  * @parme key キー値
- * @parme lv  階層レベル
+ * @parme lv  画面レベル
  * @parme obj ターゲット要素
  * @return out ボタン用HTML文字列
  */
@@ -233,44 +237,49 @@ var createBtn = function(key, lv, obj) {
 			out += '</div>';
 		}
 	} else {
-		var colSize   = 12 / lv;
-		var btnKey    = null;
-		var btnLv     = 1;
-		for (var x = 1; x <= lv; x++) {
-			if (x == lv) {
-				if (obj != null) {
-					if (obj.type == "button") {
-						btnValue  = obj.innerHTML;
-					} else {
-						btnValue  = $("#list" + key).html();
-						if ($("#badge" + key).length) {
-							btnValue  +=  '&nbsp;</span><span class="badge badge-info">' + $("#badge" + key).html() + '</span>';
+		if (lv == 9 || (lv == 5 && $("#hidTransferSearch").val() == "9")) {
+			out += '<button type="button" id="btnLv1" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="refresh()"><strong>' + btnValue + '</strong></button>';
+			out += '<input type="hidden" id="hidTransferSearch" value="9">';
+		} else {
+			var colSize   = 12 / lv;
+			var btnKey    = null;
+			var btnLv     = 1;
+			for (var x = 1; x <= lv; x++) {
+				if (x == lv) {
+					if (obj != null) {
+						if (obj.type == "button") {
+							btnValue  = obj.innerHTML;
+						} else {
+							btnValue  = $("#list" + key).html();
+							if ($("#badge" + key).length) {
+								btnValue  +=  '&nbsp;</span><span class="badge badge-info">' + $("#badge" + key).html() + '</span>';
+							}
+						}
+						btnKey = key;
+						btnLv  = lv;
+						if (lv == 5) {
+							colSize = 4;
 						}
 					}
-					btnKey = key;
-					btnLv  = lv;
+					btnStatus = "primary"
+				} else {
+					btnValue = $("#btnLv" + x).html();
+					btnKey   = $("#hidKey" + x).val();
+					btnLv    = $("#hidLv" + x).val();
 					if (lv == 5) {
-						colSize = 4;
+						colSize = 2	;
 					}
 				}
-				btnStatus = "primary"
-			} else {
-				btnValue = $("#btnLv" + x).html();
-				btnKey   = $("#hidKey" + x).val();
-				btnLv    = $("#hidLv" + x).val();
-				if (lv == 5) {
-					colSize = 2	;
+				out += '<div class="col-md-' + colSize + '">';
+				if (lv == 1) {
+					out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="refresh()"><strong>' + btnValue + '</strong></button>';
+				} else {
+					out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)"><strong>' + btnValue + '</strong></button>';
 				}
+				out += '<input type="hidden" id="hidKey' + x + '" value=' + btnKey + '>';
+				out += '<input type="hidden" id="hidLv' + x + '" value=' + btnLv + '>';
+				out += '</div>';
 			}
-			out += '<div class="col-md-' + colSize + '">';
-			if (lv == 1) {
-				out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="refresh()"><strong>' + btnValue + '</strong></button>';
-			} else {
-				out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)"><strong>' + btnValue + '</strong></button>';
-			}
-			out += '<input type="hidden" id="hidKey' + x + '" value=' + btnKey + '>';
-			out += '<input type="hidden" id="hidLv' + x + '" value=' + btnLv + '>';
-			out += '</div>';
 		}
 	}
 	return out;
@@ -281,7 +290,7 @@ var createBtn = function(key, lv, obj) {
  *
  * @parme json jsonデータ
  * @parme key キー値
- * @parme lv  階層レベル
+ * @parme lv  画面レベル
  * @return out リスト用HTML文字列
  */
 var createList = function(json, key, lv) {
@@ -298,6 +307,9 @@ var createList = function(json, key, lv) {
 				}
 				out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="main(' + lineCdList[x][0].line_cd + ', 3, this)"><strong>' + lineCdList[x][0].line_name + badge +'</strong></button>';
 			}
+		}
+		if ($("#hidTransferSearch").val() == "9") {
+			out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">' + $("#hidLineName" + key).val() + "&nbsp;<strong>" + $("#hidStationName" + key).val() + '</strong></button>';
 		}
 	}
 	for (var x in json) {
@@ -369,7 +381,7 @@ var getGroupCode = function(stationCode) {
  *
  * @parme json jsonデータ
  * @parme key キー値
- * @parme lv  階層レベル
+ * @parme lv  画面レベル
  * @return out 店舗詳細用HTML文字列
  */
 var createInfo = function(json, key, lv) {
@@ -396,7 +408,7 @@ var createInfo = function(json, key, lv) {
  * パッチ用カウント処理
  *
  * @parme key キー値
- * @parme lv  階層レベル
+ * @parme lv  画面レベル
  * @return cnt パッチ用件数
  */
 var countData = function(key, lv) {
@@ -423,7 +435,7 @@ var countData = function(key, lv) {
  * 登録フォーム生成処理
  *
  * @parme key キー値
- * @parme lv  階層レベル
+ * @parme lv  画面レベル
  */
 var createEntryForm = function() {
 	var key = createKey();
@@ -806,7 +818,11 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 						mark = "<strong>*</strong>";
 					}
 					if (isHit) {
-						out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + stationList[y].station_cd + ', 9, this)"><span style="font-weight: bold;" id="' + stationList[y].station_cd + '">' + stationList[y].station_name + mark + '</span>' + spanBadge + '</a>';
+						out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + stationList[y].station_cd + ', 9, this)">';
+						out += '<span style="font-weight: bold;" id="' + stationList[y].station_cd + '">' + stationList[y].station_name + mark + '</span>'
+						out += '<input type="hidden" id="hidLineName' + stationList[y].station_cd + '" value="' + line[0].line_name + '">';
+						out += '<input type="hidden" id="hidStationName' + stationList[y].station_cd + '" value="' + stationList[y].station_name + '">';
+						out += spanBadge + '</a>';
 					}
 					if (stationList[y].station_cd == dstStation[0].station_cd) {
 						// 出力終了
