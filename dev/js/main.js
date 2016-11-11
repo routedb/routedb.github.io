@@ -79,6 +79,7 @@ $(function() {
  *           12:利用規約
  *           13:プライバシーポリシー
  *           99:お問合せ
+ *          101:店舗詳細(検索)
  * @parme obj ターゲット要素
  */
 var main = function(key, lv, obj) {
@@ -195,7 +196,9 @@ var main = function(key, lv, obj) {
 			}
 			// 店舗詳細生成
 			$("#shopInfo").css("display", "block");
+			$("#listMain").css("display", "block");
 			$("#shopInfo").html(createInfo(shopJson, key, lv));
+			$("#listMain").css("display", "none");
 			new google.maps.Geocoder().geocode({
 				'address': $("#streetAddress").text()
 			}, callbackRender);
@@ -240,6 +243,7 @@ var createBtn = function(key, lv, obj) {
 		if (lv == 9 || (lv == 5 && $("#hidTransferSearch").val() == "9")) {
 			out += '<button type="button" id="btnLv1" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="refresh()"><strong>' + btnValue + '</strong></button>';
 			out += '<input type="hidden" id="hidTransferSearch" value="9">';
+			out += '<input type="hidden" id="hidStationId" value="' + key + '">';
 		} else {
 			var colSize   = 12 / lv;
 			var btnKey    = null;
@@ -310,6 +314,9 @@ var createList = function(json, key, lv) {
 		}
 		if ($("#hidTransferSearch").val() == "9") {
 			out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">' + $("#hidLineName" + key).val() + "&nbsp;<strong>" + $("#hidStationName" + key).val() + '</strong></button>';
+			out += '<input type="hidden" id="hidLineName' + key + '" value="' + $("#hidLineName" + key).val() + '">';
+			out += '<input type="hidden" id="hidStationName' + key + '" value="' + $("#hidStationName" + key).val() + '">';
+			out += '<input type="hidden" id="hidStationId' + key + '" value="' + key + '">';
 		}
 	}
 	for (var x in json) {
@@ -385,6 +392,9 @@ var getGroupCode = function(stationCode) {
  * @return out 店舗詳細用HTML文字列
  */
 var createInfo = function(json, key, lv) {
+	if ($("#hidTransferSearch").val() == "9") {
+		out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">' + $("#hidLineName" + $("#hidStationId").val()).val() + "&nbsp;<strong>" + $("#hidStationName" + $("#hidStationId").val()).val() + '</strong></button>';
+	}
 	var out = '<table class="table table-bordered">';
 	for (var x in json) {
 		if (json[x].key == key) {
