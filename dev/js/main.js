@@ -766,14 +766,17 @@ var getValue = function(target, key) {
  */
 var transferSearch = function() {
 	initContents();
+	var input = true;
 	var errMsg = "";
 	if (!$("#departFrom").val()) {
 		errMsg += "出発駅を入力してください。<br>";
+		input = false;
 	}
 	if (!$("#arrivalAt").val()) {
 		errMsg += "到着駅を入力してください。<br>";
+		input = false;
 	}
-	if ($("#departFrom").val() == $("#arrivalAt").val()) {
+	if (input && $("#departFrom").val() == $("#arrivalAt").val()) {
 		errMsg += "出発駅と到着駅が同じです。<br>";
 	}
 	if (errMsg.length != 0) {
