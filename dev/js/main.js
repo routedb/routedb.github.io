@@ -340,7 +340,7 @@ var createList = function(json, key, lv) {
 			out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + mark + '</span>' + spanBadge + '</a>';
 		}
 	}
-	if (lv == 4) {
+	if (lv == 4 && $("#hidTransferSearch").val() != "9") {
 		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-danger btn-block" onclick="createEntryForm()"><strong>追加</strong></button>';
 	}
 	console.log("createList end!")
@@ -767,16 +767,19 @@ var getValue = function(target, key) {
 var transferSearch = function() {
 	initContents();
 	var errMsg = "";
-	// 出発駅情報を取得
-	var targetDepartStation = getStation($("#departFrom").val(), "station_name");
-	// 到着駅情報を取得
-	var targetArrivalStation = getStation($("#arrivalAt").val(), "station_name");
+	if (!$("#departFrom").val()) {
+		errMsg += "出発駅を入力してください。<br>";
+	}
+	if (!$("#arrivalAt").val()) {
+		errMsg += "到着駅を入力してください。<br>";
+	}
 	if ($("#departFrom").val() == $("#arrivalAt").val()) {
-		errMsg = "出発駅と到着駅が同じです。<br>";
+		errMsg += "出発駅と到着駅が同じです。<br>";
 	}
 	if (errMsg.length != 0) {
-		$("#errorTransferMsg").html(errMsg);
-		$("#errorTransferMsg").css("display", "block");
+		errMsg = '<div class="alert alert-danger" role="alert">' + errMsg + '</div>'
+		$("#listMain").html(errMsg);
+		$("#listMain").css("display", "block");
 	} else {
 		$("#listMain").css("display", "block");
 		createTransferResult($("#departFrom").val(), $("#arrivalAt").val());
