@@ -1,3 +1,4 @@
+var backup;
 var separator = /\s+/;
 var regTabelog = new RegExp("tabelog");
 var regTwitter = new RegExp("twitter");
@@ -84,6 +85,10 @@ $(function() {
  */
 var main = function(key, lv, obj) {
 	console.log("main start!");
+	if (lv == 4 && $("#hidTransferSearch").val() == "9") {
+		// 乗換モードの場合は検索結果を保持
+		backup = $("#transferSearchResults").html();
+	}
 	// ボタン生成
 	$("#btnList").html(createBtn(key, lv, obj));
 	// コンテンツ初期化
@@ -354,6 +359,7 @@ var createList = function(json, key, lv) {
 	}
 	if (lv == 4) {
 		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-danger btn-block" onclick="createEntryForm()"><strong>追加</strong></button>';
+		out += '<div id="transferSearchResults">' + backup + '</div>';
 	}
 	console.log("createList end!")
 	return out;
@@ -820,6 +826,7 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 		if (data.results.length != 0) {
 			$("#errorTransferMsg").css("display", "none");
 			var resultJson = $.parseJSON(data.results[0].replace(/<("[^"]*"|'[^']*'|[^'">])*>/g, ""));
+			out += '<div id="transferSearchResults">'
 			for (var x in resultJson.ways) {
 				var line = getLine(resultJson.ways[x].line.line_name, "line_name");
 				var stationList = getStation(line[0].line_cd, "line_cd");
@@ -864,6 +871,7 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 					}
 				}
 			}
+			out += '</div>'
 		} else {
 			out += '<div class="alert alert-danger" role="alert" id="errorTransferMsg">検索に失敗しました。<br>※首都圏78の路線、1365の駅を登録しています。4回までの乗り換えに対応しています。</div>';
 		}
