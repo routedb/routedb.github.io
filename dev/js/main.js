@@ -191,9 +191,6 @@ var main = function(key, lv, obj) {
 			$("#listMain").html(createList(shopJson, key, lv));
 		} else if (lv == 5) {
 			$("#transferSearch").css("display", "none");
-			if (lv == 5 && $("#hidTransferSearch").val() == "9") {
-				$("#transferSearch").css("display", "block");
-			}
 			// 店舗詳細生成
 			$("#shopInfo").css("display", "block");
 			$("#listMain").css("display", "block");
@@ -240,10 +237,8 @@ var createBtn = function(key, lv, obj) {
 			out += '</div>';
 		}
 	} else {
-		if (lv == 9 || (lv == 5 && $("#hidTransferSearch").val() == "9")) {
-			out += '<button type="button" id="btnLv1" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="refresh()"><strong>' + btnValue + '</strong></button>';
-			out += '<input type="hidden" id="hidStationId" value="' + key + '">';
-		} else if (lv == 4 && $("#hidTransferSearch").val() == "9") {
+		if (lv == 4 && $("#hidTransferSearch").val() == "9") {
+			// 乗換モードの場合
 			out += '<div class="col-md-3"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
 			out += '<div class="col-md-3">';
 			out += '<button type="button" id="btnLv2" class="btn btn-secondary btn-info btn-block" onclick="main(' + $("#hidPrefCd" + key).val() + ', 2, this)"><strong>' + $("#hidPrefName" + key).val() + '<strong></button>';
@@ -357,7 +352,9 @@ var createList = function(json, key, lv) {
 			out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + mark + '</span>' + spanBadge + '</a>';
 		}
 	}
-	out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-danger btn-block" onclick="createEntryForm()"><strong>追加</strong></button>';
+	if (lv == 4) {
+		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-danger btn-block" onclick="createEntryForm()"><strong>追加</strong></button>';
+	}
 	console.log("createList end!")
 	return out;
 }
