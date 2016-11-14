@@ -242,8 +242,24 @@ var createBtn = function(key, lv, obj) {
 	} else {
 		if (lv == 9 || (lv == 5 && $("#hidTransferSearch").val() == "9")) {
 			out += '<button type="button" id="btnLv1" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="refresh()"><strong>' + btnValue + '</strong></button>';
-			out += '<input type="hidden" id="hidTransferSearch" value="9">';
 			out += '<input type="hidden" id="hidStationId" value="' + key + '">';
+		} else if (lv == 4 && $("#hidTransferSearch").val() == "9") {
+			out += '<div class="col-md-3"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
+			out += '<div class="col-md-3">';
+			out += '<button type="button" id="btnLv2" class="btn btn-secondary btn-info btn-block" onclick="main(' + $("#hidPrefCd" + key).val() + ', 2, this)"><strong>' + $("#hidPrefName" + key).val() + '<strong></button>';
+			out += '<input type="hidden" id="hidKey2" value=' + $("#hidPrefCd" + key).val() + '>';
+			out += '<input type="hidden" id="hidLv2" value=2>';
+			out += '</div>';
+			out += '<div class="col-md-3">';
+			out += '<button type="button" id="btnLv3" class="btn btn-secondary btn-info btn-block" onclick="main(' + $("#hidLineCd" + key).val() + ', 3, this)"><strong>' + $("#hidLineName" + key).val() + '<strong></button>';
+			out += '<input type="hidden" id="hidKey3" value=' + $("#hidLineCd" + key).val() + '>';
+			out += '<input type="hidden" id="hidLv3" value=3>';
+			out += '</div>';
+			out += '<div class="col-md-3">';
+			out += '<button type="button" id="btnLv4" class="btn btn-secondary btn-info btn-block" onclick="main(' + $("#hidStationCd" + key).val() + ', 4, this)"><strong>' + $("#hidStationName" + key).val() + '<strong></button>';
+			out += '<input type="hidden" id="hidKey4" value=' + $("#hidStationCd" + key).val() + '>';
+			out += '<input type="hidden" id="hidLv4" value=4>';
+			out += '</div>';
 		} else {
 			var colSize   = 12 / lv;
 			var btnKey    = null;
@@ -313,14 +329,15 @@ var createList = function(json, key, lv) {
 			}
 		}
 		if ($("#hidTransferSearch").val() == "9") {
-			out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">' + $("#hidLineName" + key).val() + "&nbsp;<strong>" + $("#hidStationName" + key).val() + '</strong></button>';
+			out += '<input type="hidden" id="hidPrefName' + key + '" value="' + $("#hidPrefName" + key).val() + '">';
+			out += '<input type="hidden" id="hidPrefCd' + key + '" value="' + $("#hidPrefCd" + key).val() + '">';
 			out += '<input type="hidden" id="hidLineName' + key + '" value="' + $("#hidLineName" + key).val() + '">';
+			out += '<input type="hidden" id="hidLineCd' + key + '" value="' + $("#hidLineCd" + key).val() + '">';
 			out += '<input type="hidden" id="hidStationName' + key + '" value="' + $("#hidStationName" + key).val() + '">';
 			out += '<input type="hidden" id="hidStationId' + key + '" value="' + key + '">';
 		}
 	}
 	for (var x in json) {
-		//console.log(json[x]);
 		var cnt = countData(json[x].key, lv);
 		var spanBadge = "";
 		if (cnt > 0) {
@@ -340,9 +357,7 @@ var createList = function(json, key, lv) {
 			out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + mark + '</span>' + spanBadge + '</a>';
 		}
 	}
-	if (lv == 4 && $("#hidTransferSearch").val() != "9") {
-		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-danger btn-block" onclick="createEntryForm()"><strong>追加</strong></button>';
-	}
+	out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-danger btn-block" onclick="createEntryForm()"><strong>追加</strong></button>';
 	console.log("createList end!")
 	return out;
 }
@@ -815,6 +830,7 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 				var dstStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].dst_station.station_name);
 				var isHit = false;
 				out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">' + line[0].line_name + '</button>';
+				out += '<input type="hidden" id="hidTransferSearch" value="9">';
 				if (Number(srcStation[0].station_cd) > Number(dstStation[0].station_cd)) {
 					// 出発駅コードが到着駅コードより大きい場合、降順に処理する。
 					stationList = stationList.reverse();
@@ -834,10 +850,15 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 						mark = "<strong>*</strong>";
 					}
 					if (isHit) {
-						out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + stationList[y].station_cd + ', 9, this)">';
-						out += '<span style="font-weight: bold;" id="' + stationList[y].station_cd + '">' + stationList[y].station_name + mark + '</span>'
+						var pref = getPref(stationList[y].pref_cd, "pref_cd");
+						out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + stationList[y].station_cd + ', 4, this)">';
+						out += '<span style="font-weight: bold;" id="' + stationList[y].station_cd + '">' + stationList[y].station_name + mark + '</span>';
+						out += '<input type="hidden" id="hidPrefName' + stationList[y].station_cd + '" value="' + pref[0].value + '">';
+						out += '<input type="hidden" id="hidPrefCd' + stationList[y].station_cd + '" value="' + pref[0].key + '">';
 						out += '<input type="hidden" id="hidLineName' + stationList[y].station_cd + '" value="' + line[0].line_name + '">';
+						out += '<input type="hidden" id="hidLineCd' + stationList[y].station_cd + '" value="' + line[0].line_cd + '">';
 						out += '<input type="hidden" id="hidStationName' + stationList[y].station_cd + '" value="' + stationList[y].station_name + '">';
+						out += '<input type="hidden" id="hidStationCd' + stationList[y].station_cd + '" value="' + stationList[y].station_cd + '">';
 						out += spanBadge + '</a>';
 					}
 					if (stationList[y].station_cd == dstStation[0].station_cd) {
@@ -867,7 +888,7 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
  * @return 駅データ
  */
 var getStation = function(key, targetCol) {
-	var filterStationJson = $.grep(stationJson, function(elem) {
+	var filterJson = $.grep(stationJson, function(elem) {
 		if (targetCol == "station_cd") {
 			return elem.station_cd == key;
 		}
@@ -878,7 +899,7 @@ var getStation = function(key, targetCol) {
 			return elem.line_cd == key;
 		}
 	});
-	return filterStationJson;
+	return filterJson;
 }
 
 /**
@@ -889,10 +910,10 @@ var getStation = function(key, targetCol) {
  * @return 駅データ
  */
 var getUniqueStation = function(lineCd, stationName) {
-	var filterStationJson = $.grep(stationJson, function(elem) {
+	var filterJson = $.grep(stationJson, function(elem) {
 		return elem.line_cd == lineCd && elem.station_name == stationName;
 	});
-	return filterStationJson;
+	return filterJson;
 }
 
 /**
@@ -903,7 +924,7 @@ var getUniqueStation = function(lineCd, stationName) {
  * @return value値
  */
 var getLine = function(key, targetCol) {
-	var filterLineJson = $.grep(lineJson, function(elem) {
+	var filterJson = $.grep(lineJson, function(elem) {
 		if (targetCol == "line_cd") {
 			return elem.line_cd == key;
 		}
@@ -911,7 +932,23 @@ var getLine = function(key, targetCol) {
 			return elem.line_name == key;
 		}
 	});
-	return filterLineJson;
+	return filterJson;
+}
+
+/**
+ * 都道府県データを取得する
+ *
+ * @parme key 検索キー
+ * @parme targetCol 検索対象カラム
+ * @return value値
+ */
+var getPref = function(key, targetCol) {
+	var filterJson = $.grep(prefecturesJson, function(elem) {
+		if (targetCol == "pref_cd") {
+			return elem.key == key;
+		}
+	});
+	return filterJson;
 }
 
 /**
