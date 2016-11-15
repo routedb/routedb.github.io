@@ -234,19 +234,25 @@ var createBtn = function(key, lv, obj) {
 	var btnStatus = "info";
 	if (lv > 9) {
 		if (lv == 101) {
-			out += '<div class="col-md-4"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
+			out += '<div class="col-md-4"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()">';
+			out += '<span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button>';
+			out += '<input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
 			out += '<div class="col-md-4">';
-			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-info btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
+			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-info btn-block" onclick="main(null, 10, null)">';
+			out += '<strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
 			out += '</div>';
 			out += '<div class="col-md-4">';
 			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block"><strong>' + obj.childNodes[0].innerHTML + '</strong></button>';
 			out += '</div>';
 		}
 		else {
-			out += '<div class="col-md-6"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
+			out += '<div class="col-md-6"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()">';
+			out += '<span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button>';
+			out += '<input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
 			out += '<div class="col-md-6">';
 			if (lv == 10) {
-				out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
+				out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(null, 10, null)">';
+				out += '<strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
 			}
 			else {
 				out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)">' + obj.innerHTML + '</button>';
@@ -257,7 +263,9 @@ var createBtn = function(key, lv, obj) {
 	else {
 		if (lv == 4 && $("#hidTransferSearch").val() == "9") {
 			// 乗換モードの場合
-			out += '<div class="col-md-3"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
+			out += '<div class="col-md-3"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()">';
+			out += '<span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span>';
+			out += '</button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
 			out += '<div class="col-md-3">';
 			out += '<button type="button" id="btnLv2" class="btn btn-secondary btn-info btn-block" onclick="main(' + $("#hidPrefCd" + key).val() + ', 2, this)"><strong>' + $("#hidPrefName" + key).val() + '<strong></button>';
 			out += '<input type="hidden" id="hidKey2" value=' + $("#hidPrefCd" + key).val() + '>';
@@ -433,7 +441,8 @@ var getGroupCode = function(stationCode) {
  */
 var createInfo = function(json, key, lv) {
 	if ($("#hidTransferSearch").val() == "9") {
-		out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">' + $("#hidLineName" + $("#hidStationId").val()).val() + "&nbsp;<strong>" + $("#hidStationName" + $("#hidStationId").val()).val() + '</strong></button>';
+		out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">'; 
+		out += $("#hidLineName" + $("#hidStationId").val()).val() + "&nbsp;<strong>" + $("#hidStationName" + $("#hidStationId").val()).val() + '</strong></button>';
 	}
 	var out = '<table class="table table-bordered">';
 	for (var x in json) {
