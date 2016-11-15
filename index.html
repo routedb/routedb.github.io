@@ -19,6 +19,23 @@
       <div class="container-fluid">
         <div class="row" id="btnList" style="padding-top:5px;">
         </div>
+        <div class="row" id="transferSearch" style="padding-top:5px;display:none;">
+          <div class="col-md-4">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon3">出発</span>
+              <input type="text" class="form-control" id="departFrom">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon3">到着</span>
+              <input type="text" class="form-control" id="arrivalAt">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <button type="button" id="btnTransferSearch" class="btn btn-secondary btn-info btn-block"><strong>簡易乗換検索(首都圏)</strong></button>
+          </div>
+        </div>
         <div class="row">
           <div class="col-md-12">
             <div class="list-group rowcontent" id="listMain" style="padding-top:5px;overflow: auto;height: 100%;max-height: 80%;">
@@ -207,7 +224,20 @@
 
       ga('create', 'UA-84217593-1', 'auto');
       ga('send', 'pageview');
-    
     </script>
+  	<div aria-hidden="true" class="modal fade bs-example-modal-sm" data-backdrop="static" id="myPleaseWait" role="dialog" tabindex="-1">
+  		<div class="modal-dialog modal-sm">
+  			<div class="modal-content">
+  				<div class="modal-header">
+  					<h4 class="modal-title">検索中</h4>
+  				</div>
+  				<div class="modal-body">
+  					<div class="progress">
+  						<div class="progress-bar progress-bar-info progress-bar-striped active" style="width: 100%"></div>
+  					</div>
+  				</div>
+  			</div>
+  		</div>
+  	</div>
     </body>
 </html>

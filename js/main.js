@@ -1,9 +1,10 @@
+var transferSearchResult;
 var separator = /\s+/;
 var regTabelog = new RegExp("tabelog");
 var regTwitter = new RegExp("twitter");
 var regFacebook = new RegExp("facebook");
 var regWikipedia = new RegExp("wikipedia");
-var prefecturesJson, lineJson, stationJson, shopJson;
+var configJson, prefecturesJson, lineJson, stationJson, shopJson;
 var refresh = function() {
 	location.reload();
 }
@@ -11,6 +12,10 @@ $(function() {
 	// 非同期処理解除
 	$.ajaxSetup({
 		async: false
+	});
+	// 設定を取得
+	$.getJSON("conf/config.json", function(results) {
+		configJson = results;
 	});
 	// データを取得
 	$.getJSON("data/data.json", function(results) {
@@ -25,6 +30,10 @@ $(function() {
 	});
 	// 初期表示
 	main(null, 1, null);
+	// 乗換検索押下イベント
+	$("#btnTransferSearch").click(function() {
+		transferSearch();
+	});
 	// フッタータイトル押下イベント
 	$("#navBrand").click(function() {
 		refresh();
@@ -50,20 +59,36 @@ $(function() {
 		main(null, 99, this);
 	});
 	// フッターイベント
-    $(".navbar-nav li a").click(function(event) {
-    	$(".navbar-collapse").collapse('hide');
-    });
+	$(".navbar-nav li a").click(function(event) {
+		$(".navbar-collapse").collapse('hide');
+	});
 });
 
 /**
  * 主処理
  *
  * @parme key キー値
- * @parme lv  階層レベル
+ * @parme lv  画面レベル
+ *            1:都道府県い
+ *            2:路線
+ *            3:駅
+ *            4:店舗
+ *            5:店舗詳細
+ *            9:乗り換え検索
+ *           10:検索
+ *           11:路線データベースについて
+ *           12:利用規約
+ *           13:プライバシーポリシー
+ *           99:お問合せ
+ *          101:店舗詳細(検索)
  * @parme obj ターゲット要素
  */
 var main = function(key, lv, obj) {
 	console.log("main start!");
+	if (lv == 4 && $("#hidTransferSearch").val() == "9") {
+		// 乗換モードの場合は検索結果を保持
+		transferSearchResult = $("#transferSearchResults").html();
+	}
 	// ボタン生成
 	$("#btnList").html(createBtn(key, lv, obj));
 	// コンテンツ初期化
@@ -71,25 +96,30 @@ var main = function(key, lv, obj) {
 	// リスト出力用json文字列
 	var resultJson = "";
 	if (lv > 9) {
-		// 階層レベルが2桁の場合は、フッター処理
+		$("#transferSearch").css("display", "none");
+		// 画面レベルが2桁の場合は、フッター処理
 		if (lv == 10) {
 			// 検索ボタン押下
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(searchJson($("#keyword").val()), key, lv));
-		} else if (lv == 101) {
+		}
+		else if (lv == 101) {
 			// 検索結果リスト押下
 			$("#shopInfo").css("display", "block");
 			$("#shopInfo").html(createInfo(shopJson, key, lv));
 			new google.maps.Geocoder().geocode({
 				'address': $("#streetAddress").text()
 			}, callbackRender);
-		} else if (lv == 11) {
+		}
+		else if (lv == 11) {
 			// 路線データベースについて押下
 			$("#about").css("display", "block");
-		} else if (lv == 12) {
+		}
+		else if (lv == 12) {
 			// 利用規約押下
 			$("#termsofuse").css("display", "block");
-		} else if (lv == 13) {
+		}
+		else if (lv == 13) {
 			// プライバシーポリシー押下
 			$("#privacy").css("display", "block");
 			var tagsList = [];
@@ -99,23 +129,28 @@ var main = function(key, lv, obj) {
 					tagsList.push(arrtags[y]);
 				}
 			}
-			var uniquetags = tagsList.filter(function (x, i, self) {
-	            return self.indexOf(x) === i;
-	        });
+			var uniquetags = tagsList.filter(function(x, i, self) {
+				return self.indexOf(x) === i;
+			});
 			for (var x in uniquetags) {
 				console.log("#" + uniquetags[x]);
 			}
-		} else if (lv == 99) {
+		}
+		else if (lv == 99) {
 			// お問合せ押下
 			$("#contactForm").css("display", "block");
 		}
-	} else {
-		// 階層レベルが2桁の場合は、コンテンツ処理
+	}
+	else {
+		// 画面レベルが1桁の場合は、コンテンツ処理
 		if (lv == 1) {
+			$("#transferSearch").css("display", "block");
 			// 都道府県リスト生成
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(prefecturesJson, key, lv));
-		} else if (lv == 2 || lv == 3) {
+		}
+		else if (lv == 2 || lv == 3) {
+			$("#transferSearch").css("display", "block");
 			// 路線リストまたは駅リスト生成
 			$("#listMain").css("display", "block");
 			// 路線または駅データ格納用オブジェクト
@@ -146,7 +181,8 @@ var main = function(key, lv, obj) {
 				for (x = 0; x < filterData.length; x++) {
 					resultJson += '{"key":"' + filterData[x][0].line_cd + '","levels":"3","value":"' + filterData[x][0].line_name + '"},';
 				}
-			} else if (lv == 3) {
+			}
+			else if (lv == 3) {
 				// 駅情報を取得
 				filterData = $.grep(stationJson, function(elem) {
 					return elem.line_cd == key;
@@ -159,14 +195,22 @@ var main = function(key, lv, obj) {
 			resultJson += ']';
 			// リスト出力
 			$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
-		} else if (lv == 4) {
+		}
+		else if (lv == 4 || lv == 9) {
+			// 画面レベル9から来た場合は4で上書き
+			lv = 4;
+			$("#transferSearch").css("display", "block");
 			// 店舗リスト生成
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(shopJson, key, lv));
-		} else if (lv == 5) {
+		}
+		else if (lv == 5) {
+			$("#transferSearch").css("display", "none");
 			// 店舗詳細生成
 			$("#shopInfo").css("display", "block");
+			$("#listMain").css("display", "block");
 			$("#shopInfo").html(createInfo(shopJson, key, lv));
+			$("#listMain").css("display", "none");
 			new google.maps.Geocoder().geocode({
 				'address': $("#streetAddress").text()
 			}, callbackRender);
@@ -180,72 +224,107 @@ var main = function(key, lv, obj) {
  * ボタン生成処理
  *
  * @parme key キー値
- * @parme lv  階層レベル
+ * @parme lv  画面レベル
  * @parme obj ターゲット要素
  * @return out ボタン用HTML文字列
  */
 var createBtn = function(key, lv, obj) {
-	var out       = "";
-	var btnValue  = '<span style="font-weight: bold;" id="list' + key + '">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span>';
+	var out = "";
+	var btnValue = '<span style="font-weight: bold;" id="list' + key + '">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span>';
 	var btnStatus = "info";
 	if (lv > 9) {
 		if (lv == 101) {
-			out += '<div class="col-md-4"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
+			out += '<div class="col-md-4"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()">';
+			out += '<span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button>';
+			out += '<input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
 			out += '<div class="col-md-4">';
-			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-info btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
+			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-info btn-block" onclick="main(null, 10, null)">';
+			out += '<strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
 			out += '</div>';
 			out += '<div class="col-md-4">';
-			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block"><strong>' +  obj.childNodes[0].innerHTML + '</strong></button>';
+			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block"><strong>' + obj.childNodes[0].innerHTML + '</strong></button>';
 			out += '</div>';
-		} else {
-			out += '<div class="col-md-6"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
+		}
+		else {
+			out += '<div class="col-md-6"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()">';
+			out += '<span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button>';
+			out += '<input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
 			out += '<div class="col-md-6">';
 			if (lv == 10) {
-				out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
-			} else {
+				out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(null, 10, null)">';
+				out += '<strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
+			}
+			else {
 				out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)">' + obj.innerHTML + '</button>';
 			}
 			out += '</div>';
 		}
-	} else {
-		var colSize   = 12 / lv;
-		var btnKey    = null;
-		var btnLv     = 1;
-		for (var x = 1; x <= lv; x++) {
-			if (x == lv) {
-				if (obj != null) {
-					if (obj.type == "button") {
-						btnValue  = obj.innerHTML;
-					} else {
-						btnValue  = $("#list" + key).html();
-						if ($("#badge" + key).length) {
-							btnValue  +=  '&nbsp;</span><span class="badge badge-info">' + $("#badge" + key).html() + '</span>';
+	}
+	else {
+		if (lv == 4 && $("#hidTransferSearch").val() == "9") {
+			// 乗換モードの場合
+			out += '<div class="col-md-3"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()">';
+			out += '<span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span>';
+			out += '</button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
+			out += '<div class="col-md-3">';
+			out += '<button type="button" id="btnLv2" class="btn btn-secondary btn-info btn-block" onclick="main(' + $("#hidPrefCd" + key).val() + ', 2, this)"><strong>' + $("#hidPrefName" + key).val() + '<strong></button>';
+			out += '<input type="hidden" id="hidKey2" value=' + $("#hidPrefCd" + key).val() + '>';
+			out += '<input type="hidden" id="hidLv2" value=2>';
+			out += '</div>';
+			out += '<div class="col-md-3">';
+			out += '<button type="button" id="btnLv3" class="btn btn-secondary btn-info btn-block" onclick="main(' + $("#hidLineCd" + key).val() + ', 3, this)"><strong>' + $("#hidLineName" + key).val() + '<strong></button>';
+			out += '<input type="hidden" id="hidKey3" value=' + $("#hidLineCd" + key).val() + '>';
+			out += '<input type="hidden" id="hidLv3" value=3>';
+			out += '</div>';
+			out += '<div class="col-md-3">';
+			out += '<button type="button" id="btnLv4" class="btn btn-secondary btn-info btn-block" onclick="main(' + $("#hidStationCd" + key).val() + ', 4, this)"><strong>' + $("#hidStationName" + key).val() + '<strong></button>';
+			out += '<input type="hidden" id="hidKey4" value=' + $("#hidStationCd" + key).val() + '>';
+			out += '<input type="hidden" id="hidLv4" value=4>';
+			out += '</div>';
+		}
+		else {
+			var colSize = 12 / lv;
+			var btnKey = null;
+			var btnLv = 1;
+			for (var x = 1; x <= lv; x++) {
+				if (x == lv) {
+					if (obj != null) {
+						if (obj.type == "button") {
+							btnValue = obj.innerHTML;
+						}
+						else {
+							btnValue = $("#list" + key).html();
+							if ($("#badge" + key).length) {
+								btnValue += '&nbsp;</span><span class="badge badge-info">' + $("#badge" + key).html() + '</span>';
+							}
+						}
+						btnKey = key;
+						btnLv = lv;
+						if (lv == 5) {
+							colSize = 4;
 						}
 					}
-					btnKey = key;
-					btnLv  = lv;
+					btnStatus = "primary"
+				}
+				else {
+					btnValue = $("#btnLv" + x).html();
+					btnKey = $("#hidKey" + x).val();
+					btnLv = $("#hidLv" + x).val();
 					if (lv == 5) {
-						colSize = 4;
+						colSize = 2;
 					}
 				}
-				btnStatus = "primary"
-			} else {
-				btnValue = $("#btnLv" + x).html();
-				btnKey   = $("#hidKey" + x).val();
-				btnLv    = $("#hidLv" + x).val();
-				if (lv == 5) {
-					colSize = 2	;
+				out += '<div class="col-md-' + colSize + '">';
+				if (lv == 1) {
+					out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="refresh()"><strong>' + btnValue + '</strong></button>';
 				}
+				else {
+					out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)"><strong>' + btnValue + '</strong></button>';
+				}
+				out += '<input type="hidden" id="hidKey' + x + '" value=' + btnKey + '>';
+				out += '<input type="hidden" id="hidLv' + x + '" value=' + btnLv + '>';
+				out += '</div>';
 			}
-			out += '<div class="col-md-' + colSize + '">';
-			if (lv == 1) {
-				out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="refresh()"><strong>' + btnValue + '</strong></button>';
-			} else {
-				out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)"><strong>' + btnValue + '</strong></button>';
-			}
-			out += '<input type="hidden" id="hidKey' + x + '" value=' + btnKey + '>';
-			out += '<input type="hidden" id="hidLv' + x + '" value=' + btnLv + '>';
-			out += '</div>';
 		}
 	}
 	return out;
@@ -256,17 +335,34 @@ var createBtn = function(key, lv, obj) {
  *
  * @parme json jsonデータ
  * @parme key キー値
- * @parme lv  階層レベル
+ * @parme lv  画面レベル
  * @return out リスト用HTML文字列
  */
 var createList = function(json, key, lv) {
 	var out = "";
 	console.log("createList start!");
 	if (lv == 4) {
-		out += createJoinLineList(key);
+		var lineCdList = createJoinLineList(key);
+		for (var x in lineCdList) {
+			if (lineCdList[x].length > 0) {
+				var badge = "";
+				var cnt = countData(lineCdList[x][0].line_cd, 2);
+				if (cnt != 0) {
+					badge = '&nbsp;<span class="badge badge-info">' + cnt + '</span>'
+				}
+				out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="main(' + lineCdList[x][0].line_cd + ', 3, this)"><strong>' + lineCdList[x][0].line_name + badge + '</strong></button>';
+			}
+		}
+		if ($("#hidTransferSearch").val() == "9") {
+			out += '<input type="hidden" id="hidPrefName' + key + '" value="' + $("#hidPrefName" + key).val() + '">';
+			out += '<input type="hidden" id="hidPrefCd' + key + '" value="' + $("#hidPrefCd" + key).val() + '">';
+			out += '<input type="hidden" id="hidLineName' + key + '" value="' + $("#hidLineName" + key).val() + '">';
+			out += '<input type="hidden" id="hidLineCd' + key + '" value="' + $("#hidLineCd" + key).val() + '">';
+			out += '<input type="hidden" id="hidStationName' + key + '" value="' + $("#hidStationName" + key).val() + '">';
+			out += '<input type="hidden" id="hidStationId' + key + '" value="' + key + '">';
+		}
 	}
 	for (var x in json) {
-		//console.log(json[x]);
 		var cnt = countData(json[x].key, lv);
 		var spanBadge = "";
 		if (cnt > 0) {
@@ -276,9 +372,11 @@ var createList = function(json, key, lv) {
 			if (json[x].stationCode == key) {
 				out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '</span><span class="label label-success" style="padding:.3em .6em .2em;float: right;font-size: 85%;">' + json[x].tags + '</span></a>';
 			}
-		} else if (lv == 10) {
+		}
+		else if (lv == 10) {
 			out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', 101, this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '</span><span class="label label-success" style="padding:.3em .6em .2em;float: right;font-size: 85%;">' + json[x].tags + '</span></a>';
-		} else {
+		}
+		else {
 			var mark = "";
 			if (lv == 3 && createJoinLineList(json[x].key) != "") {
 				mark = "<strong>*</strong>";
@@ -288,6 +386,10 @@ var createList = function(json, key, lv) {
 	}
 	if (lv == 4) {
 		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-danger btn-block" onclick="createEntryForm()"><strong>追加</strong></button>';
+		if ($("#hidTransferSearch").val() == "9") {
+			// 乗換モードの場合、検索結果を表示
+			out += '<div id="transferSearchResults" style="padding-top:5px;">' + transferSearchResult + '</div>';
+		}
 	}
 	console.log("createList end!")
 	return out;
@@ -300,11 +402,9 @@ var createList = function(json, key, lv) {
  * @return out 乗換情報用HTML文字列
  */
 var createJoinLineList = function(stationCode) {
-	var out = "";
 	var groupCode = getGroupCode(stationCode);
-	var joinLineList = [];
 	// 駅情報から駅グループコードで乗換路線情報を取得
-	joinLineList = $.grep(stationJson, function(elem) {
+	var joinLineList = $.grep(stationJson, function(elem) {
 		return elem.station_g_cd == groupCode;
 	});
 	var lineCdList = [];
@@ -315,17 +415,7 @@ var createJoinLineList = function(stationCode) {
 		});
 		lineCdList.push(temp);
 	}
-	for (var x in lineCdList) {
-		if (lineCdList[x].length > 0) {
-			var badge = "";
-			var cnt = countData(lineCdList[x][0].line_cd, 2);
-			if (cnt != 0) {
-				badge = '&nbsp;<span class="badge badge-info">' + cnt + '</span>'
-			}
-			out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="main(' + lineCdList[x][0].line_cd + ', 3, this)"><strong>' + lineCdList[x][0].line_name + badge +'</strong></button>';
-		}
-	}
-	return out;
+	return lineCdList;
 }
 
 /**
@@ -346,10 +436,14 @@ var getGroupCode = function(stationCode) {
  *
  * @parme json jsonデータ
  * @parme key キー値
- * @parme lv  階層レベル
+ * @parme lv  画面レベル
  * @return out 店舗詳細用HTML文字列
  */
 var createInfo = function(json, key, lv) {
+	if ($("#hidTransferSearch").val() == "9") {
+		out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">'; 
+		out += $("#hidLineName" + $("#hidStationId").val()).val() + "&nbsp;<strong>" + $("#hidStationName" + $("#hidStationId").val()).val() + '</strong></button>';
+	}
 	var out = '<table class="table table-bordered">';
 	for (var x in json) {
 		if (json[x].key == key) {
@@ -373,7 +467,7 @@ var createInfo = function(json, key, lv) {
  * パッチ用カウント処理
  *
  * @parme key キー値
- * @parme lv  階層レベル
+ * @parme lv  画面レベル
  * @return cnt パッチ用件数
  */
 var countData = function(key, lv) {
@@ -383,11 +477,13 @@ var countData = function(key, lv) {
 			if (shopJson[x].prefecturesCode == key) {
 				cnt++;
 			}
-		} else if (lv == 2) {
+		}
+		else if (lv == 2) {
 			if (shopJson[x].lineCode == key) {
 				cnt++;
 			}
-		} else if (lv == 3) {
+		}
+		else if (lv == 3) {
 			if (shopJson[x].stationCode == key) {
 				cnt++;
 			}
@@ -400,7 +496,7 @@ var countData = function(key, lv) {
  * 登録フォーム生成処理
  *
  * @parme key キー値
- * @parme lv  階層レベル
+ * @parme lv  画面レベル
  */
 var createEntryForm = function() {
 	var key = createKey();
@@ -462,7 +558,8 @@ var checkEntryForm = function() {
 	for (var x = 0; x < form.length; x++) {
 		if (!form[x].value && form[x].required) {
 			errMsg += '<strong>' + $("#lbl" + form[x].id).html() + '</strong>が入力されていません。<br>';
-		} else {
+		}
+		else {
 			successJson += '"' + form[x].id + '":"' + form[x].value.replace(/\r?\n/g, '<br>') + '",'
 		}
 	}
@@ -472,7 +569,8 @@ var checkEntryForm = function() {
 	if (!errMsg) {
 		$("#errorEntryMsg").css("display", "none");
 		$("#entryForm").html(createEntryConfirm($.parseJSON(successJson)));
-	} else {
+	}
+	else {
 		$("#errorEntryMsg").html(errMsg);
 		$("#errorEntryMsg").css("display", "block");
 	}
@@ -485,7 +583,7 @@ var checkEntryForm = function() {
  * @return out 確認画面用HTML文字列
  */
 var createEntryConfirm = function(json) {
-	var out  = '<table class="table table-bordered">';
+	var out = '<table class="table table-bordered">';
 	out += '<tr><th>カテゴリー</th><td>' + json.tags + '</td></tr>';
 	out += '<tr><th>名前</th><td>' + json.value + '</td></tr>';
 	out += '<tr><th>住所</th><td><span id="streetAddress">' + json.streetAddress + '</span><br><div id="map-canvas"><div/></td></tr>';
@@ -509,17 +607,16 @@ var createEntryConfirm = function(json) {
 var sendEntryForm = function() {
 	var out = "";
 	var strJson = decodeURIComponent($("#hidEntryJson").val()) + ",";
-	var requestURL = 'https://hooks.slack.com/services/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';
-    var request = $.ajax({
-    	url: requestURL,
-    	type: 'post',
-    	data: 'payload=' + JSON.stringify({
-    		"channel": "#routedb-entry",
-    		"username": "routedb.github.io",
-    		"text": strJson
-    	})
-    });
-    request.done(function(data) {
+	var request = $.ajax({
+		url: configJson.slackHookEntryURL,
+		type: 'post',
+		data: 'payload=' + JSON.stringify({
+			"channel": "#routedb-entry",
+			"username": "routedb.github.io",
+			"text": strJson
+		})
+	});
+	request.done(function(data) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのご登録ありがとうございました。</h3></div><div class="panel-body">ご登録いただいた店舗データについて内容を精査するため反映までに最大1週間ほどかかります。<br>1週間以上反映が無い場合、内容に不備があったものとしてお手数ですが再度ご登録お願いします。</div></div>';
 		$("#entryForm").html(out);
 		console.log("Request done.");
@@ -543,7 +640,8 @@ var checkContactForm = function() {
 	for (var x = 0; x < form.length; x++) {
 		if (!form[x].value) {
 			errMsg += '<strong>' + $("#lbl" + form[x].id).html() + '</strong>が入力されていません。<br>';
-		} else {
+		}
+		else {
 			successJson += '"' + form[x].id + '":"' + form[x].value.replace(/\r?\n/g, '<br>') + '",'
 		}
 	}
@@ -553,7 +651,8 @@ var checkContactForm = function() {
 	if (!errMsg) {
 		$("#errorContactMsg").css("display", "none");
 		$("#contactForm").html(createContactConfirm($.parseJSON(successJson)));
-	} else {
+	}
+	else {
 		$("#errorContactMsg").html(errMsg);
 		$("#errorContactMsg").css("display", "block");
 	}
@@ -567,7 +666,7 @@ var checkContactForm = function() {
  * @return out 確認画面用HTML文字列
  */
 var createContactConfirm = function(json) {
-	var out  = '<table class="table table-bordered">';
+	var out = '<table class="table table-bordered">';
 	out += '<tr><th>メールアドレス</th><td>' + json.mail + '</td></tr>';
 	out += '<tr><th>問合せ内容</th><td>' + json.mailbody + '</td></tr>';
 	out += '</table>';
@@ -582,17 +681,16 @@ var createContactConfirm = function(json) {
 var sendContactForm = function() {
 	var out = "";
 	var strJson = decodeURIComponent($("#hidContactJson").val());
-	var requestURL = 'https://hooks.slack.com/services/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';
-    var request = $.ajax({
-    	url: requestURL,
-    	type: 'post',
-    	data: 'payload=' + JSON.stringify({
-    		"channel": "#routedb-contact",
-    		"username": "routedb.github.io",
-    		"text": strJson
-    	})
-    });
-    request.done(function(data) {
+	var request = $.ajax({
+		url: configJson.slackHookContactURL,
+		type: 'post',
+		data: 'payload=' + JSON.stringify({
+			"channel": "#routedb-contact",
+			"username": "routedb.github.io",
+			"text": strJson
+		})
+	});
+	request.done(function(data) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのお問合せありがとうございました。</h3></div><div class="panel-body">お問合せいただいた内容について返信までに最大1週間ほどかかります。<br>何卒、ご了承いただきますようお願いします。</div></div>';
 		$("#contactForm").html(out);
 		console.log("Request done.");
@@ -613,7 +711,7 @@ var sendContactForm = function() {
 var formattertags = function(tags) {
 	var out = "";
 	var arrtags = tags.split(separator);
-  for (var x in arrtags) {
+	for (var x in arrtags) {
 		out += '<a href="javascript:void(0)" target="_blank" class="btn btn-success btn-sm active"><strong>' + arrtags[x] + '</strong></a>';
 	}
 	return out;
@@ -631,13 +729,17 @@ var formatterLink = function(externalLink) {
 	for (var x = 0; x < arrLink.length; x++) {
 		if (arrLink[x].match(regTabelog)) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>食べログ</strong></a>';
-		} else if (arrLink[x].match(regTwitter)) {
+		}
+		else if (arrLink[x].match(regTwitter)) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>twitter</strong></a>';
-		} else if (arrLink[x].match(regFacebook)) {
+		}
+		else if (arrLink[x].match(regFacebook)) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>facebook</strong></a>';
-		} else if (arrLink[x].match(regWikipedia)) {
+		}
+		else if (arrLink[x].match(regWikipedia)) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>wikipedia</strong></a>';
-		} else if (externalLink.length != 0) {
+		}
+		else if (externalLink.length != 0) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>HPまたは関連ページ</strong></a>';
 		}
 	}
@@ -662,7 +764,7 @@ var formatterStreetAddress = function(streetAddress) {
  * @return resultJson 検索結果格納済jsonオブジェクト
  */
 var searchJson = function(keyword) {
-  var out = "";
+	var out = "";
 	var resultJson = [];
 	for (var row in shopJson) {
 		if (andSearch(shopJson[row], keyword)) {
@@ -703,19 +805,207 @@ var andSearch = function(target, keyword) {
  */
 var getValue = function(target, key) {
 	var isLine = false;
-	filterData = $.grep(target, function(elem) {
+	var filterData = $.grep(target, function(elem) {
 		if (target.length == 617) {
 			isLine = true;
 			return elem.line_cd == key;
-		} else {
+		}
+		else {
 			return elem.station_cd == key;
 		}
 	});
 	if (isLine) {
 		return filterData[0].line_name;
-	} else {
+	}
+	else {
 		return filterData[0].station_name;
 	}
+}
+
+/**
+ * 乗換検索処理
+ */
+var transferSearch = function() {
+	initContents();
+	var required = true;
+	var errMsg = "";
+	if (!$("#departFrom").val()) {
+		errMsg += "出発駅を入力してください。<br>";
+		required = false;
+	}
+	if (!$("#arrivalAt").val()) {
+		errMsg += "到着駅を入力してください。<br>";
+		required = false;
+	}
+	if (required && $("#departFrom").val() == $("#arrivalAt").val()) {
+		errMsg += "出発駅と到着駅が同じです。<br>";
+	}
+	if (errMsg.length != 0) {
+		errMsg = '<div class="alert alert-danger" role="alert">' + errMsg + '</div>'
+		$("#listMain").html(errMsg);
+		$("#listMain").css("display", "block");
+	}
+	else {
+		$("#listMain").css("display", "block");
+		createTransferResult($("#departFrom").val(), $("#arrivalAt").val());
+	}
+};
+
+/**
+ * 乗換検索結果出力
+ *
+ * @parme targetDepartStation 出発駅画面入力値
+ * @parme targetArrivalStation 到着駅画面入力値
+ */
+var createTransferResult = function(targetDepartStation, targetArrivalStation) {
+	$('#myPleaseWait').modal('show');
+	var requestURL = "https://api.trip2.jp/ex/tokyo/v1.0/json?src=" + targetDepartStation + "&dst=" + targetArrivalStation + configJson.trip2ApiKey
+	var out = "";
+	var request = $.ajax({
+		url: requestURL,
+		type: "GET"
+	});
+	request.done(function(data) {
+		$('#myPleaseWait').modal('hide');
+		if (data.results.length != 0) {
+			$("#errorTransferMsg").css("display", "none");
+			var resultJson = $.parseJSON(data.results[0].replace(/<("[^"]*"|'[^']*'|[^'">])*>/g, ""));
+			out += '<div id="transferSearchResults"><div class="panel list-group">'
+			for (var x in resultJson.ways) {
+				var line = getLine(resultJson.ways[x].line.line_name, "line_name");
+				var stationList = getStation(line[0].line_cd, "line_cd");
+				var srcStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].src_station.station_name);
+				var dstStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].dst_station.station_name);
+				var isHit = false;
+				// リストヘッダ(路線名)を生成
+				out += '<a class="list-group-item list-group-item-success" data-parent="#transferSearchResults" data-target="#transfer' + x;
+				out += '" data-toggle="collapse" href="#"><input type="hidden" id="hidTransferSearch" value="9"><strong>' + line[0].line_name;
+				out += '(' + resultJson.ways[x].src_station.station_name + '～' + resultJson.ways[x].dst_station.station_name + ')</strong></a>';
+				out += '<div id="transfer' + x + '" class="sublinks collapse">';
+				if (Number(srcStation[0].station_cd) > Number(dstStation[0].station_cd)) {
+					// 出発駅コードが到着駅コードより大きい場合、降順に処理する。
+					stationList = stationList.reverse();
+				}
+				for (var y = 0; y < stationList.length; y++) {
+					if (stationList[y].station_cd == srcStation[0].station_cd) {
+						// 出発駅で出力開始
+						isHit = true;
+					}
+					var cnt = countData(stationList[y].station_cd, 3);
+					var spanBadge = "";
+					if (cnt > 0) {
+						spanBadge = '<span class="badge" style="background-color:#2e6da4;" id="badge' + stationList[y].station_cd + '">' + cnt + '</span>';
+					}
+					var mark = "";
+					if (createJoinLineList(stationList[y].station_cd) != "") {
+						// 乗換モード中は乗換マーク出さない
+						//mark = "<strong>*</strong>";
+					}
+					if (isHit) {
+						// 出力中
+						var pref = getPref(stationList[y].pref_cd, "pref_cd");
+						out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + stationList[y].station_cd + ', 4, this)">';
+						out += '<span style="font-weight: bold;" id="' + stationList[y].station_cd + '">' + stationList[y].station_name + mark + '</span>';
+						out += '<input type="hidden" id="hidPrefName' + stationList[y].station_cd + '" value="' + pref[0].value + '">';
+						out += '<input type="hidden" id="hidPrefCd' + stationList[y].station_cd + '" value="' + pref[0].key + '">';
+						out += '<input type="hidden" id="hidLineName' + stationList[y].station_cd + '" value="' + line[0].line_name + '">';
+						out += '<input type="hidden" id="hidLineCd' + stationList[y].station_cd + '" value="' + line[0].line_cd + '">';
+						out += '<input type="hidden" id="hidStationName' + stationList[y].station_cd + '" value="' + stationList[y].station_name + '">';
+						out += '<input type="hidden" id="hidStationCd' + stationList[y].station_cd + '" value="' + stationList[y].station_cd + '">';
+						out += spanBadge + '</a>';
+					}
+					if (stationList[y].station_cd == dstStation[0].station_cd) {
+						// 到着駅で出力終了
+						isHit = false;
+					}
+				}
+				out += '</div>';
+			}
+			out += '</div></div>'
+		}
+		else {
+			out += '<div class="alert alert-danger" role="alert" id="errorTransferMsg">検索に失敗しました。<br>※首都圏78の路線、1365の駅を登録しています。4回までの乗り換えに対応しています。</div>';
+		}
+		$("#listMain").html(out);
+		console.log("Request done.");
+	});
+	request.fail(function(jqXHR, textStatus) {
+		$('#myPleaseWait').modal('hide');
+		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">処理に失敗しました。</h3></div><div class="panel-body">お手数おかけしますがお問合せください。</div></div>';
+		$("#listMain").html(out);
+		console.log("Request failed: " + textStatus);
+	});
+};
+
+/**
+ * 駅データを取得する
+ *
+ * @parme key 検索キー
+ * @parme targetCol 検索対象カラム
+ * @return 駅データ
+ */
+var getStation = function(key, targetCol) {
+	var filterJson = $.grep(stationJson, function(elem) {
+		if (targetCol == "station_cd") {
+			return elem.station_cd == key;
+		}
+		if (targetCol == "station_name") {
+			return elem.station_name == key;
+		}
+		if (targetCol == "line_cd") {
+			return elem.line_cd == key;
+		}
+	});
+	return filterJson;
+}
+
+/**
+ * 一意な駅データを取得する
+ *
+ * @parme lineCd 路線コード
+ * @parme stationName 駅名
+ * @return 駅データ
+ */
+var getUniqueStation = function(lineCd, stationName) {
+	var filterJson = $.grep(stationJson, function(elem) {
+		return elem.line_cd == lineCd && elem.station_name == stationName;
+	});
+	return filterJson;
+}
+
+/**
+ * 路線データを取得する
+ *
+ * @parme key 検索キー
+ * @parme targetCol 検索対象カラム
+ * @return value値
+ */
+var getLine = function(key, targetCol) {
+	var filterJson = $.grep(lineJson, function(elem) {
+		if (targetCol == "line_cd") {
+			return elem.line_cd == key;
+		}
+		if (targetCol == "line_name") {
+			return elem.line_name == key;
+		}
+	});
+	return filterJson;
+}
+
+/**
+ * 都道府県データを取得する
+ *
+ * @parme key 検索キー
+ * @parme targetCol 検索対象カラム
+ * @return value値
+ */
+var getPref = function(key, targetCol) {
+	var filterJson = $.grep(prefecturesJson, function(elem) {
+		if (targetCol == "pref_cd") {
+			return elem.key == key;
+		}
+	});
+	return filterJson;
 }
 
 /**
