@@ -1,4 +1,4 @@
-var backup;
+var transferSearchResult;
 var separator = /\s+/;
 var regTabelog = new RegExp("tabelog");
 var regTwitter = new RegExp("twitter");
@@ -87,7 +87,7 @@ var main = function(key, lv, obj) {
 	console.log("main start!");
 	if (lv == 4 && $("#hidTransferSearch").val() == "9") {
 		// 乗換モードの場合は検索結果を保持
-		backup = $("#transferSearchResults").html();
+		transferSearchResult = $("#transferSearchResults").html();
 	}
 	// ボタン生成
 	$("#btnList").html(createBtn(key, lv, obj));
@@ -359,7 +359,10 @@ var createList = function(json, key, lv) {
 	}
 	if (lv == 4) {
 		out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-danger btn-block" onclick="createEntryForm()"><strong>追加</strong></button>';
-		out += '<div id="transferSearchResults">' + backup + '</div>';
+		if ($("#hidTransferSearch").val() == "9") {
+			// 乗換モードの場合、検索結果を表示
+			out += '<div id="transferSearchResults" style="padding-top:5px;">' + transferSearchResult + '</div>';
+		}
 	}
 	console.log("createList end!")
 	return out;
@@ -784,17 +787,17 @@ var getValue = function(target, key) {
  */
 var transferSearch = function() {
 	initContents();
-	var input = true;
+	var required = true;
 	var errMsg = "";
 	if (!$("#departFrom").val()) {
 		errMsg += "出発駅を入力してください。<br>";
-		input = false;
+		required = false;
 	}
 	if (!$("#arrivalAt").val()) {
 		errMsg += "到着駅を入力してください。<br>";
-		input = false;
+		required = false;
 	}
-	if (input && $("#departFrom").val() == $("#arrivalAt").val()) {
+	if (required && $("#departFrom").val() == $("#arrivalAt").val()) {
 		errMsg += "出発駅と到着駅が同じです。<br>";
 	}
 	if (errMsg.length != 0) {
@@ -833,6 +836,7 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 				var srcStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].src_station.station_name);
 				var dstStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].dst_station.station_name);
 				var isHit = false;
+				// リストヘッダ(路線名)を生成
 				out += '<a class="list-group-item list-group-item-success" data-parent="#transferSearchResults" data-target="#transfer' + x;
 				out += '" data-toggle="collapse" href="#"><input type="hidden" id="hidTransferSearch" value="9"><strong>' + line[0].line_name;
 				out += '(' + resultJson.ways[x].src_station.station_name + '～' + resultJson.ways[x].dst_station.station_name + ')</strong></a>';
@@ -843,7 +847,7 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 				}
 				for (var y = 0; y < stationList.length; y++) {
 					if (stationList[y].station_cd == srcStation[0].station_cd) {
-						// 出力開始
+						// 出発駅で出力開始
 						isHit = true;
 					}
 					var cnt = countData(stationList[y].station_cd, 3);
@@ -856,6 +860,7 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 						mark = "<strong>*</strong>";
 					}
 					if (isHit) {
+						// 出力中
 						var pref = getPref(stationList[y].pref_cd, "pref_cd");
 						out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + stationList[y].station_cd + ', 4, this)">';
 						out += '<span style="font-weight: bold;" id="' + stationList[y].station_cd + '">' + stationList[y].station_name + mark + '</span>';
@@ -868,7 +873,7 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 						out += spanBadge + '</a>';
 					}
 					if (stationList[y].station_cd == dstStation[0].station_cd) {
-						// 出力終了
+						// 到着駅で出力終了
 						isHit = false;
 					}
 				}
