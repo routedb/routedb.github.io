@@ -826,15 +826,17 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 		if (data.results.length != 0) {
 			$("#errorTransferMsg").css("display", "none");
 			var resultJson = $.parseJSON(data.results[0].replace(/<("[^"]*"|'[^']*'|[^'">])*>/g, ""));
-			out += '<div id="transferSearchResults">'
+			out += '<div id="transferSearchResults"><div class="panel list-group">'
 			for (var x in resultJson.ways) {
 				var line = getLine(resultJson.ways[x].line.line_name, "line_name");
 				var stationList = getStation(line[0].line_cd, "line_cd");
 				var srcStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].src_station.station_name);
 				var dstStation = getUniqueStation(line[0].line_cd, resultJson.ways[x].dst_station.station_name);
 				var isHit = false;
-				out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">' + line[0].line_name + '</button>';
-				out += '<input type="hidden" id="hidTransferSearch" value="9">';
+				out += '<a class="list-group-item list-group-item-success" data-parent="#transferSearchResults" data-target="#transfer' + x;
+				out += '" data-toggle="collapse" href="#"><input type="hidden" id="hidTransferSearch" value="9"><strong>' + line[0].line_name;
+				out += '(' + resultJson.ways[x].src_station.station_name + '～' + resultJson.ways[x].dst_station.station_name + ')</strong></a>';
+				out += '<div id="transfer' + x + '" class="sublinks collapse">';
 				if (Number(srcStation[0].station_cd) > Number(dstStation[0].station_cd)) {
 					// 出発駅コードが到着駅コードより大きい場合、降順に処理する。
 					stationList = stationList.reverse();
@@ -870,8 +872,9 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 						isHit = false;
 					}
 				}
+				out += '</div>';
 			}
-			out += '</div>'
+			out += '</div></div>'
 		} else {
 			out += '<div class="alert alert-danger" role="alert" id="errorTransferMsg">検索に失敗しました。<br>※首都圏78の路線、1365の駅を登録しています。4回までの乗り換えに対応しています。</div>';
 		}
