@@ -59,9 +59,9 @@ $(function() {
 		main(null, 99, this);
 	});
 	// フッターイベント
-    $(".navbar-nav li a").click(function(event) {
-    	$(".navbar-collapse").collapse('hide');
-    });
+	$(".navbar-nav li a").click(function(event) {
+		$(".navbar-collapse").collapse('hide');
+	});
 });
 
 /**
@@ -102,20 +102,24 @@ var main = function(key, lv, obj) {
 			// 検索ボタン押下
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(searchJson($("#keyword").val()), key, lv));
-		} else if (lv == 101) {
+		}
+		else if (lv == 101) {
 			// 検索結果リスト押下
 			$("#shopInfo").css("display", "block");
 			$("#shopInfo").html(createInfo(shopJson, key, lv));
 			new google.maps.Geocoder().geocode({
 				'address': $("#streetAddress").text()
 			}, callbackRender);
-		} else if (lv == 11) {
+		}
+		else if (lv == 11) {
 			// 路線データベースについて押下
 			$("#about").css("display", "block");
-		} else if (lv == 12) {
+		}
+		else if (lv == 12) {
 			// 利用規約押下
 			$("#termsofuse").css("display", "block");
-		} else if (lv == 13) {
+		}
+		else if (lv == 13) {
 			// プライバシーポリシー押下
 			$("#privacy").css("display", "block");
 			var tagsList = [];
@@ -125,24 +129,27 @@ var main = function(key, lv, obj) {
 					tagsList.push(arrtags[y]);
 				}
 			}
-			var uniquetags = tagsList.filter(function (x, i, self) {
-	            return self.indexOf(x) === i;
-	        });
+			var uniquetags = tagsList.filter(function(x, i, self) {
+				return self.indexOf(x) === i;
+			});
 			for (var x in uniquetags) {
 				console.log("#" + uniquetags[x]);
 			}
-		} else if (lv == 99) {
+		}
+		else if (lv == 99) {
 			// お問合せ押下
 			$("#contactForm").css("display", "block");
 		}
-	} else {
+	}
+	else {
 		// 画面レベルが1桁の場合は、コンテンツ処理
 		if (lv == 1) {
 			$("#transferSearch").css("display", "block");
 			// 都道府県リスト生成
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(prefecturesJson, key, lv));
-		} else if (lv == 2 || lv == 3) {
+		}
+		else if (lv == 2 || lv == 3) {
 			$("#transferSearch").css("display", "block");
 			// 路線リストまたは駅リスト生成
 			$("#listMain").css("display", "block");
@@ -174,7 +181,8 @@ var main = function(key, lv, obj) {
 				for (x = 0; x < filterData.length; x++) {
 					resultJson += '{"key":"' + filterData[x][0].line_cd + '","levels":"3","value":"' + filterData[x][0].line_name + '"},';
 				}
-			} else if (lv == 3) {
+			}
+			else if (lv == 3) {
 				// 駅情報を取得
 				filterData = $.grep(stationJson, function(elem) {
 					return elem.line_cd == key;
@@ -187,14 +195,16 @@ var main = function(key, lv, obj) {
 			resultJson += ']';
 			// リスト出力
 			$("#listMain").html(createList($.parseJSON(resultJson), key, lv));
-		} else if (lv == 4 || lv == 9) {
+		}
+		else if (lv == 4 || lv == 9) {
 			// 画面レベル9から来た場合は4で上書き
 			lv = 4;
 			$("#transferSearch").css("display", "block");
 			// 店舗リスト生成
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(shopJson, key, lv));
-		} else if (lv == 5) {
+		}
+		else if (lv == 5) {
 			$("#transferSearch").css("display", "none");
 			// 店舗詳細生成
 			$("#shopInfo").css("display", "block");
@@ -219,8 +229,8 @@ var main = function(key, lv, obj) {
  * @return out ボタン用HTML文字列
  */
 var createBtn = function(key, lv, obj) {
-	var out       = "";
-	var btnValue  = '<span style="font-weight: bold;" id="list' + key + '">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span>';
+	var out = "";
+	var btnValue = '<span style="font-weight: bold;" id="list' + key + '">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span>';
 	var btnStatus = "info";
 	if (lv > 9) {
 		if (lv == 101) {
@@ -229,19 +239,22 @@ var createBtn = function(key, lv, obj) {
 			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-info btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
 			out += '</div>';
 			out += '<div class="col-md-4">';
-			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block"><strong>' +  obj.childNodes[0].innerHTML + '</strong></button>';
+			out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block"><strong>' + obj.childNodes[0].innerHTML + '</strong></button>';
 			out += '</div>';
-		} else {
+		}
+		else {
 			out += '<div class="col-md-6"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
 			out += '<div class="col-md-6">';
 			if (lv == 10) {
 				out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(null, 10, null)"><strong>検索結果：「' + $("#keyword").val() + '」<strong></button>';
-			} else {
+			}
+			else {
 				out += '<button type="button" id="btnLv' + lv + '" class="btn btn-secondary btn-primary btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)">' + obj.innerHTML + '</button>';
 			}
 			out += '</div>';
 		}
-	} else {
+	}
+	else {
 		if (lv == 4 && $("#hidTransferSearch").val() == "9") {
 			// 乗換モードの場合
 			out += '<div class="col-md-3"><button type="button" id="btnLv1" class="btn btn-secondary btn-info btn-block" onclick="refresh()"><span style="font-weight: bold;" id="listnull">HOME&nbsp;</span><span class="badge badge-info">' + shopJson.length + '</span></button><input type="hidden" id="hidKey1" value="null"><input type="hidden" id="hidLv1" value="1"></div>';
@@ -260,40 +273,44 @@ var createBtn = function(key, lv, obj) {
 			out += '<input type="hidden" id="hidKey4" value=' + $("#hidStationCd" + key).val() + '>';
 			out += '<input type="hidden" id="hidLv4" value=4>';
 			out += '</div>';
-		} else {
-			var colSize   = 12 / lv;
-			var btnKey    = null;
-			var btnLv     = 1;
+		}
+		else {
+			var colSize = 12 / lv;
+			var btnKey = null;
+			var btnLv = 1;
 			for (var x = 1; x <= lv; x++) {
 				if (x == lv) {
 					if (obj != null) {
 						if (obj.type == "button") {
-							btnValue  = obj.innerHTML;
-						} else {
-							btnValue  = $("#list" + key).html();
+							btnValue = obj.innerHTML;
+						}
+						else {
+							btnValue = $("#list" + key).html();
 							if ($("#badge" + key).length) {
-								btnValue  +=  '&nbsp;</span><span class="badge badge-info">' + $("#badge" + key).html() + '</span>';
+								btnValue += '&nbsp;</span><span class="badge badge-info">' + $("#badge" + key).html() + '</span>';
 							}
 						}
 						btnKey = key;
-						btnLv  = lv;
+						btnLv = lv;
 						if (lv == 5) {
 							colSize = 4;
 						}
 					}
 					btnStatus = "primary"
-				} else {
+				}
+				else {
 					btnValue = $("#btnLv" + x).html();
-					btnKey   = $("#hidKey" + x).val();
-					btnLv    = $("#hidLv" + x).val();
+					btnKey = $("#hidKey" + x).val();
+					btnLv = $("#hidLv" + x).val();
 					if (lv == 5) {
-						colSize = 2	;
+						colSize = 2;
 					}
 				}
 				out += '<div class="col-md-' + colSize + '">';
 				if (lv == 1) {
 					out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="refresh()"><strong>' + btnValue + '</strong></button>';
-				} else {
+				}
+				else {
 					out += '<button type="button" id="btnLv' + x + '" class="btn btn-secondary btn-' + btnStatus + ' btn-block" onclick="main(' + btnKey + ',' + btnLv + ', this)"><strong>' + btnValue + '</strong></button>';
 				}
 				out += '<input type="hidden" id="hidKey' + x + '" value=' + btnKey + '>';
@@ -325,7 +342,7 @@ var createList = function(json, key, lv) {
 				if (cnt != 0) {
 					badge = '&nbsp;<span class="badge badge-info">' + cnt + '</span>'
 				}
-				out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="main(' + lineCdList[x][0].line_cd + ', 3, this)"><strong>' + lineCdList[x][0].line_name + badge +'</strong></button>';
+				out += '<button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="main(' + lineCdList[x][0].line_cd + ', 3, this)"><strong>' + lineCdList[x][0].line_name + badge + '</strong></button>';
 			}
 		}
 		if ($("#hidTransferSearch").val() == "9") {
@@ -347,9 +364,11 @@ var createList = function(json, key, lv) {
 			if (json[x].stationCode == key) {
 				out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', ' + json[x].levels + ', this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '</span><span class="label label-success" style="padding:.3em .6em .2em;float: right;font-size: 85%;">' + json[x].tags + '</span></a>';
 			}
-		} else if (lv == 10) {
+		}
+		else if (lv == 10) {
 			out += '<a href="javascript:void(0)" class="list-group-item" onclick="main(' + json[x].key + ', 101, this)"><span style="font-weight: bold;" id="list' + json[x].key + '">' + json[x].value + '</span><span class="label label-success" style="padding:.3em .6em .2em;float: right;font-size: 85%;">' + json[x].tags + '</span></a>';
-		} else {
+		}
+		else {
 			var mark = "";
 			if (lv == 3 && createJoinLineList(json[x].key) != "") {
 				mark = "<strong>*</strong>";
@@ -449,11 +468,13 @@ var countData = function(key, lv) {
 			if (shopJson[x].prefecturesCode == key) {
 				cnt++;
 			}
-		} else if (lv == 2) {
+		}
+		else if (lv == 2) {
 			if (shopJson[x].lineCode == key) {
 				cnt++;
 			}
-		} else if (lv == 3) {
+		}
+		else if (lv == 3) {
 			if (shopJson[x].stationCode == key) {
 				cnt++;
 			}
@@ -528,7 +549,8 @@ var checkEntryForm = function() {
 	for (var x = 0; x < form.length; x++) {
 		if (!form[x].value && form[x].required) {
 			errMsg += '<strong>' + $("#lbl" + form[x].id).html() + '</strong>が入力されていません。<br>';
-		} else {
+		}
+		else {
 			successJson += '"' + form[x].id + '":"' + form[x].value.replace(/\r?\n/g, '<br>') + '",'
 		}
 	}
@@ -538,7 +560,8 @@ var checkEntryForm = function() {
 	if (!errMsg) {
 		$("#errorEntryMsg").css("display", "none");
 		$("#entryForm").html(createEntryConfirm($.parseJSON(successJson)));
-	} else {
+	}
+	else {
 		$("#errorEntryMsg").html(errMsg);
 		$("#errorEntryMsg").css("display", "block");
 	}
@@ -551,7 +574,7 @@ var checkEntryForm = function() {
  * @return out 確認画面用HTML文字列
  */
 var createEntryConfirm = function(json) {
-	var out  = '<table class="table table-bordered">';
+	var out = '<table class="table table-bordered">';
 	out += '<tr><th>カテゴリー</th><td>' + json.tags + '</td></tr>';
 	out += '<tr><th>名前</th><td>' + json.value + '</td></tr>';
 	out += '<tr><th>住所</th><td><span id="streetAddress">' + json.streetAddress + '</span><br><div id="map-canvas"><div/></td></tr>';
@@ -575,16 +598,16 @@ var createEntryConfirm = function(json) {
 var sendEntryForm = function() {
 	var out = "";
 	var strJson = decodeURIComponent($("#hidEntryJson").val()) + ",";
-    var request = $.ajax({
-    	url: configJson.slackHookEntryURL,
-    	type: 'post',
-    	data: 'payload=' + JSON.stringify({
-    		"channel": "#routedb-entry",
-    		"username": "routedb.github.io",
-    		"text": strJson
-    	})
-    });
-    request.done(function(data) {
+	var request = $.ajax({
+		url: configJson.slackHookEntryURL,
+		type: 'post',
+		data: 'payload=' + JSON.stringify({
+			"channel": "#routedb-entry",
+			"username": "routedb.github.io",
+			"text": strJson
+		})
+	});
+	request.done(function(data) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのご登録ありがとうございました。</h3></div><div class="panel-body">ご登録いただいた店舗データについて内容を精査するため反映までに最大1週間ほどかかります。<br>1週間以上反映が無い場合、内容に不備があったものとしてお手数ですが再度ご登録お願いします。</div></div>';
 		$("#entryForm").html(out);
 		console.log("Request done.");
@@ -608,7 +631,8 @@ var checkContactForm = function() {
 	for (var x = 0; x < form.length; x++) {
 		if (!form[x].value) {
 			errMsg += '<strong>' + $("#lbl" + form[x].id).html() + '</strong>が入力されていません。<br>';
-		} else {
+		}
+		else {
 			successJson += '"' + form[x].id + '":"' + form[x].value.replace(/\r?\n/g, '<br>') + '",'
 		}
 	}
@@ -618,7 +642,8 @@ var checkContactForm = function() {
 	if (!errMsg) {
 		$("#errorContactMsg").css("display", "none");
 		$("#contactForm").html(createContactConfirm($.parseJSON(successJson)));
-	} else {
+	}
+	else {
 		$("#errorContactMsg").html(errMsg);
 		$("#errorContactMsg").css("display", "block");
 	}
@@ -632,7 +657,7 @@ var checkContactForm = function() {
  * @return out 確認画面用HTML文字列
  */
 var createContactConfirm = function(json) {
-	var out  = '<table class="table table-bordered">';
+	var out = '<table class="table table-bordered">';
 	out += '<tr><th>メールアドレス</th><td>' + json.mail + '</td></tr>';
 	out += '<tr><th>問合せ内容</th><td>' + json.mailbody + '</td></tr>';
 	out += '</table>';
@@ -647,16 +672,16 @@ var createContactConfirm = function(json) {
 var sendContactForm = function() {
 	var out = "";
 	var strJson = decodeURIComponent($("#hidContactJson").val());
-    var request = $.ajax({
-    	url: configJson.slackHookContactURL,
-    	type: 'post',
-    	data: 'payload=' + JSON.stringify({
-    		"channel": "#routedb-contact",
-    		"username": "routedb.github.io",
-    		"text": strJson
-    	})
-    });
-    request.done(function(data) {
+	var request = $.ajax({
+		url: configJson.slackHookContactURL,
+		type: 'post',
+		data: 'payload=' + JSON.stringify({
+			"channel": "#routedb-contact",
+			"username": "routedb.github.io",
+			"text": strJson
+		})
+	});
+	request.done(function(data) {
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">路線データベースへのお問合せありがとうございました。</h3></div><div class="panel-body">お問合せいただいた内容について返信までに最大1週間ほどかかります。<br>何卒、ご了承いただきますようお願いします。</div></div>';
 		$("#contactForm").html(out);
 		console.log("Request done.");
@@ -677,7 +702,7 @@ var sendContactForm = function() {
 var formattertags = function(tags) {
 	var out = "";
 	var arrtags = tags.split(separator);
-  for (var x in arrtags) {
+	for (var x in arrtags) {
 		out += '<a href="javascript:void(0)" target="_blank" class="btn btn-success btn-sm active"><strong>' + arrtags[x] + '</strong></a>';
 	}
 	return out;
@@ -695,13 +720,17 @@ var formatterLink = function(externalLink) {
 	for (var x = 0; x < arrLink.length; x++) {
 		if (arrLink[x].match(regTabelog)) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>食べログ</strong></a>';
-		} else if (arrLink[x].match(regTwitter)) {
+		}
+		else if (arrLink[x].match(regTwitter)) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>twitter</strong></a>';
-		} else if (arrLink[x].match(regFacebook)) {
+		}
+		else if (arrLink[x].match(regFacebook)) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>facebook</strong></a>';
-		} else if (arrLink[x].match(regWikipedia)) {
+		}
+		else if (arrLink[x].match(regWikipedia)) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>wikipedia</strong></a>';
-		} else if (externalLink.length != 0) {
+		}
+		else if (externalLink.length != 0) {
 			out += '<a href="' + arrLink[x] + '" target="_blank" class="btn btn-warning btn-sm active"><strong>HPまたは関連ページ</strong></a>';
 		}
 	}
@@ -726,7 +755,7 @@ var formatterStreetAddress = function(streetAddress) {
  * @return resultJson 検索結果格納済jsonオブジェクト
  */
 var searchJson = function(keyword) {
-  var out = "";
+	var out = "";
 	var resultJson = [];
 	for (var row in shopJson) {
 		if (andSearch(shopJson[row], keyword)) {
@@ -771,13 +800,15 @@ var getValue = function(target, key) {
 		if (target.length == 617) {
 			isLine = true;
 			return elem.line_cd == key;
-		} else {
+		}
+		else {
 			return elem.station_cd == key;
 		}
 	});
 	if (isLine) {
 		return filterData[0].line_name;
-	} else {
+	}
+	else {
 		return filterData[0].station_name;
 	}
 }
@@ -804,7 +835,8 @@ var transferSearch = function() {
 		errMsg = '<div class="alert alert-danger" role="alert">' + errMsg + '</div>'
 		$("#listMain").html(errMsg);
 		$("#listMain").css("display", "block");
-	} else {
+	}
+	else {
 		$("#listMain").css("display", "block");
 		createTransferResult($("#departFrom").val(), $("#arrivalAt").val());
 	}
@@ -816,7 +848,7 @@ var transferSearch = function() {
  * @parme targetDepartStation 出発駅画面入力値
  * @parme targetArrivalStation 到着駅画面入力値
  */
-var createTransferResult = function (targetDepartStation, targetArrivalStation) {
+var createTransferResult = function(targetDepartStation, targetArrivalStation) {
 	$('#myPleaseWait').modal('show');
 	var requestURL = "https://api.trip2.jp/ex/tokyo/v1.0/json?src=" + targetDepartStation + "&dst=" + targetArrivalStation + configJson.trip2ApiKey
 	var out = "";
@@ -857,7 +889,8 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 					}
 					var mark = "";
 					if (createJoinLineList(stationList[y].station_cd) != "") {
-						mark = "<strong>*</strong>";
+						// 乗換モード中は乗換マーク出さない
+						//mark = "<strong>*</strong>";
 					}
 					if (isHit) {
 						// 出力中
@@ -880,13 +913,15 @@ var createTransferResult = function (targetDepartStation, targetArrivalStation) 
 				out += '</div>';
 			}
 			out += '</div></div>'
-		} else {
+		}
+		else {
 			out += '<div class="alert alert-danger" role="alert" id="errorTransferMsg">検索に失敗しました。<br>※首都圏78の路線、1365の駅を登録しています。4回までの乗り換えに対応しています。</div>';
 		}
 		$("#listMain").html(out);
 		console.log("Request done.");
 	});
 	request.fail(function(jqXHR, textStatus) {
+		$('#myPleaseWait').modal('hide');
 		out = '<div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title">処理に失敗しました。</h3></div><div class="panel-body">お手数おかけしますがお問合せください。</div></div>';
 		$("#listMain").html(out);
 		console.log("Request failed: " + textStatus);
