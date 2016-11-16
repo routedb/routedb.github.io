@@ -441,7 +441,7 @@ var getGroupCode = function(stationCode) {
  */
 var createInfo = function(json, key, lv) {
 	if ($("#hidTransferSearch").val() == "9") {
-		out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">'; 
+		out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">';
 		out += $("#hidLineName" + $("#hidStationId").val()).val() + "&nbsp;<strong>" + $("#hidStationName" + $("#hidStationId").val()).val() + '</strong></button>';
 	}
 	var out = '<table class="table table-bordered">';
@@ -769,6 +769,7 @@ var searchJson = function(keyword) {
 	for (var row in shopJson) {
 		if (andSearch(shopJson[row], keyword)) {
 			resultJson.push(shopJson[row]);
+			out += '更新情報(https://routedb.github.io/)<br><br>#路線データベース #子鉄 #パパ鉄 #ママ鉄 #乗り鉄 #鉄道';
 			out += shopJson[row].value + " #" + shopJson[row].tags + " #" + getValue(lineJson, shopJson[row].lineCode) + " #" + getValue(stationJson, shopJson[row].stationCode) + "\r\n"
 		}
 	}
