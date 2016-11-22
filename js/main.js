@@ -772,7 +772,7 @@ var searchJson = function(keyword) {
 			var out = '登録情報(https://routedb.github.io/)\r\n\r\n';
 			out += shopJson[row].value + " #" + shopJson[row].tags + " #" + getValue(lineJson, shopJson[row].lineCode) + " #" + getValue(stationJson, shopJson[row].stationCode) + "\r\n"
 			out += '#路線データベース #子鉄 #パパ鉄 #ママ鉄 #乗り鉄 #鉄道 #食べ歩き';
-			postTwitter(out);
+			//postTwitter(out);
 			logout += out;
 		}
 	}
@@ -785,19 +785,19 @@ var searchJson = function(keyword) {
  *
  * @parme out 文字列
  */
-var postTwitter = function(out) {
-	OAuth.initialize('dFcyTxgCcitCy26qcsVM7gmuqkM')
-	//Example with Twitter with the cache option enabled
-	OAuth.popup('twitter', {
-		cache: true
-	}).done(function(twitter) {
-		console.log(twitter);
-		//make API calls with `twitter`
-	}).fail(function(err) {
-		console.log(err);
-		//todo when the OAuth flow failed
-	})
-}
+// var postTwitter = function(out) {
+// 	OAuth.initialize('dFcyTxgCcitCy26qcsVM7gmuqkM')
+// 	//Example with Twitter with the cache option enabled
+// 	OAuth.popup('twitter', {
+// 		cache: true
+// 	}).done(function(twitter) {
+// 		console.log(twitter);
+// 		//make API calls with `twitter`
+// 	}).fail(function(err) {
+// 		console.log(err);
+// 		//todo when the OAuth flow failed
+// 	})
+// }
 /**
  * and検索判定
  *
