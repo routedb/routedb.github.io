@@ -772,11 +772,11 @@ var searchJson = function(keyword) {
 			var out = '登録情報(https://routedb.github.io/)\r\n\r\n';
 			out += shopJson[row].value + " #" + shopJson[row].tags + " #" + getValue(lineJson, shopJson[row].lineCode) + " #" + getValue(stationJson, shopJson[row].stationCode) + "\r\n"
 			out += '#路線データベース #子鉄 #パパ鉄 #ママ鉄 #乗り鉄 #鉄道 #食べ歩き';
+			console.log(out);
 			//postTwitter(out);
 			logout += out;
 		}
 	}
-	console.log(out);
 	return resultJson;
 }
 
