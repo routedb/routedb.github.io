@@ -776,7 +776,7 @@ var searchJson = function(keyword) {
 			logout += out;
 		}
 	}
-	console.log(logout);
+	console.log(out);
 	return resultJson;
 }
 
