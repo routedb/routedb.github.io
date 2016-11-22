@@ -441,7 +441,7 @@ var getGroupCode = function(stationCode) {
  */
 var createInfo = function(json, key, lv) {
 	if ($("#hidTransferSearch").val() == "9") {
-		out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">'; 
+		out += '<button type="button" class="list-group-item list-group-item-action list-group-item-success">';
 		out += $("#hidLineName" + $("#hidStationId").val()).val() + "&nbsp;<strong>" + $("#hidStationName" + $("#hidStationId").val()).val() + '</strong></button>';
 	}
 	var out = '<table class="table table-bordered">';
@@ -668,7 +668,7 @@ var checkContactForm = function() {
 var createContactConfirm = function(json) {
 	var out = '<table class="table table-bordered">';
 	out += '<tr><th>メールアドレス</th><td>' + json.mail + '</td></tr>';
-	out += '<tr><th>問合せ内容</th><td>' + json.mailbody + '</td></tr>';
+	out += '<tr><th>問���せ内容</th><td>' + json.mailbody + '</td></tr>';
 	out += '</table>';
 	out += '<input type="hidden" id="hidContactJson" value="' + encodeURIComponent(JSON.stringify(json)) + '">';
 	out += '<button type="button" id="btnUpdate" class="btn btn-secondary btn-success btn-block" onclick="sendContactForm()">送信</button>';
@@ -764,18 +764,40 @@ var formatterStreetAddress = function(streetAddress) {
  * @return resultJson 検索結果格納済jsonオブジェクト
  */
 var searchJson = function(keyword) {
-	var out = "";
 	var resultJson = [];
+	var logout = "";
 	for (var row in shopJson) {
 		if (andSearch(shopJson[row], keyword)) {
-			resultJson.push(shopJson[row]);
+			resultJson.x(shopJson[row]);
+			var out = '登録情報(https://routedb.github.io/)\r\n\r\n';
 			out += shopJson[row].value + " #" + shopJson[row].tags + " #" + getValue(lineJson, shopJson[row].lineCode) + " #" + getValue(stationJson, shopJson[row].stationCode) + "\r\n"
+			out += '#路線データベース #子鉄 #パパ鉄 #ママ鉄 #乗り鉄 #鉄道 #食べ歩き';
+			postTwitter(out);
+			logout += out;
 		}
 	}
-	console.log(out);
+	console.log(logout);
 	return resultJson;
 }
 
+/**
+ * twitterに送信処理
+ *
+ * @parme out 文字列
+ */
+var postTwitter = function(out) {
+	OAuth.initialize('dFcyTxgCcitCy26qcsVM7gmuqkM')
+	//Example with Twitter with the cache option enabled
+	OAuth.popup('twitter', {
+		cache: true
+	}).done(function(twitter) {
+		console.log(twitter);
+		//make API calls with `twitter`
+	}).fail(function(err) {
+		console.log(err);
+		//todo when the OAuth flow failed
+	})
+}
 /**
  * and検索判定
  *
