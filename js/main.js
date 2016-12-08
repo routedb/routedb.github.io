@@ -1,4 +1,4 @@
-var transferSearchResult;
+// var transferSearchResult;
 var separator = /\s+/;
 var regTabelog = new RegExp("tabelog");
 var regTwitter = new RegExp("twitter");
@@ -85,10 +85,10 @@ $(function() {
  */
 var main = function(key, lv, obj) {
 	console.log("main start!");
-	if (lv == 4 && $("#hidTransferSearch").val() == "9") {
-		// 乗換モードの場合は検索結果を保持
-		transferSearchResult = $("#transferSearchResults").html();
-	}
+	// if (lv == 4 && $("#hidTransferSearch").val() == "9") {
+	// 	// 乗換モードの場合は検索結果を保持
+	// 	transferSearchResult = $("#transferSearchResults").html();
+	// }
 	// ボタン生成
 	$("#btnList").html(createBtn(key, lv, obj));
 	// コンテンツ初期化
@@ -144,7 +144,7 @@ var main = function(key, lv, obj) {
 	else {
 		// 画面レベルが1桁の場合は、コンテンツ処理
 		if (lv == 1) {
-			$("#transferSearch").css("display", "block");
+			// $("#transferSearch").css("display", "block");
 			// 都道府県リスト生成
 			$("#listMain").css("display", "block");
 			$("#listMain").html(createList(prefecturesJson, key, lv));
