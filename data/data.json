@@ -673,7 +673,7 @@
 			]
 		},
 		{
-			station:[
+			"station":[
 				{"station_cd":"1110101","station_g_cd":"1110101","station_name":"函館(はこだて)","station_name_k":"","station_name_r":"","line_cd":"11101","pref_cd":"1","post":"040-0063","add":"北海道函館市若松町１２-１３","lon":"140.726413","lat":"41.773709","open_ymd":"1902-12-10","close_ymd":"","e_status":"0","e_sort":"1110101"},
 				{"station_cd":"1110102","station_g_cd":"1110102","station_name":"五稜郭(ごりょうかく)","station_name_k":"","station_name_r":"","line_cd":"11101","pref_cd":"1","post":"041-0813","add":"函館市亀田本町","lon":"140.733539","lat":"41.803557","open_ymd":"","close_ymd":"","e_status":"0","e_sort":"1110102"},
 				{"station_cd":"1110103","station_g_cd":"1110103","station_name":"桔梗(ききょう)","station_name_k":"","station_name_r":"","line_cd":"11101","pref_cd":"1","post":"041-1210","add":"北海道函館市桔梗３丁目４１-３６","lon":"140.722952","lat":"41.846457","open_ymd":"1902-12-10","close_ymd":"","e_status":"0","e_sort":"1110103"},
