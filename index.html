@@ -1,243 +1,632 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="width=device-width, intial-scale=1" name="viewport"/>
-    <title>路線データベース</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
-    .mainContents {
-      min-height: calc(100vh - 50px);
-    }
-    .stickyFooter {
-      min-height: 50px;
-    }
-    </style>
-  </head>
-  <body>
-    <div class="mainContents">
-      <div class="container-fluid">
-        <div class="row" id="btnList" style="padding-top:5px;">
-        </div>
-        <!--<div class="row" id="transferSearch" style="padding-top:5px;display:none;">-->
-        <!--  <div class="col-md-4">-->
-        <!--    <div class="input-group">-->
-        <!--      <span class="input-group-addon" id="basic-addon3">出発</span>-->
-        <!--      <input type="text" class="form-control" id="departFrom">-->
-        <!--    </div>-->
-        <!--  </div>-->
-        <!--  <div class="col-md-4">-->
-        <!--    <div class="input-group">-->
-        <!--      <span class="input-group-addon" id="basic-addon3">到着</span>-->
-        <!--      <input type="text" class="form-control" id="arrivalAt">-->
-        <!--    </div>-->
-        <!--  </div>-->
-        <!--  <div class="col-md-4">-->
-        <!--    <button type="button" id="btnTransferSearch" class="btn btn-secondary btn-info btn-block"><strong>簡易乗換検索(首都圏)</strong></button>-->
-        <!--  </div>-->
-        <!--</div>-->
-        <div class="row">
-          <div class="col-md-12">
-            <div class="list-group rowcontent" id="listMain" style="padding-top:5px;overflow: auto;height: 100%;max-height: 80%;">
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12 rowcontent" id="shopInfo" style="padding-top:5px;display:none;overflow: auto;height: 100%;max-height: 80%;">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12 rowcontent" id="entryForm" style="padding-top:5px;display:none;overflow: auto;height: 100%;max-height: 80%;">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12 rowcontent" id="about" style="padding-top:5px;display:none;overflow: auto;height: 100%;max-height: 80%;">
-            <div class="panel panel-info">
-              <div class="panel-body">
-                <h5><u>路線データベースとは</u></h5>
-                路線データベースは、電車で探す、日本全国路線情報サイトです。各駅最寄の施設や店舗などジャンルを問わずデータベース化しているのが特徴です。<br>
-                各々が自信を持って皆さんにおすすめできる情報を登録しましょう。
-                <h5><u>推奨環境</u></h5>
-                路線データベースは、Chrome・Firefox・Internet Explorer・Safariの最新版のブラウザのご使用を推奨としております。<br>
-                古いバージョンをご利用の方は、ぜひこれらの最新版ブラウザでご覧ください。
-                <h5><u>JavaScript・Cookieに関して</u></h5>
-                路線データベースは、画面の遷移や投稿のために、JavaScriptとCookieを使用しております。当サイトをご利用の際はJavaScriptとCookieを有効にした上でご利用ください。
-                <h5><u>コピーライト</u></h5>
-                路線データベースは、以下の素材・技術を使用しております。<br>
-                ・GitHub Pages<br>
-                ・Google Maps API<br>
-                ・Slack API<br>
-                ・駅データ.jp
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12 rowcontent" id="termsofuse" style="padding-top:5px;display:none;overflow: auto;height: 100%;max-height: 80%;">
-            <div class="panel panel-info">
-              <div class="panel-body">
-                路線データベース（以下「当サイト」と言う）に関する利用規約（以下『本規約』）を以下の通り定めます。<br>
-                当サイトご利用にあたっては本規約の内容をお読みいただき、予めご承諾いただいた場合のみご利用ください。<br><br>
-                本規約の内容は必要に応じて予告なしに改訂できるものとします。ご利用の際には、最新の利用規約をご参照ください。また、今後規約の改訂があった場合も、利用者（以下「ユーザー」）の皆様にはその内容に引き続き同意いただいているものとみなされます。<br><br>
-                <h5><u>個人情報について</u></h5>
-                <a href="javascript:void(0)" onclick="main(null, 13, this)"><strong>プライバシーポリシー</strong></a>参照
-                <h5><u>禁止行為</u></h5>
-                ユーザーは当サイトの使用にあたって、下記のいずれかに該当・類似する行為を行わないものとします。<br>
-                ・公序良俗に反する行為<br>
-                ・犯罪行為に結びつく行為<br>
-                ・法令に違反する行為<br>
-                ・宣伝や商用を目的とした行為<br>
-                ・選挙の事前運動、選挙運動又はこれらに類似する行為。及び公職選挙法に抵触する行為<br>
-                ・当サイトと関係のない団体、サービス、活動等への勧誘を目的とした行為<br>
-                ・当サイトまたは他ユーザーを含む第三者の知的財産権、肖像権、プライバシーの権利、名誉、その他の権利又は利益を侵害する行為<br>
-                ・当サイトまたは他ユーザーを含む第三者に不利益を与える行為<br>
-                ・当サイトまたは他ユーザーになりすましをする行為<br>
-                ・当サイトまたは他ユーザーを誹謗中傷する行為<br>
-                ・他ユーザー又は第三者との間で、売買、贈与及び金銭的な利害の発生する行為<br>
-                ・当サイトからの電子メール又は当サイトの内容の無断転載及び再配布<br>
-                ・コンピュータウィルス等、当サイトのシステムインフラに障害を及ぼす行為<br>
-                ・当サイト上に掲載された情報を不正に改ざん、消去する行為。又は虚偽の情報を掲載する行為<br>
-                ・その他、当サイトが不適切と判断する行為
-                <h5><u>ユーザー間の情報</u></h5>
-                当サイトを通じてユーザー同士でなされた情報の授受、及びそれに付随して行われる行為については当サイトは一切の責任を負わないものとします。
-                <h5><u>サービスについて</u></h5>
-                当サイトは提供しているサービスを予告なく変更、又は中止する場合があります。<br>
-                当サイトは下記に該当する場合、サービスの一部もしくは全部を一時中断、又は停止する場合があります。<br>
-                ・当サイト及びそれにかかるネットワーク等のシステムの定期保守、更新ならびに緊急の場合<br>
-                ・火災・停電・天災などの不可抗力により、サービスの提供が困難な場合<br>
-                ・その他、不測の事態により当サイトがサービスの提供が困難と判断した場合<br>
-                これらによりユーザー又は第三者に不利益、損害が発生した場合、当サイトはその責任を負わないものとします。<br>
-                <h5><u>投稿について</u></h5>
-                当サイトは、必要と判断した場合には、いつでもユーザーの投稿したデータの内容を閲覧し、公開の差し止め、公開データの改変あるいは削除ができるものとします。<br>
-                ユーザーは当サイトの使用にあたり、下記のいずれかに該当、もしくは類似する行為を行わないものとします。下記のいずれかに該当・類似する場合、ユーザーの承諾なし投稿内容の編集・削除ができるものとします。<br>
-                ・不買を呼びかける行為<br>
-                ・他ユーザーを含む第三者を不快にさせる行為<br>
-                ・店舗関係者等による自らの利益のみを考えた投稿<br>
-                ・同内容を複数書き込む行為<br>
-                ・店舗や店員、その他店舗関係者への誹謗中傷<br>
-                ・衛生管理面や法律に関する問題等、しかるべき当局へご連絡いただく内容のもの<br>
-                ・内容の確認が困難と思われる、根拠のないもの<br>
-                ・添加物に関連する内容<br>
-                ・悪意を感じる内容<br>
-                ・その他、当サイトが不適切と判断する投稿<br><br>
-                当サイトが下記のいずれかに該当すると判断したユーザーに関しては、ユーザーへの承諾なしにコメントの表示優先度を変更できるものとします。<br>
-                ・店への配慮に欠ける発言が目立つ<br>
-                ・ストレスを発散させるための発言が目立つ<br>
-                ・クレーマー気質である<br>
-                ・皮肉的な発言が目立つ<br>
-                ・利用規約に反する内容を繰り返す<br>
-                ・利用規約の内容をご理解いただいてない<br>
-                これらによりユーザーが損害を被った場合、当サイトはその責任を負わないものとします。
-                <h5><u>権利帰属</u></h5>
-                ・当サイトのデザインや構造等の著作権はすべて当サイトに帰属します。<br>
-                ・ユーザーが書き込みを行った時点で、当該書き込み内容を国内における複製、公衆送信、頒布、翻訳、翻案等の権利をユーザーが無償で当サイトに対して許諾したものとします。ユーザーの利用許諾期間は書き込み内容の著作権が存続する限りとし、ロイヤリティ等の対価は一切発生しないものとします。<br>
-                ・当サイト上で、ユーザーが掲示した内容により知的財産権（著作権．意匠権・特許権・実用新案権・商標権・ノウハウが含まれるがこれに限定されない）が発生する場合、当権利は全て当サイトに帰属するか、もしくは当サイトに対し無償で譲渡されるものとします。<br>
-                ・ユーザーは当サイト及び当サイトにより正当に権利を取得し、又は正当に権利の使用許諾を受けた第三者に対し、著作者人格権（公表権、氏名表示権、同一性保持権）を公使しないものとします。<br>
-                ・当サイトまたは第三者がユーザーの書き込みを利用したことによりユーザーが受けた損害については、当サイトは一切の保証を致しません。<br>
-                ・ユーザーは、当サイト上に投稿するにあたって、使用、利用するデータに対し、著作権・商標権・特許権・意匠権およびその他の知的財産権などの適法かつ有効な使用権を有していることを保証していただきます。尚、公開データに、第三者の保有する著作権などの権利が含まれる場合、その使用権に関して、当サイトから当該第三者に確認させていただく場合や、公開事前の第三者による使用許諾に関する証明を当該ユーザーに求めることがあります。<br>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12 rowcontent" id="privacy" style="padding-top:5px;display:none;overflow: auto;height: 100%;max-height: 80%;">
-            <div class="panel panel-info">
-              <div class="panel-body">
-                路線データベース（以下「当サイト」と言う）における閲覧者（以下「ユーザ」と言う）の個人情報取り扱い、および広告等の表記、その他運営に関する指針を示すものです。
-                <h5><u>アクセス解析について</u></h5>
-                当サイトでは、コンテンツの拡充やサイト運営を目的として、以下のサービスとcookieによるアクセス解析を利用しています。これにより得られる情報は匿名であり、ユーザ個人が特定されることはありません。
-                <h5>Googleアナリティクス</h5>
-                Googleが運営するアクセス解析ツールです。<br>この機能はCookieを無効にすることで情報の収集を拒否することが出来ます。詳細はお使いのWebブラウザの機能説明をご確認下さい。
-                <h5><u>広告について</u></h5>
-                当サイトでは、現在第三者配信による広告サービスの利用はありません。
-                <h5><u>コメント入力した個人情報について</u></h5>
-                ユーザが入力した個人情報を無断で第三者に開示することはありません。<br><br>
-                ただし各種法令・国が定める指針により法的な開示請求が発生した場合は例外とします。
-                <h5><u>免責事項</u></h5>
-                上記の提携サービスおよびシステム障害により生じる損害について、当サイト管理者は責任を負わないものとします。
-                <h5><u>特記事項</u></h5>
-                本規約は準拠法の変更、および利用サービス規約の変更に伴い随時追加・変更されます。<br><br>
-                なお、当サイト管理人が被った権利侵害に関わる紛争が生じた場合は、日本法を準拠法と定め、かかる紛争については東京地方裁判所を第一審の専属的管轄裁判所とします。
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12 rowcontent" id="contactForm" style="padding-top:5px;display:none;overflow: auto;height: 100%;max-height: 80%;">
-            <div class="panel panel-default" style="padding:5px;"><div class="alert alert-danger" style="display:none;" role="alert" id="errorContactMsg"></div>
-            <form class="form-horizontal" role="form">
-            <div class="form-group"><label class="col-sm-2 control-label" style="text-align:center" id="lblmail">メールアドレス</label><div class="col-sm-10"><input class="form-control contactForm" id="mail"></div></div>
-            <div class="form-group"><label class="col-sm-2 control-label" style="text-align:center" id="lblmailbody">問合せ内容</label><div class="col-sm-10"><textarea class="form-control contactForm" rows="10" id="mailbody"></textarea></div></div>
-            </form>
-            <button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="checkContactForm()">確認</button></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="stickyFooter">
-      <nav class="navbar navbar-default navbar-fixed-bottom">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <button aria-expanded="false" class="collapsed navbar-toggle" data-target="#bs-example-navbar-collapse-7" data-toggle="collapse" type="button"><span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button> <a class="navbar-brand" href="javascript:void(0)" id="navBrand"><strong>路線データベース</strong></a>
-          </div>
-          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-7">
-           <form class="navbar-form navbar-left" onsubmit="return main(null, 10, null)">
-             <div class="input-group">
-               <input type="text" class="form-control" placeholder="Search for..." id="keyword">
-               <span class="input-group-btn">
-                 <button class="btn btn-default" type="button" id="btnSearch">検索</button>
-               </span>
-             </div>
-           </form>
-            <ul class="nav navbar-nav navbar-right">
-              <li>
-                <a href="javascript:void(0)" id="navAbout"><strong>路線データベースについて</strong></a>
-              </li>
-              <li>
-                <a href="javascript:void(0)" id="navTermsofuse"><strong>利用規約</strong></a>
-              </li>
-              <li>
-                <a href="javascript:void(0)" id="navPrivacy"><strong>プライバシーポリシー</strong></a>
-              </li>
-              <li>
-                <a href="javascript:void(0)" id="navContact"><strong>お問合せ</strong></a>
-              </li>
-              <li>
-                <a class="twitter-btn" href="https://twitter.com/intent/follow?screen_name=routedb"><strong>Follow @routedb</strong></a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </div>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jquery.xdomainajax.js"></script>
-    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=AIzaSyCM0J8a1CGDpi6sqI_xKksKQrNLByH3OTE"></script>
-    <script type="text/javascript" src="js/main.js"></script>
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+<!doctype html>
+<html lang="ja">
 
-      ga('create', 'UA-84217593-1', 'auto');
-      ga('send', 'pageview');
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>routedb</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-light fixed-top bg-light">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <button class="btn btn-outline-secondary" type="button" onclick="location.reload();">TOP</button>
+            </div>
+            <div class="input-group-prepend">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown">タグ</button>
+                <div class="dropdown-menu p-4 text-muted overflow-auto" style="height: 150px;" id="uniqueTagsList">
+                </div>
+            </div>
+            <input type="text" id="keyword" class="form-control" aria-label="Recipient's username with two button addons" aria-describedby="button-addon4">
+            <div class="input-group-append" id="button-addon4">
+                <button class="btn btn-outline-secondary" type="button" onclick="findLocal('')">検索</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- GoogleMap -->
+    <div id="map-canvas" style="width: 100%;height: 400px;background: #eee;"></div>
+    <div class="list-group" id="list" style="padding-bottom:60px;">
+    </div>
+    <div class="modal fade" id="dataForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body" id="modal_form">
+                    <form id="addForm" role="form">
+                        <input type="hidden" id="hidUuid">
+                        <input type="hidden" id="hidPrefCd">
+                        <input type="hidden" id="hidLineCd">
+                        <input type="hidden" id="hidStationCd">
+                        <input type="hidden" id="hidActiveStationCd">
+                        <input type="hidden" id="hidStationName">
+                        <input type="hidden" id="hidPrefElement">
+                        <input type="hidden" id="hidLineElement">
+                        <input type="hidden" id="hidStationElement">
+                        <input type="hidden" id="hidTransferLines">
+                        <input type="hidden" id="hidTransferStations">
+                        <div class="form-group">
+                            <label for="recipient-name" class="col-form-label">なまえ:</label>
+                            <input type="text" class="form-control" id="data_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">タグ:</label>
+                            <input type="text" class="form-control" id="data_tag">
+                        </div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">キャンセル</button>
+                        <button type="submit" class="btn btn-primary">登録</button>
+                    </form>
+                </div>
+                <div class="modal-body" id="modal_msg" style="display: none;">
+                    <p>登録しました。</p>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModalMsg()">閉じる</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stickyFooter">
+        <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
+            <a class="navbar-brand" href="#" onclick="location.reload();">Route DB</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Terms of use</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Privacy Policy</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Follow @routedb</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin=" anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.6/dist/loadingoverlay.min.js"></script>
+    <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyCix65IjkwpYudG66diaCPfbBvZhlXFbwY"></script>
+    <!-- Optional JavaScript -->
+    <script>
+        const addFormUrl = 'https://docs.google.com/forms/u/0/d/e/1FAIpQLSewCzPNrhuFBtvFVkD7szNCRLlQNhCOqyXftJ4OBxd9oo7bzQ/formResponse'
+        const dataUrl = 'https://script.google.com/macros/s/AKfycbx17uVU-n6-879iGyhiEZ6SFMAYoyN_RS4agO3Ms-rgQk4XMRJ5fHDaEGi74aZa_O5w/exec';
+        const transfer_icon = '※'
+
+        // ローディング
+        $(function() {
+            // 現在地取得
+            getMyPlace();
+            // 都道府県マスタ取得
+            $.getJSON("data/prefs.json", function(prefs) {
+                var out = "";
+                // 都道府県一覧作成
+                for (var key in prefs) {
+                    out += '<a href="#" class="list-group-item list-group-item-action" id="prefElement' + prefs[key].pref_cd + '" onclick="getLine(\'' + prefs[key].pref_cd + '\')">'
+                    out += '<strong>' + prefs[key].pref_name + '（' + prefs[key].pref_name_k + '）</strong>'
+                    out += '<span class="badge badge-pill badge-light" id="badge_pref' + prefs[key].pref_cd + '"></span></a>';
+                }
+                $("#list").html(out);
+            });
+            // ローカルデータ取得
+            $.ajax({
+                    type: 'GET',
+                    url: dataUrl + '?sn=local',
+                    dataType: 'jsonp',
+                    jsonpCallback: 'jsondata'
+                })
+                .then(
+                    function(local) {
+                        // 都道府県毎のデータ件数取得
+                        var groupByPref = local.reduce(function(result, current) {
+                            var element = result.find(function(p) {
+                                return p.hidPrefCd === current.hidPrefCd
+                            });
+                            if (element) {
+                                element.count++;
+                            } else {
+                                result.push({
+                                    hidPrefCd: current.hidPrefCd,
+                                    count: 1
+                                });
+                            }
+                            return result;
+                        }, []);
+                        // 件数バッジ描画
+                        for (var idx in groupByPref) {
+                            $("#badge_pref" + groupByPref[idx].hidPrefCd).html(groupByPref[idx].count)
+                        }
+                        // タグクラウド作成開始
+                        var tagsAll = "";
+                        // 全タグを連結
+                        for (var idx in local) {
+                            tagsAll += local[idx].tag;
+                        }
+                        // 一意のタグ配列作成
+                        var uniqueTagsList = tagsAll.split("#").filter(function(x, i, self) {
+                            return self.indexOf(x) === i;
+                        });
+                        // ソート
+                        uniqueTagsList.sort();
+                        // タグクラウド作成
+                        var out = "";
+                        for (var idx in uniqueTagsList) {
+                            out += '<a href="#" class="badge badge-success" style="font-size: 100%;" onclick="findLocal(\'' + uniqueTagsList[idx] + '\')">' + uniqueTagsList[idx] + '</a>';
+                        }
+                        $("#uniqueTagsList").html(out);
+                    },
+                    function() {
+                        console.log('error');
+                    }
+                );
+            /**
+             * 登録フォームイベント
+             */
+            $("#addForm").submit(function(event) {
+                // hidden項目を取得
+                var hidUuid = new Date().getTime().toString(16);
+                var hidPrefCd = $("#hidPrefCd").val();
+                var hidLineCd = $("#hidLineCd").val();
+                var hidStationCd = $("#hidStationCd").val();
+                var hidPrefElement = $("#hidPrefElement").val();
+                var hidLineElement = $("#hidLineElement").val();
+                var hidStationElement = $("#hidStationElement").val();
+                var data_name = $("#data_name").val();
+                var data_tag = $("#data_tag").val();
+                // googleフォームにPOST
+                $.ajax({
+                    url: addFormUrl,
+                    data: {
+                        "entry.1664878280": hidUuid,
+                        "entry.330967881": hidPrefCd,
+                        "entry.530825915": hidLineCd,
+                        "entry.193652865": hidStationCd,
+                        "entry.2082251296": hidPrefElement,
+                        "entry.1659786519": hidLineElement,
+                        "entry.743628637": hidStationElement,
+                        "entry.1471533980": data_name,
+                        "entry.1349980811": data_tag
+                    },
+                    type: "POST",
+                    dataType: "xml",
+                    statusCode: {
+                        0: function() {
+                            $("#modal_form").hide();
+                            $("#modal_msg").show();
+                        },
+                        200: function() {
+                            alert("errorMsg")
+                        }
+                    }
+                })
+                event.preventDefault();
+            });
+        });
+
+        /**
+         * 路線一覧作成描画
+         * 
+         * @param {String} pref_cd - 都道府県コード
+         */
+        function getLine(pref_cd) {
+            // 親エレメント（都道府県）取得
+            var parentElement = $("#prefElement" + pref_cd)[0].outerHTML.replace("list-group-item-action", "list-group-item-action list-group-item-primary active");
+            $("#hidPrefElement").val(parentElement);
+            $("#hidPrefCd").val(pref_cd);
+            // 駅マスタ取得
+            $.getJSON("data/stations.json", function(stations) {
+                var out = parentElement;
+                // 都道府県で検索
+                var prefStations = $.grep(stations, function(obj) {
+                    return obj.pref_cd == pref_cd;
+                });
+                // console.log(prefStations);
+                // 一意の路線一覧取得
+                var uniqueLines = $.unique(prefStations.map(function(obj) {
+                    return obj.line_cd;
+                }));
+                // console.log(uniqueLines);
+                // 路線マスタ取得
+                $.getJSON("data/lines.json", function(lines) {
+                    // 路線一覧作成
+                    $.each(uniqueLines, function(idx, line_cd) {
+                        var prefLine = $.grep(lines, function(obj) {
+                            return obj.line_cd == line_cd;
+                        });
+                        // console.log(prefLine);
+                        out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:50px;" id="lineElement' + prefLine[0].line_cd + '" onclick="getStation(\'' + prefLine[0].line_cd + '\')">'
+                        out += '<strong>' + prefLine[0].line_name + '（' + prefLine[0].line_name_k + '）</strong>'
+                        out += '<span class="badge badge-pill badge-light" name="badge_line" id="badge_line' + line_cd + '"></span></a>';
+                    });
+                    $("#list").html(out);
+                });
+                // ローカルデータ取得
+                $.ajax({
+                        type: 'GET',
+                        url: dataUrl + '?sn=local',
+                        dataType: 'jsonp',
+                        jsonpCallback: 'jsondata'
+                    })
+                    .then(
+                        function(local) {
+                            // 駅コードでgroup by
+                            var groupByStation = local.reduce(function(result, current) {
+                                var element = result.find(function(p) {
+                                    return p.hidStationCd === current.hidStationCd
+                                });
+                                if (element) {
+                                    element.count++;
+                                } else {
+                                    result.push({
+                                        hidStationCd: current.hidStationCd,
+                                        count: 1
+                                    });
+                                }
+                                return result;
+                            }, []);
+                            //console.log(groupByStation);
+                            // 路線要素をループ
+                            for (var i in $('[name="badge_line"]')) {
+                                var subtotalLine = 0;
+                                var line_cd = $('[name="badge_line"]')[i].id.replace("badge_line", "");
+                                for (var idx in groupByStation) {
+                                    // 路線コードで部分一致する場合、加算
+                                    if (groupByStation[idx].hidStationCd.indexOf(line_cd) != -1) {
+                                        subtotalLine += groupByStation[idx].count;
+                                    }
+                                }
+                                if (subtotalLine > 0) {
+                                    // 0件以外件数バッジ描画
+                                    $("#badge_line" + line_cd).html(subtotalLine)
+                                }
+                            }
+                        },
+                        function() {
+                            console.log('error');
+                        }
+                    );
+            });
+        }
+
+        /**
+         * 駅一覧作成描画
+         * 
+         * @param {String} line_cd - 路線コード
+         */
+        function getStation(line_cd) {
+            // 親エレメント（路線）取得
+            var parentElement = $("#lineElement" + line_cd)[0].outerHTML.replace("list-group-item-action", "list-group-item-action  list-group-item-info active");
+            $("#hidLineElement").val(parentElement);
+            $("#hidLineCd").val(line_cd);
+            // 駅マスタ取得
+            $.getJSON("data/stations.json", function(stations) {
+                var lineStations = $.grep(stations, function(obj) {
+                    return obj.line_cd == line_cd;
+                });
+                // console.log(lineStations);
+                var out = $("#hidPrefElement").val() + parentElement;
+                for (var idx in lineStations) {
+                    // カレントの駅コードで検索
+                    var tmpStations = $.grep(stations, function(obj) {
+                        return obj.station_cd == lineStations[idx].station_cd;
+                    });
+                    //console.log(tmpStations);
+                    // 接続駅取得のためグループ駅コードで検索
+                    var gStations = $.grep(stations, function(obj) {
+                        return obj.station_g_cd == tmpStations[0].station_g_cd;
+                    });
+                    // 一意の接続路線リスト作成
+                    var transferLines = $.unique(gStations.map(function(obj) {
+                        return obj.line_cd;
+                    }));
+                    // 一意の接続駅リスト作成
+                    var transferStations = $.unique(gStations.map(function(obj) {
+                        return obj.station_cd;
+                    }));
+                    // console.log(transferLines.toString());
+                    // 駅一覧作成
+                    out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:80px;" id="stationElement' + lineStations[idx].station_cd + '" onclick="getLocal(\'' + lineStations[idx].station_cd + '\',\'' + lineStations[idx].station_name + '\',\'' + lineStations[idx].lat + '\',\'' + lineStations[idx].lon + '\',\'' + line_cd + '\',\'' + transferLines.toString().replace(/,/g, '_') + '\',\'' + transferStations.toString().replace(/,/g, '_') + '\')">'
+                    out += '<strong>' + lineStations[idx].station_name + '（' + lineStations[idx].station_name_k + '）</strong>'
+                    if (gStations.length > 1) {
+                        // 接続駅は※表示
+                        out += transfer_icon;
+                    }
+                    out += '<span class="badge badge-pill badge-light" id="badge_station' + lineStations[idx].station_cd + '"></span></a>';
+                }
+                $("#list").html(out);
+                // マップ描画
+                drowMap(lineStations[0].lat, lineStations[0].lon);
+                // 路線レイヤー描画
+                drowPolyline(lineStations);
+            });
+            // 路線コードでローカルデータ取得
+            $.ajax({
+                    type: 'GET',
+                    url: dataUrl + '?sn=local&q=' + line_cd,
+                    dataType: 'jsonp',
+                    jsonpCallback: 'jsondata'
+                })
+                .then(
+                    function(local) {
+                        // 駅コードでgroup by
+                        var groupByStation = local.reduce(function(result, current) {
+                            var element = result.find(function(p) {
+                                return p.hidStationCd === current.hidStationCd
+                            });
+                            if (element) {
+                                element.count++;
+                            } else {
+                                result.push({
+                                    hidStationCd: current.hidStationCd,
+                                    count: 1
+                                });
+                            }
+                            return result;
+                        }, []);
+                        // console.log(groupByStation);
+                        for (var idx in groupByStation) {
+                            // console.log(groupByStation[idx]);
+                            // グループ駅コードから駅コードのリストを作成
+                            var stations = groupByStation[idx].hidStationCd.split("_");
+                            for (var idx2 in stations) {
+                                // console.log(stations[idx2]);
+                                // 件数バッジ描画
+                                $("#badge_station" + stations[idx2]).html(groupByStation[idx].count)
+                            }
+                        }
+                    },
+                    function() {
+                        console.log('error');
+                    }
+                );
+        }
+        /**
+         * ローカル一覧作成描画
+         * 
+         * @param {String} station_cd - 駅コード
+         * @param {String} station_name - 駅名称
+         * @param {String} lat - 経度
+         * @param {String} lng - 緯度
+         * @param {String} transferLines - 接続路線
+         * @param {String} transferStations - 接続駅
+         */
+        function getLocal(station_cd, station_name, lat, lng, line_cd, transferLines, transferStations) {
+            // マップ描画
+            if (lat != "" && lng != "") {
+                drowMap(lat, lng);
+            }
+            // モーダルフォーム初期化
+            $("#modal_form").show();
+            $("#modal_msg").hide();
+            $("#data_tag").val("");
+            $("#data_name").val("");
+            // ローディングアニメーション開始
+            $.LoadingOverlay("show");
+            // 親エレメント（駅）取得
+            var parentElement = $("#stationElement" + station_cd)[0].outerHTML.replace("list-group-item-action", "list-group-item-action list-group-item-success active");
+            $("#hidStationElement").val(parentElement);
+            $("#hidStationCd").val(station_cd + "_" + transferStations);
+            $("#hidActiveStationCd").val(station_cd);
+            $("#hidStationName").val(station_name);
+            $("#hidTransferLines").val(transferLines);
+            $("#hidTransferStations").val(transferStations);
+            var out = $("#hidPrefElement").val() + $("#hidLineElement").val();
+            var arrTransferLines = $.grep(transferLines.split("_"), function(value, idx) {
+                return value != line_cd;
+            });
+            $.getJSON("data/lines.json", function(lines) {
+                for (var idx in arrTransferLines) {
+                    var transferLine = $.grep(lines, function(obj) {
+                        return obj.line_cd == arrTransferLines[idx];
+                    });
+                    // console.log(transferLine);
+                    out += '<a href="#" class="list-group-item list-group-item-action list-group-item-info" style="padding-left:50px;" id="lineElement' + transferLine[0].line_cd + '" onclick="getStation(\'' + transferLine[0].line_cd + '\')"><strong>' + transferLine[0].line_name + '（' + transferLine[0].line_name_k + '）</strong></a>'
+                }
+                $.ajax({
+                        type: 'GET',
+                        url: dataUrl + '?sn=local&q=' + station_cd,
+                        dataType: 'jsonp',
+                        jsonpCallback: 'jsondata'
+                    })
+                    .then(
+                        function(local) {
+                            out += parentElement;
+                            for (var idx in local) {
+                                var tags = local[idx].tag.split("#");
+                                out += '<a href="https://www.google.com/search?q=' + station_name + '+' + tags[1] + '+' + local[idx].name + '" class="list-group-item list-group-item-action" target="_blank" style="text-align:center;"><strong>' + local[idx].name + '</strong>';
+                                for (var idx2 in tags) {
+                                    out += '<span class="badge badge-success">'
+                                    out += tags[idx2]
+                                    out += '</span>'
+                                }
+                                out += '</a>'
+                            }
+                            out += '<a href="#" class="list-group-item list-group-item-action list-group-item-danger" data-toggle="modal" data-target="#dataForm" style="text-align:center;">✙<strong>追加</strong></a>'
+                            $("#list").html(out);
+                            $.LoadingOverlay("hide");
+                        },
+                        function() {
+                            console.log('error');
+                        }
+                    );
+            });
+        }
+
+        /**
+         * ローカル検索(検索ボタンorタグプルダウン)
+         * 
+         * @param {String} keyword - 検索文字列
+         */
+        function findLocal(keyword) {
+            $.LoadingOverlay("show");
+            if (keyword === "") {
+                keyword = $("#keyword").val();
+            }
+            $.ajax({
+                    type: 'GET',
+                    url: dataUrl + '?sn=local&q=' + keyword,
+                    dataType: 'jsonp',
+                    jsonpCallback: 'jsondata'
+                })
+                .then(
+                    function(local) {
+                        var out = '<a href="#" class="list-group-item list-group-item-action list-group-item-warning" data-toggle="modal" data-target="#dataForm" style="text-align:center;"><strong>「' + keyword + '」' + local.length + '件</strong></a>';
+                        for (var idx in local) {
+                            out += local[idx].hidPrefElement;
+                            out += local[idx].hidLineElement;
+                            out += local[idx].hidStationElement;
+                            var tags = local[idx].tag.split("#");
+                            out += '<a href="https://www.google.com/search?q=' + tags[1] + '+' + local[idx].name + '" class="list-group-item list-group-item-action" target="_blank" style="text-align:center;"><strong>' + local[idx].name + '</strong>';
+                            for (var idx2 in tags) {
+                                out += '<span class="badge badge-success">'
+                                out += tags[idx2]
+                                out += '</span>'
+                            }
+                            out += '</a>'
+                        }
+                        $("#list").html(out);
+                        $.LoadingOverlay("hide");
+                    },
+                    function() {
+                        console.log('error');
+                    }
+                );
+        }
+
+        /**
+         * 登録完了メッセージ閉じる
+         */
+        function closeModalMsg() {
+            getLocal($("#hidActiveStationCd").val(), $("#hidStationName").val(), "", "", $("#hidLineCd").val(), $("#hidTransferLines").val(), $("#hidTransferStations").val());
+        }
+
+        /**
+         * 現在地取得
+         */
+        function getMyPlace() {
+            if (!navigator.geolocation) { //Geolocation apiがサポートされていない場合
+                alert("<p>Geolocationはあなたの端末でサポートされておりません</p>");
+                return;
+            }
+
+            function success(position) {
+                var lat = position.coords.latitude; //緯度
+                var lng = position.coords.longitude; //経度
+                drowMap(lat, lng);
+            };
+
+            function error() {
+                alert("座標位置を取得できません");
+            };
+            navigator.geolocation.getCurrentPosition(success, error); //成功と失敗を判断
+        }
+
+        /**
+         * Map描画
+         * 
+         * @param {String} lat - 経度
+         * @param {String} lng - 緯度
+         */
+        function drowMap(lat, lng) {
+            // 座標取得
+            var latlng = new google.maps.LatLng(lat, lng);
+            // Google Mapsに書き出し
+            var map = new google.maps.Map(document.getElementById("map-canvas"), {
+                zoom: 15, // ズーム値
+                center: latlng, // 中心座標
+            });
+            // マーカーの新規出力
+            new google.maps.Marker({
+                map: map,
+                position: latlng,
+            });
+        }
+
+        /**
+         * Polyline作成描画
+         * 
+         * @param {object} lineStations - 路線情報オブジェクト
+         */
+        function drowPolyline(lineStations) {
+
+            // 始発駅の座標を取得
+            var latlng = new google.maps.LatLng(lineStations[0].lat, lineStations[0].lon);
+            var opts = {
+                zoom: 10,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                center: latlng
+            };
+            var lat_lng = [];
+            for (var idx in lineStations) {
+                lat_lng.push(new google.maps.LatLng(lineStations[idx].lat, lineStations[idx].lon));
+            }
+            var map = new google.maps.Map(document.getElementById("map-canvas"), opts);
+            // Polylineの初期設定
+            var polylineOpts = {
+                map: map,
+                strokeColor: "#FF0000",
+                strokeOpacity: 1.0,
+                strokeWeight: 3,
+                path: lat_lng
+            };
+            // 直前で作成したPolylineOptionsを利用してPolylineを作成
+            var polyline = new google.maps.Polyline(polylineOpts);
+        }
+
+        function calcDistance(lat1, lng1, lat2, lng2) {
+            const Re = 6378.137 // 地球の半径
+
+            function radians(deg) {
+                return deg * Math.PI / 180
+            }
+
+            function rectangularCoordinateSystem(lat, lng) {
+                const h = radians(lat)
+                const t = radians(lng)
+                const x = Math.cos(h) * Math.cos(t)
+                const y = Math.cos(h) * Math.sin(t)
+                const z = Math.sin(h)
+                return [x, y, z]
+            }
+
+            function innerProduct(vector1, vector2) {
+                return vector1.reduce((carry, value, index) => {
+                    return carry + value * vector2[index]
+                }, 0)
+            }
+
+            const v1 = rectangularCoordinateSystem(lat1, lng1)
+            const v2 = rectangularCoordinateSystem(lat2, lng2)
+            return Re * Math.acos(innerProduct(v1, v2))
+        }
+
+        function getNearestStation(lat, lng) {
+            return stations.map((station) => {
+                station.distance = calcDistance(lat, lng, station.lat, station.lng)
+                return station
+            }).sort((station1, station2) =>
+                station1.distance - station2.distance
+            ).slice(0, 1)
+        }
     </script>
-  	<!--<div aria-hidden="true" class="modal fade bs-example-modal-sm" data-backdrop="static" id="myPleaseWait" role="dialog" tabindex="-1">-->
-  	<!--	<div class="modal-dialog modal-sm">-->
-  	<!--		<div class="modal-content">-->
-  	<!--			<div class="modal-header">-->
-  	<!--				<h4 class="modal-title">検索中</h4>-->
-  	<!--			</div>-->
-  	<!--			<div class="modal-body">-->
-  	<!--				<div class="progress">-->
-  	<!--					<div class="progress-bar progress-bar-info progress-bar-striped active" style="width: 100%"></div>-->
-  	<!--				</div>-->
-  	<!--			</div>-->
-  	<!--		</div>-->
-  	<!--	</div>-->
-  	<!--</div>-->
-    </body>
+</body>
+
 </html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, intial-scale=1" name="viewport"/>
+    <title>路線データベース</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+    .mainContents {
+      min-height: calc(100vh - 50px);
+    }
+    .stickyFooter {
+      min-height: 50px;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="mainContents">
+      <div class="container-fluid">
+        <div class="row" id="btnList" style="padding-top:5px;">
+        </div>
+        <div class="row" id="transferSearch" style="padding-top:5px;display:none;">
+          <div class="col-md-4">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon3">出発</span>
+              <input type="text" class="form-control" id="departFrom">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon3">到着</span>
+              <input type="text" class="form-control" id="arrivalAt">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <button type="button" id="btnTransferSearch" class="btn btn-secondary btn-info btn-block"><strong>簡易乗換検索(首都圏)</strong></button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="list-group rowcontent" id="listMain" style="padding-top:5px;overflow: auto;height: 100%;max-height: 80%;">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 rowcontent" id="shopInfo" style="padding-top:5px;display:none;overflow: auto;height: 100%;max-height: 80%;">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 rowcontent" id="entryForm" style="padding-top:5px;display:none;overflow: auto;height: 100%;max-height: 80%;">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 rowcontent" id="about" style="padding-top:5px;display:none;overflow: auto;height: 100%;max-height: 80%;">
+            <div class="panel panel-info">
+              <div class="panel-body">
+                <h5><u>路線データベースとは</u></h5>
+                路線データベースは、電車で探す、日本全国路線情報サイトです。各駅最寄の施設や店舗などジャンルを問わずデータベース化しているのが特徴です。<br>
+                各々が自信を持って皆さんにおすすめできる情報を登録しましょう。
+                <h5><u>推奨環境</u></h5>
+                路線データベースは、Chrome・Firefox・Internet Explorer・Safariの最新版のブラウザのご使用を推奨としております。<br>
+                古いバージョンをご利用の方は、ぜひこれらの最新版ブラウザでご覧ください。
+                <h5><u>JavaScript・Cookieに関して</u></h5>
+                路線データベースは、画面の遷移や投稿のために、JavaScriptとCookieを使用しております。当サイトをご利用の際はJavaScriptとCookieを有効にした上でご利用ください。
+                <h5><u>コピーライト</u></h5>
+                路線データベースは、以下の素材・技術を使用しております。<br>
+                ・GitHub Pages<br>
+                ・Google Maps API<br>
+                ・Slack API<br>
+                ・駅データ.jp
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 rowcontent" id="termsofuse" style="padding-top:5px;display:none;overflow: auto;height: 100%;max-height: 80%;">
+            <div class="panel panel-info">
+              <div class="panel-body">
+                路線データベース（以下「当サイト」と言う）に関する利用規約（以下『本規約』）を以下の通り定めます。<br>
+                当サイトご利用にあたっては本規約の内容をお読みいただき、予めご承諾いただいた場合のみご利用ください。<br><br>
+                本規約の内容は必要に応じて予告なしに改訂できるものとします。ご利用の際には、最新の利用規約をご参照ください。また、今後規約の改訂があった場合も、利用者（以下「ユーザー」）の皆様にはその内容に引き続き同意いただいているものとみなされます。<br><br>
+                <h5><u>個人情報について</u></h5>
+                <a href="javascript:void(0)" onclick="main(null, 13, this)"><strong>プライバシーポリシー</strong></a>参照
+                <h5><u>禁止行為</u></h5>
+                ユーザーは当サイトの使用にあたって、下記のいずれかに該当・類似する行為を行わないものとします。<br>
+                ・公序良俗に反する行為<br>
+                ・犯罪行為に結びつく行為<br>
+                ・法令に違反する行為<br>
+                ・宣伝や商用を目的とした行為<br>
+                ・選挙の事前運動、選挙運動又はこれらに類似する行為。及び公職選挙法に抵触する行為<br>
+                ・当サイトと関係のない団体、サービス、活動等への勧誘を目的とした行為<br>
+                ・当サイトまたは他ユーザーを含む第三者の知的財産権、肖像権、プライバシーの権利、名誉、その他の権利又は利益を侵害する行為<br>
+                ・当サイトまたは他ユーザーを含む第三者に不利益を与える行為<br>
+                ・当サイトまたは他ユーザーになりすましをする行為<br>
+                ・当サイトまたは他ユーザーを誹謗中傷する行為<br>
+                ・他ユーザー又は第三者との間で、売買、贈与及び金銭的な利害の発生する行為<br>
+                ・当サイトからの電子メール又は当サイトの内容の無断転載及び再配布<br>
+                ・コンピュータウィルス等、当サイトのシステムインフラに障害を及ぼす行為<br>
+                ・当サイト上に掲載された情報を不正に改ざん、消去する行為。又は虚偽の情報を掲載する行為<br>
+                ・その他、当サイトが不適切と判断する行為
+                <h5><u>ユーザー間の情報</u></h5>
+                当サイトを通じてユーザー同士でなされた情報の授受、及びそれに付随して行われる行為については当サイトは一切の責任を負わないものとします。
+                <h5><u>サービスについて</u></h5>
+                当サイトは提供しているサービスを予告なく変更、又は中止する場合があります。<br>
+                当サイトは下記に該当する場合、サービスの一部もしくは全部を一時中断、又は停止する場合があります。<br>
+                ・当サイト及びそれにかかるネットワーク等のシステムの定期保守、更新ならびに緊急の場合<br>
+                ・火災・停電・天災などの不可抗力により、サービスの提供が困難な場合<br>
+                ・その他、不測の事態により当サイトがサービスの提供が困難と判断した場合<br>
+                これらによりユーザー又は第三者に不利益、損害が発生した場合、当サイトはその責任を負わないものとします。<br>
+                <h5><u>投稿について</u></h5>
+                当サイトは、必要と判断した場合には、いつでもユーザーの投稿したデータの内容を閲覧し、公開の差し止め、公開データの改変あるいは削除ができるものとします。<br>
+                ユーザーは当サイトの使用にあたり、下記のいずれかに該当、もしくは類似する行為を行わないものとします。下記のいずれかに該当・類似する場合、ユーザーの承諾なし投稿内容の編集・削除ができるものとします。<br>
+                ・不買を呼びかける行為<br>
+                ・他ユーザーを含む第三者を不快にさせる行為<br>
+                ・店舗関係者等による自らの利益のみを考えた投稿<br>
+                ・同内容を複数書き込む行為<br>
+                ・店舗や店員、その他店舗関係者への誹謗中傷<br>
+                ・衛生管理面や法律に関する問題等、しかるべき当局へご連絡いただく内容のもの<br>
+                ・内容の確認が困難と思われる、根拠のないもの<br>
+                ・添加物に関連する内容<br>
+                ・悪意を感じる内容<br>
+                ・その他、当サイトが不適切と判断する投稿<br><br>
+                当サイトが下記のいずれかに該当すると判断したユーザーに関しては、ユーザーへの承諾なしにコメントの表示優先度を変更できるものとします。<br>
+                ・店への配慮に欠ける発言が目立つ<br>
+                ・ストレスを発散させるための発言が目立つ<br>
+                ・クレーマー気質である<br>
+                ・皮肉的な発言が目立つ<br>
+                ・利用規約に反する内容を繰り返す<br>
+                ・利用規約の内容をご理解いただいてない<br>
+                これらによりユーザーが損害を被った場合、当サイトはその責任を負わないものとします。
+                <h5><u>権利帰属</u></h5>
+                ・当サイトのデザインや構造等の著作権はすべて当サイトに帰属します。<br>
+                ・ユーザーが書き込みを行った時点で、当該書き込み内容を国内における複製、公衆送信、頒布、翻訳、翻案等の権利をユーザーが無償で当サイトに対して許諾したものとします。ユーザーの利用許諾期間は書き込み内容の著作権が存続する限りとし、ロイヤリティ等の対価は一切発生しないものとします。<br>
+                ・当サイト上で、ユーザーが掲示した内容により知的財産権（著作権．意匠権・特許権・実用新案権・商標権・ノウハウが含まれるがこれに限定されない）が発生する場合、当権利は全て当サイトに帰属するか、もしくは当サイトに対し無償で譲渡されるものとします。<br>
+                ・ユーザーは当サイト及び当サイトにより正当に権利を取得し、又は正当に権利の使用許諾を受けた第三者に対し、著作者人格権（公表権、氏名表示権、同一性保持権）を公使しないものとします。<br>
+                ・当サイトまたは第三者がユーザーの書き込みを利用したことによりユーザーが受けた損害については、当サイトは一切の保証を致しません。<br>
+                ・ユーザーは、当サイト上に投稿するにあたって、使用、利用するデータに対し、著作権・商標権・特許権・意匠権およびその他の知的財産権などの適法かつ有効な使用権を有していることを保証していただきます。尚、公開データに、第三者の保有する著作権などの権利が含まれる場合、その使用権に関して、当サイトから当該第三者に確認させていただく場合や、公開事前の第三者による使用許諾に関する証明を当該ユーザーに求めることがあります。<br>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 rowcontent" id="privacy" style="padding-top:5px;display:none;overflow: auto;height: 100%;max-height: 80%;">
+            <div class="panel panel-info">
+              <div class="panel-body">
+                路線データベース（以下「当サイト」と言う）における閲覧者（以下「ユーザ」と言う）の個人情報取り扱い、および広告等の表記、その他運営に関する指針を示すものです。
+                <h5><u>アクセス解析について</u></h5>
+                当サイトでは、コンテンツの拡充やサイト運営を目的として、以下のサービスとcookieによるアクセス解析を利用しています。これにより得られる情報は匿名であり、ユーザ個人が特定されることはありません。
+                <h5>Googleアナリティクス</h5>
+                Googleが運営するアクセス解析ツールです。<br>この機能はCookieを無効にすることで情報の収集を拒否することが出来ます。詳細はお使いのWebブラウザの機能説明をご確認下さい。
+                <h5><u>広告について</u></h5>
+                当サイトでは、現在第三者配信による広告サービスの利用はありません。
+                <h5><u>コメント入力した個人情報について</u></h5>
+                ユーザが入力した個人情報を無断で第三者に開示することはありません。<br><br>
+                ただし各種法令・国が定める指針により法的な開示請求が発生した場合は例外とします。
+                <h5><u>免責事項</u></h5>
+                上記の提携サービスおよびシステム障害により生じる損害について、当サイト管理者は責任を負わないものとします。
+                <h5><u>特記事項</u></h5>
+                本規約は準拠法の変更、および利用サービス規約の変更に伴い随時追加・変更されます。<br><br>
+                なお、当サイト管理人が被った権利侵害に関わる紛争が生じた場合は、日本法を準拠法と定め、かかる紛争については東京地方裁判所を第一審の専属的管轄裁判所とします。
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 rowcontent" id="contactForm" style="padding-top:5px;display:none;overflow: auto;height: 100%;max-height: 80%;">
+            <div class="panel panel-default" style="padding:5px;"><div class="alert alert-danger" style="display:none;" role="alert" id="errorContactMsg"></div>
+            <form class="form-horizontal" role="form">
+            <div class="form-group"><label class="col-sm-2 control-label" style="text-align:center" id="lblmail">メールアドレス</label><div class="col-sm-10"><input class="form-control contactForm" id="mail"></div></div>
+            <div class="form-group"><label class="col-sm-2 control-label" style="text-align:center" id="lblmailbody">問合せ内容</label><div class="col-sm-10"><textarea class="form-control contactForm" rows="10" id="mailbody"></textarea></div></div>
+            </form>
+            <button type="button" id="btnAdd" class="btn btn-secondary btn-success btn-block" onclick="checkContactForm()">確認</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="stickyFooter">
+      <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button aria-expanded="false" class="collapsed navbar-toggle" data-target="#bs-example-navbar-collapse-7" data-toggle="collapse" type="button"><span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button> <a class="navbar-brand" href="javascript:void(0)" id="navBrand"><strong>路線データベース</strong></a>
+          </div>
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-7">
+           <form class="navbar-form navbar-left" onsubmit="return main(null, 10, null)">
+             <div class="input-group">
+               <input type="text" class="form-control" placeholder="Search for..." id="keyword">
+               <span class="input-group-btn">
+                 <button class="btn btn-default" type="button" id="btnSearch">検索</button>
+               </span>
+             </div>
+           </form>
+            <ul class="nav navbar-nav navbar-right">
+              <li>
+                <a href="javascript:void(0)" id="navAbout"><strong>路線データベースについて</strong></a>
+              </li>
+              <li>
+                <a href="javascript:void(0)" id="navTermsofuse"><strong>利用規約</strong></a>
+              </li>
+              <li>
+                <a href="javascript:void(0)" id="navPrivacy"><strong>プライバシーポリシー</strong></a>
+              </li>
+              <li>
+                <a href="javascript:void(0)" id="navContact"><strong>お問合せ</strong></a>
+              </li>
+              <li>
+                <a class="twitter-btn" href="https://twitter.com/intent/follow?screen_name=routedb"><strong>Follow @routedb</strong></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.xdomainajax.js"></script>
+    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=AIzaSyCM0J8a1CGDpi6sqI_xKksKQrNLByH3OTE"></script>
+    <script type="text/javascript" src="js/oauth.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-84217593-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  	<div aria-hidden="true" class="modal fade bs-example-modal-sm" data-backdrop="static" id="myPleaseWait" role="dialog" tabindex="-1">
+  		<div class="modal-dialog modal-sm">
+  			<div class="modal-content">
+  				<div class="modal-header">
+  					<h4 class="modal-title">検索中</h4>
+  				</div>
+  				<div class="modal-body">
+  					<div class="progress">
+  						<div class="progress-bar progress-bar-info progress-bar-striped active" style="width: 100%"></div>
+  					</div>
+  				</div>
+  			</div>
+  		</div>
+  	</div>
+    </body>
+</html>
