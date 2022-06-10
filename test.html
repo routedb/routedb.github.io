@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+
+    <title>routedb</title>
+</head>
+
+<body onload="init()">
+    <header class="sticky-top">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <button class="btn btn-secondary" type="button" onclick="location.reload();">
+                    TOP
+                </button>
+            </div>
+            <div class="input-group-prepend">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                    タグ
+                </button>
+                <div class="dropdown-menu p-4 text-muted overflow-auto" style="height: 150px" id="uniqueTagsList"></div>
+            </div>
+            <input type="text" id="keyword" class="form-control"
+                aria-label="Recipient's username with two button addons" aria-describedby="button-addon4" />
+            <div class="input-group-append" id="button-addon4">
+                <button class="btn btn-secondary" type="button" onclick="findLocal('')">
+                    検索
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- GoogleMap -->
+    <main>
+        <div id="map-canvas" style="width: 100%; height: 400px; background: #eee;"></div>
+        <div class="list-group" id="list" style="padding-bottom: 45px;"></div>
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <form id="addForm" role="form">
+                            <input type="hidden" id="hidUuid" />
+                            <input type="hidden" id="hidPrefCd" />
+                            <input type="hidden" id="hidLineCd" />
+                            <input type="hidden" id="hidStationCd" />
+                            <input type="hidden" id="hidActiveStationCd" />
+                            <input type="hidden" id="hidStationName" />
+                            <input type="hidden" id="hidPrefElement" />
+                            <input type="hidden" id="hidLineElement" />
+                            <input type="hidden" id="hidStationElement" />
+                            <input type="hidden" id="hidTransferLines" />
+                            <input type="hidden" id="hidTransferStations" />
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">名称:</label>
+                                <input type="text" class="form-control" id="data_name" />
+                            </div>
+                            <div class="form-group">
+                                <label for="message-text" class="col-form-label">タグ※「#」区切り。例）#ラーメン#自家製麺</label>
+                                <input type="text" class="form-control" id="data_tag" />
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary btn-sm">登録</button>
+                        </form>
+                    </div>
+                    <div class="modal-body" id="modal_msg" style="display: none">
+                        <p>登録しました。</p>
+                        <div class="text-right">
+                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"
+                                onclick="closeModalMsg()">
+                                閉じる
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="fixed-bottom">
+        <div class="btn-group dropup" style="width:100%;">
+            <button class="btn btn-secondary" type="button" onclick="location.reload();">路線データベース</button>
+            <select class="form-select" style="width:50%;" aria-label="Default select example">
+                <option selected>メニュー</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+              </select>
+        </div>
+    </footer>
+    <!-- Optional JavaScript; choose one of the two! -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCix65IjkwpYudG66diaCPfbBvZhlXFbwY"></script>
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+    <script>
+        const getPrefectures = async () => {
+            const url = `https://express.heartrails.com/api/json?method=getPrefectures`;
+            const response = await fetch(url, { method: "get" });
+            const json = response.json();
+            if (response.status == 200) {
+                return Promise.resolve(json);
+            } else {
+                return Promise.reject(json.error);
+            }
+        };
+
+        const getLine = async (line) => {
+            const url = `https://express.heartrails.com/api/json?method=getLines&prefecture=${line}`;
+            const response = await fetch(url, { method: "get" });
+            const json = response.json();
+            if (response.status == 200) {
+                return Promise.resolve(json);
+            } else {
+                return Promise.reject(json.error);
+            }
+        };
+
+        const getStationList = async (line) => {
+            const url = `https://express.heartrails.com/api/json?method=getStations&line=${line}`;
+            const response = await fetch(url, { method: "get" });
+            const json = response.json();
+            if (response.status == 200) {
+                return Promise.resolve(json);
+            } else {
+                return Promise.reject(json.error);
+            }
+        };
+
+        const getStation = async (station) => {
+            const url = `https://express.heartrails.com/api/json?method=getStations&name=${station}`;
+            const response = await fetch(url, { method: "get" });
+            const json = response.json();
+            if (response.status == 200) {
+                return Promise.resolve(json);
+            } else {
+                return Promise.reject(json.error);
+            }
+        };
+
+        function init() {
+            // 現在地取得
+            getMyPlace();
+            // 都道府県取得
+            getPrefectures()
+                .then((data) => {
+                    console.log(data);
+                    let objData = data.response.prefecture;
+                    let out = "";
+                    // 都道府県一覧作成
+                    for (let prefecture_idx in objData) {
+                        out +=
+                            '<a href="#" class="list-group-item list-group-item-action" id="prefElement' +
+                            prefecture_idx +
+                            '" onclick="drawLine(this,\'' +
+                            objData[prefecture_idx] +
+                            "')\">";
+                        out += "<strong>" + objData[prefecture_idx] + "</strong>";
+                        out +=
+                            '<span class="badge badge-pill badge-light" id="badge_pref' +
+                            prefecture_idx +
+                            '"></span></a>';
+                    }
+                    document.getElementById("list").innerHTML = out;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+        function drawLine(elem, prefecture) {
+            getLine(prefecture)
+                .then((data) => {
+                    console.log(elem.outerHTML);
+                    console.log(data);
+                    let objData = data.response.line;
+                    let out = elem.outerHTML;
+                    // 路線一覧作成
+                    for (let line_idx in objData) {
+                        out +=
+                            '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
+                            line_idx +
+                            '" onclick="drawStationList(this,\'' +
+                            objData[line_idx] +
+                            "')\">";
+                        out += "<strong>" + objData[line_idx] + "</strong>";
+                        out +=
+                            '<span class="badge badge-pill badge-light" id="badge_line' +
+                            line_idx +
+                            '"></span></a>';
+                    }
+                    document.getElementById("list").innerHTML = out;
+                })
+                .catch((err) => { });
+        }
+
+        function drawStationList(elem, line) {
+            getStationList(line)
+                .then((data) => {
+                    console.log(elem.outerHTML);
+                    console.log(data);
+                    let objData = data.response.station;
+                    let out = elem.parentElement.children[0].outerHTML + elem.outerHTML;
+                    // 駅一覧作成
+                    for (let station_idx in objData) {
+                        out +=
+                            '<a href="#" class="list-group-item list-group-item-action" style="padding-left:35px;" id="stationElement' +
+                            station_idx +
+                            '" onclick="drawStation(this,\'' +
+                            objData[station_idx].name +
+                            "','" +
+                            objData[station_idx].prefecture +
+                            "','" +
+                            objData[station_idx].line +
+                            "')\">";
+                        out += "<strong>" + objData[station_idx].name + "</strong>";
+                        out +=
+                            '<span class="badge badge-pill badge-light" id="badge_stationList' +
+                            station_idx +
+                            '"></span></a>';
+                    }
+                    document.getElementById("list").innerHTML = out;
+                    // 路線レイヤー描画
+                    drowPolyline(objData);
+                })
+                .catch((err) => { });
+        }
+
+        function drawStation(elem, station, prefecture, line) {
+            getStation(station)
+                .then((data) => {
+                    console.log(elem.outerHTML);
+                    console.log(data);
+                    let objData = data.response.station;
+                    let out =
+                        '<a href="#" class="list-group-item list-group-item-action" onclick="drawLine(this,\'' +
+                        prefecture +
+                        "')\">";
+                    out += "<strong>" + prefecture + "</strong>";
+                    out +=
+                        '<span class="badge badge-pill badge-light" id="badge_pref' +
+                        '"></span></a>' +
+                        '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" onclick="drawStationList(this,\'' +
+                        line +
+                        "')\">";
+                    out += "<strong>" + line + "</strong>";
+                    out +=
+                        '<span class="badge badge-pill badge-light" id="badge_line' +
+                        '"></span></a>';
+                    // 駅詳細作成
+                    for (let station_idx in objData) {
+                        if (objData[station_idx].line !== elem.parentElement.children[1].innerText) {
+                            if (objData[station_idx].prefecture === prefecture) {
+                                out +=
+                                    '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="stationElement' +
+                                    station_idx +
+                                    '" onclick="drawStationList(this,\'' +
+                                    objData[station_idx].line +
+                                    "')\">";
+                                out += "<strong>" + objData[station_idx].line + "</strong>";
+                                out +=
+                                    '<span class="badge badge-pill badge-light" id="badge_station' +
+                                    station_idx +
+                                    '"></span></a>';
+                            }
+                        }
+                    }
+                    document.getElementById("list").innerHTML =
+                        out +
+                        elem.outerHTML +
+                        '<a href="#" class="list-group-item list-group-item-action list-group-item-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" style="text-align:center;">✙<strong>追加</strong></a>';
+                    drowMap(objData[0].y, objData[0].x);
+                })
+                .catch((err) => { });
+        }
+
+        /**
+         * 現在地取得
+         */
+        function getMyPlace() {
+            if (!navigator.geolocation) {
+                //Geolocation apiがサポートされていない場合
+                alert("<p>Geolocationはあなたの端末でサポートされておりません</p>");
+                return;
+            }
+
+            function success(position) {
+                var lat = position.coords.latitude; //緯度
+                var lng = position.coords.longitude; //経度
+                drowMap(lat, lng);
+            }
+
+            function error() {
+                alert("座標位置を取得できません");
+            }
+            navigator.geolocation.getCurrentPosition(success, error); //成功と失敗を判断
+        }
+
+        /**
+         * Map描画
+         * 
+         * @param {String} lat - 経度
+         * @param {String} lng - 緯度
+         */
+        function drowMap(lat, lng) {
+            // 座標取得
+            var latlng = new google.maps.LatLng(lat, lng);
+            // Google Mapsに書き出し
+            var map = new google.maps.Map(document.getElementById("map-canvas"), {
+                zoom: 15, // ズーム値
+                center: latlng, // 中心座標
+            });
+            // マーカーの新規出力
+            new google.maps.Marker({
+                map: map,
+                position: latlng,
+            });
+        }
+
+        /**
+         * Polyline作成描画
+         * 
+         * @param {object} lineStations - 路線情報オブジェクト
+         */
+        function drowPolyline(lineStations) {
+
+            // 始発駅の座標を取得
+            var latlng = new google.maps.LatLng(lineStations[0].y, lineStations[0].x);
+            var opts = {
+                zoom: 10,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                center: latlng
+            };
+            var lat_lng = [];
+            for (var idx in lineStations) {
+                lat_lng.push(new google.maps.LatLng(lineStations[idx].y, lineStations[idx].x));
+            }
+            var map = new google.maps.Map(document.getElementById("map-canvas"), opts);
+            // Polylineの初期設定
+            var polylineOpts = {
+                map: map,
+                strokeColor: "#FF0000",
+                strokeOpacity: 1.0,
+                strokeWeight: 3,
+                path: lat_lng
+            };
+            // 直前で作成したPolylineOptionsを利用してPolylineを作成
+            var polyline = new google.maps.Polyline(polylineOpts);
+        }
+    </script>
+</body>
+
+</html>
