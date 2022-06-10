@@ -10,20 +10,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
 
-    <title>routedb</title>
+    <title>routeDB</title>
 </head>
 
 <body onload="init()">
     <header class="sticky-top">
         <div class="input-group">
             <div class="input-group-prepend">
-                <button class="btn btn-secondary" type="button" onclick="location.reload();">
-                    TOP
-                </button>
-            </div>
-            <div class="input-group-prepend">
                 <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
-                    タグ
+                    tags
                 </button>
                 <div class="dropdown-menu p-4 text-muted overflow-auto" style="height: 150px" id="uniqueTagsList"></div>
             </div>
@@ -31,7 +26,7 @@
                 aria-label="Recipient's username with two button addons" aria-describedby="button-addon4" />
             <div class="input-group-append" id="button-addon4">
                 <button class="btn btn-secondary" type="button" onclick="findLocal('')">
-                    検索
+                    find
                 </button>
             </div>
         </div>
@@ -57,25 +52,25 @@
                             <input type="hidden" id="hidTransferLines" />
                             <input type="hidden" id="hidTransferStations" />
                             <div class="form-group">
-                                <label for="recipient-name" class="col-form-label">名称:</label>
+                                <label for="recipient-name" class="col-form-label">name</label>
                                 <input type="text" class="form-control" id="data_name" />
                             </div>
                             <div class="form-group">
-                                <label for="message-text" class="col-form-label">タグ※「#」区切り。例）#ラーメン#自家製麺</label>
-                                <input type="text" class="form-control" id="data_tag" />
+                                <label for="message-text" class="col-form-label">tag</label>
+                                <input type="text" class="form-control" id="data_tag" placeholder="#喫茶店#プリン#喫煙可"/>
                             </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary btn-sm">登録</button>
+                        <button type="submit" class="btn btn-primary btn-sm">add</button>
                         </form>
                     </div>
                     <div class="modal-body" id="modal_msg" style="display: none">
-                        <p>登録しました。</p>
+                        <p>success!</p>
                         <div class="text-right">
                             <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"
                                 onclick="closeModalMsg()">
-                                閉じる
+                                Close
                             </button>
                         </div>
                     </div>
@@ -85,9 +80,9 @@
     </main>
     <footer class="fixed-bottom">
         <div class="btn-group dropup" style="width:100%;">
-            <button class="btn btn-secondary" type="button" onclick="location.reload();">路線データベース</button>
+            <button class="btn btn-secondary" type="button" onclick="location.reload();">routeDB</button>
             <select class="form-select" style="width:50%;" aria-label="Default select example">
-                <option selected>メニュー</option>
+                <option selected>menu</option>
                 <option value="1">One</option>
                 <option value="2">Two</option>
                 <option value="3">Three</option>
@@ -164,15 +159,13 @@
                     let out = "";
                     // 都道府県一覧作成
                     for (let prefecture_idx in objData) {
-                        out +=
-                            '<a href="#" class="list-group-item list-group-item-action" id="prefElement' +
+                        out += '<a href="#" class="list-group-item list-group-item-action" id="prefElement' +
                             prefecture_idx +
                             '" onclick="drawLine(this,\'' +
                             objData[prefecture_idx] +
                             "')\">";
                         out += "<strong>" + objData[prefecture_idx] + "</strong>";
-                        out +=
-                            '<span class="badge badge-pill badge-light" id="badge_pref' +
+                        out += '<span class="badge badge-pill badge-light" id="badge_pref' +
                             prefecture_idx +
                             '"></span></a>';
                     }
@@ -191,15 +184,13 @@
                     let out = elem.outerHTML;
                     // 路線一覧作成
                     for (let line_idx in objData) {
-                        out +=
-                            '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
+                        out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
                             line_idx +
                             '" onclick="drawStationList(this,\'' +
                             objData[line_idx] +
                             "')\">";
                         out += "<strong>" + objData[line_idx] + "</strong>";
-                        out +=
-                            '<span class="badge badge-pill badge-light" id="badge_line' +
+                        out += '<span class="badge badge-pill badge-light" id="badge_line' +
                             line_idx +
                             '"></span></a>';
                     }
@@ -217,8 +208,7 @@
                     let out = elem.parentElement.children[0].outerHTML + elem.outerHTML;
                     // 駅一覧作成
                     for (let station_idx in objData) {
-                        out +=
-                            '<a href="#" class="list-group-item list-group-item-action" style="padding-left:35px;" id="stationElement' +
+                        out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:35px;" id="stationElement' +
                             station_idx +
                             '" onclick="drawStation(this,\'' +
                             objData[station_idx].name +
@@ -228,8 +218,7 @@
                             objData[station_idx].line +
                             "')\">";
                         out += "<strong>" + objData[station_idx].name + "</strong>";
-                        out +=
-                            '<span class="badge badge-pill badge-light" id="badge_stationList' +
+                        out += '<span class="badge badge-pill badge-light" id="badge_stationList' +
                             station_idx +
                             '"></span></a>';
                     }
@@ -246,43 +235,36 @@
                     console.log(elem.outerHTML);
                     console.log(data);
                     let objData = data.response.station;
-                    let out =
-                        '<a href="#" class="list-group-item list-group-item-action" onclick="drawLine(this,\'' +
+                    let out = '<a href="#" class="list-group-item list-group-item-action" onclick="drawLine(this,\'' +
                         prefecture +
                         "')\">";
                     out += "<strong>" + prefecture + "</strong>";
-                    out +=
-                        '<span class="badge badge-pill badge-light" id="badge_pref' +
+                    out += '<span class="badge badge-pill badge-light" id="badge_pref' +
                         '"></span></a>' +
                         '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" onclick="drawStationList(this,\'' +
                         line +
                         "')\">";
                     out += "<strong>" + line + "</strong>";
-                    out +=
-                        '<span class="badge badge-pill badge-light" id="badge_line' +
+                    out += '<span class="badge badge-pill badge-light" id="badge_line' +
                         '"></span></a>';
                     // 駅詳細作成
                     for (let station_idx in objData) {
                         if (objData[station_idx].line !== elem.parentElement.children[1].innerText) {
                             if (objData[station_idx].prefecture === prefecture) {
-                                out +=
-                                    '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="stationElement' +
+                                out +='<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="stationElement' +
                                     station_idx +
                                     '" onclick="drawStationList(this,\'' +
                                     objData[station_idx].line +
                                     "')\">";
                                 out += "<strong>" + objData[station_idx].line + "</strong>";
-                                out +=
-                                    '<span class="badge badge-pill badge-light" id="badge_station' +
+                                out += '<span class="badge badge-pill badge-light" id="badge_station' +
                                     station_idx +
                                     '"></span></a>';
                             }
                         }
                     }
-                    document.getElementById("list").innerHTML =
-                        out +
-                        elem.outerHTML +
-                        '<a href="#" class="list-group-item list-group-item-action list-group-item-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" style="text-align:center;">✙<strong>追加</strong></a>';
+                    document.getElementById("list").innerHTML = out + elem.outerHTML +
+                        '<a href="#" class="list-group-item list-group-item-action list-group-item-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" style="text-align:center;">✙<strong>add</strong></a>';
                     drowMap(objData[0].y, objData[0].x);
                 })
                 .catch((err) => { });
