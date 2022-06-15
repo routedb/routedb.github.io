@@ -145,7 +145,7 @@
         };
 
         const getStation = async(station) => {
-            const url = `https://express.heartrails.com/api/json?method=getStations&name=${station}`;
+            const url = `https://routedb.github.io/data/mst_station.json`;
             const response = await fetch(url, {
                 method: "get"
             });
@@ -256,12 +256,15 @@
         }
 
         function drawStation(elem, station, prefecture, line) {
-            getStationList()
+            getStation()
                 .then((data) => {
                     console.log(elem.outerHTML);
                     console.log(data);
-                    let objData = data.filter(value => {
-                        if (value.line.indexOf(line) !== -1) {
+                    console.log(station);
+                    console.log(prefecture);
+                    console.log(line);
+                    let stationData = data.filter(value => {
+                        if (value.line.indexOf(line) !== -1 && value.station_name.indexOf(station) !== -1 && value.prefecture.indexOf(prefecture) !== -1) {
                             return value
                         };
                     });
@@ -278,7 +281,7 @@
                     out += '<span class="badge badge-pill badge-light" id="badge_line' +
                         '"></span></a>';
                     // 駅詳細作成
-                    for (let station_idx in objData) {
+                    for (let station_idx in stationData) {
                         if (objData[station_idx].line !== elem.parentElement.children[1].innerText) {
                             if (objData[station_idx].prefecture === prefecture) {
                                 out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="stationElement' +
