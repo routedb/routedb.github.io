@@ -209,7 +209,7 @@
                         out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
                             filterData[line_idx].line_id +
                             '" onclick="drawStationList(this,\'' +
-                            filterData[line_idx].line +
+                            filterData[line_idx].line_id +
                             "')\">";
                         out += "<strong>" + filterData[line_idx].line + "</strong>";
                         out += '<span class="badge badge-pill badge-light" id="badge_line' +
@@ -221,36 +221,36 @@
                 .catch((err) => {});
         }
 
-        function drawStationList(elem, line) {
+        function drawStationList(elem, line_id) {
             getStationList()
                 .then((data) => {
                     console.log(elem.outerHTML);
                     console.log(data);
-                    let lineData = data.filter(value => {
-                        if (value.line.indexOf(line) !== -1) {
+                    let filterData = data.filter(value => {
+                        if (value.line_id.indexOf(line_id) !== -1) {
                             return value
                         }
                     });
                     let out = elem.parentElement.children[0].outerHTML + elem.outerHTML;
                     // 駅一覧作成
-                    for (let station_idx in lineData) {
+                    for (let station_idx in filterData) {
                         out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:35px;" id="stationElement' +
-                            lineData[station_idx].station_id +
+                            filterData[station_idx].station_id +
                             '" onclick="drawStation(this,\'' +
-                            lineData[station_idx].station_name +
+                            filterData[station_idx].station_name +
                             "','" +
-                            lineData[station_idx].prefecture +
+                            filterData[station_idx].prefecture +
                             "','" +
-                            lineData[station_idx].line +
+                            filterData[station_idx].line +
                             "')\">";
-                        out += "<strong>" + lineData[station_idx].station_name + "</strong>";
+                        out += "<strong>" + filterData[station_idx].station_name + "</strong>";
                         out += '<span class="badge badge-pill badge-light" id="badge_stationList' +
-                            lineData[station_idx].station_id +
+                            filterData[station_idx].station_id +
                             '"></span></a>';
                     }
                     document.getElementById("list").innerHTML = out;
                     // 路線レイヤー描画
-                    drowPolyline(lineData);
+                    drowPolyline(filterData);
                 })
                 .catch((err) => {});
         }
@@ -258,47 +258,71 @@
         function drawStation(elem, station, prefecture, line) {
             getStation()
                 .then((data) => {
-                    console.log(elem.outerHTML);
-                    console.log(data);
-                    console.log(station);
-                    console.log(prefecture);
-                    console.log(line);
-                    let stationData = data.filter(value => {
+                    let filterData = data.filter(value => {
                         if (value.line.indexOf(line) !== -1 && value.station_name.indexOf(station) !== -1 && value.prefecture.indexOf(prefecture) !== -1) {
                             return value
                         };
                     });
-                    let out = '<a href="#" class="list-group-item list-group-item-action" onclick="drawLine(this,\'' +
-                        prefecture +
+                    let out = "";
+                    // 都道府県
+                    out += '<a href="#" class="list-group-item list-group-item-action" id="prefElement' +
+                        filterData[0].prefecture_id +
+                        '" onclick="drawLine(this,\'' +
+                        filterData[0].prefecture +
                         "')\">";
-                    out += "<strong>" + prefecture + "</strong>";
+                    out += "<strong>" + filterData[0].prefecture + "</strong>";
                     out += '<span class="badge badge-pill badge-light" id="badge_pref' +
-                        '"></span></a>' +
-                        '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" onclick="drawStationList(this,\'' +
-                        line +
-                        "')\">";
-                    out += "<strong>" + line + "</strong>";
-                    out += '<span class="badge badge-pill badge-light" id="badge_line' +
+                        filterData[0].prefecture_id +
                         '"></span></a>';
-                    // 駅詳細作成
-                    for (let station_idx in stationData) {
-                        if (objData[station_idx].line !== elem.parentElement.children[1].innerText) {
-                            if (objData[station_idx].prefecture === prefecture) {
-                                out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="stationElement' +
-                                    station_idx +
-                                    '" onclick="drawStationList(this,\'' +
-                                    objData[station_idx].line +
-                                    "')\">";
-                                out += "<strong>" + objData[station_idx].line + "</strong>";
-                                out += '<span class="badge badge-pill badge-light" id="badge_station' +
-                                    station_idx +
-                                    '"></span></a>';
-                            }
-                        }
+                    // 路線
+                    out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
+                        filterData[0].line_id +
+                        '" onclick="drawStationList(this,\'' +
+                        filterData[0].line_id +
+                        "')\">";
+                    out += "<strong>" + filterData[0].line + "</strong>";
+                    out += '<span class="badge badge-pill badge-light" id="badge_line' +
+                        filterData[0].line_id +
+                        '"></span></a>';
+                    // 乗換
+                    filterData[0].transfer_line.split('/').forEach(function(value2) {
+                        console.log(value2);
+                    });
+                    let transferData = data.filter(value => {
+                        if (value.line.indexOf(filterData[0].transfer_line) !== -1) {
+                            return value
+                        };
+                    });
+                    for (let transfer_idx in transferData) {
+
                     }
-                    document.getElementById("list").innerHTML = out + elem.outerHTML +
+                    let convertTransferData = transferData.filter(value => {
+                        if (value.station_name.indexOf(filterData[0].station_name) !== -1 && value.prefecture.indexOf(filterData[0].prefecture) !== -1) {
+                            return value
+                        };
+                    });
+                    out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
+                        convertTransferData[0].line_id +
+                        '" onclick="drawStationList(this,\'' +
+                        convertTransferData[0].line_id +
+                        "')\">";
+                    out += "<strong>" + convertTransferData[0].line + "</strong>";
+                    out += '<span class="badge badge-pill badge-light" id="badge_line' +
+                        convertTransferData[0].line_id +
+                        '"></span></a>';
+                    // 駅
+                    out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:35px;" id="stationElement' +
+                        filterData[0].station_id +
+                        '" onclick="drawStationList(this,\'' +
+                        filterData[0].station_name +
+                        "')\">";
+                    out += "<strong>" + filterData[0].station_name + "</strong>";
+                    out += '<span class="badge badge-pill badge-light" id="badge_station' +
+                        filterData[0].station_id +
+                        '"></span></a>';
+                    document.getElementById("list").innerHTML = out +
                         '<a href="#" class="list-group-item list-group-item-action list-group-item-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" style="text-align:center;">✙<strong>add</strong></a>';
-                    drowMap(objData[0].y, objData[0].x);
+                    drowMap(filterData[0].lat, filterData[0].lng);
                 })
                 .catch((err) => {});
         }
@@ -354,15 +378,15 @@
         function drowPolyline(lineData) {
 
             // 始発駅の座標を取得
-            var latlng = new google.maps.LatLng(lineData[0].lat, lineStations[0].lng);
+            var latlng = new google.maps.LatLng(lineData[0].lat, lineData[0].lng);
             var opts = {
                 zoom: 10,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 center: latlng
             };
             var lat_lng = [];
-            for (var idx in lineStations) {
-                lat_lng.push(new google.maps.LatLng(lineStations[idx].lat, lineStations[idx].lng));
+            for (var idx in lineData) {
+                lat_lng.push(new google.maps.LatLng(lineData[idx].lat, lineData[idx].lng));
             }
             var map = new google.maps.Map(document.getElementById("map-canvas"), opts);
             // Polylineの初期設定
