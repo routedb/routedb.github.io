@@ -118,12 +118,12 @@
             }
         };
 
-        const getLine = async(line) => {
-            const url = `https://express.heartrails.com/api/json?method=getLines&prefecture=${line}`;
+        const getLine = async() => {
+            const url = `https://routedb.github.io/data/mst_line.json`;
             const response = await fetch(url, {
                 method: "get"
             });
-            const json = response.json();
+            const json = response.json()
             if (response.status == 200) {
                 return Promise.resolve(json);
             } else {
@@ -131,8 +131,8 @@
             }
         };
 
-        const getStationList = async(line) => {
-            const url = `https://express.heartrails.com/api/json?method=getStations&line=${line}`;
+        const getStationList = async() => {
+            const url = `https://routedb.github.io/data/mst_station.json`;
             const response = await fetch(url, {
                 method: "get"
             });
@@ -168,28 +168,22 @@
                 .catch((err) => {
                     console.log(err);
                 });
-            fetch('https://routedb.github.io/data/mst_prefecture.json')
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data)
-                });
 
             // 都道府県取得
             getPrefectures()
                 .then((data) => {
                     console.log(data);
-                    let objData = data.response.prefecture;
                     let out = "";
                     // 都道府県一覧作成
-                    for (let prefecture_idx in objData) {
+                    for (let prefecture_idx in data) {
                         out += '<a href="#" class="list-group-item list-group-item-action" id="prefElement' +
-                            prefecture_idx +
+                            data[prefecture_idx].prefecture_id +
                             '" onclick="drawLine(this,\'' +
-                            objData[prefecture_idx] +
+                            data[prefecture_idx].prefecture +
                             "')\">";
-                        out += "<strong>" + objData[prefecture_idx] + "</strong>";
+                        out += "<strong>" + data[prefecture_idx].prefecture + "</strong>";
                         out += '<span class="badge badge-pill badge-light" id="badge_pref' +
-                            prefecture_idx +
+                            data[prefecture_idx].prefecture_id +
                             '"></span></a>';
                     }
                     document.getElementById("list").innerHTML = out;
@@ -204,18 +198,22 @@
                 .then((data) => {
                     console.log(elem.outerHTML);
                     console.log(data);
-                    let objData = data.response.line;
+                    let filterData = data.filter(value => {
+                        if (value.prefecture.indexOf(prefecture) !== -1) {
+                            return value
+                        }
+                    });
                     let out = elem.outerHTML;
                     // 路線一覧作成
-                    for (let line_idx in objData) {
+                    for (let line_idx in filterData) {
                         out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
-                            line_idx +
+                            filterData[line_idx].line_id +
                             '" onclick="drawStationList(this,\'' +
-                            objData[line_idx] +
+                            filterData[line_idx].line +
                             "')\">";
-                        out += "<strong>" + objData[line_idx] + "</strong>";
+                        out += "<strong>" + filterData[line_idx].line + "</strong>";
                         out += '<span class="badge badge-pill badge-light" id="badge_line' +
-                            line_idx +
+                            filterData[line_idx].line_id +
                             '"></span></a>';
                     }
                     document.getElementById("list").innerHTML = out;
@@ -224,41 +222,49 @@
         }
 
         function drawStationList(elem, line) {
-            getStationList(line)
+            getStationList()
                 .then((data) => {
                     console.log(elem.outerHTML);
                     console.log(data);
-                    let objData = data.response.station;
+                    let lineData = data.filter(value => {
+                        if (value.line.indexOf(line) !== -1) {
+                            return value
+                        }
+                    });
                     let out = elem.parentElement.children[0].outerHTML + elem.outerHTML;
                     // 駅一覧作成
-                    for (let station_idx in objData) {
+                    for (let station_idx in lineData) {
                         out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:35px;" id="stationElement' +
-                            station_idx +
+                            lineData[station_idx].station_id +
                             '" onclick="drawStation(this,\'' +
-                            objData[station_idx].name +
+                            lineData[station_idx].station_name +
                             "','" +
-                            objData[station_idx].prefecture +
+                            lineData[station_idx].prefecture +
                             "','" +
-                            objData[station_idx].line +
+                            lineData[station_idx].line +
                             "')\">";
-                        out += "<strong>" + objData[station_idx].name + "</strong>";
+                        out += "<strong>" + lineData[station_idx].station_name + "</strong>";
                         out += '<span class="badge badge-pill badge-light" id="badge_stationList' +
-                            station_idx +
+                            lineData[station_idx].station_id +
                             '"></span></a>';
                     }
                     document.getElementById("list").innerHTML = out;
                     // 路線レイヤー描画
-                    drowPolyline(objData);
+                    drowPolyline(lineData);
                 })
                 .catch((err) => {});
         }
 
         function drawStation(elem, station, prefecture, line) {
-            getStation(station)
+            getStationList()
                 .then((data) => {
                     console.log(elem.outerHTML);
                     console.log(data);
-                    let objData = data.response.station;
+                    let objData = data.filter(value => {
+                        if (value.line.indexOf(line) !== -1) {
+                            return value
+                        };
+                    });
                     let out = '<a href="#" class="list-group-item list-group-item-action" onclick="drawLine(this,\'' +
                         prefecture +
                         "')\">";
@@ -340,12 +346,12 @@
         /**
          * Polyline作成描画
          * 
-         * @param {object} lineStations - 路線情報オブジェクト
+         * @param {object} lineData - 路線情報オブジェクト
          */
-        function drowPolyline(lineStations) {
+        function drowPolyline(lineData) {
 
             // 始発駅の座標を取得
-            var latlng = new google.maps.LatLng(lineStations[0].y, lineStations[0].x);
+            var latlng = new google.maps.LatLng(lineData[0].lat, lineStations[0].lng);
             var opts = {
                 zoom: 10,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -353,7 +359,7 @@
             };
             var lat_lng = [];
             for (var idx in lineStations) {
-                lat_lng.push(new google.maps.LatLng(lineStations[idx].y, lineStations[idx].x));
+                lat_lng.push(new google.maps.LatLng(lineStations[idx].lat, lineStations[idx].lng));
             }
             var map = new google.maps.Map(document.getElementById("map-canvas"), opts);
             // Polylineの初期設定
