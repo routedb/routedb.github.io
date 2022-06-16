@@ -144,7 +144,7 @@
             }
         };
 
-        const getStation = async(station) => {
+        const getStation = async() => {
             const url = `https://routedb.github.io/data/v_mst_station.json`;
             const response = await fetch(url, {
                 method: "get"
@@ -158,9 +158,7 @@
         };
 
         function init() {
-            // 現在地取得
             getMyPlace();
-            // db取得
             getRouteDB()
                 .then((data) => {
                     console.log(data);
@@ -168,13 +166,10 @@
                 .catch((err) => {
                     console.log(err);
                 });
-
-            // 都道府県取得
             getPrefectures()
                 .then((data) => {
                     console.log(data);
                     let out = "";
-                    // 都道府県一覧作成
                     for (let prefecture_idx in data) {
                         out += '<a href="#" class="list-group-item list-group-item-action" id="prefElement' +
                             data[prefecture_idx].prefecture_id +
@@ -203,13 +198,22 @@
                             return value
                         }
                     });
-                    let out = elem.outerHTML;
-                    // 路線一覧作成
+                    let out = '<a href="#" class="list-group-item list-group-item-action" id="prefElement' +
+                        filterData[0].prefecture_id +
+                        '" onclick="drawLine(this,\'' +
+                        filterData[0].prefecture +
+                        "')\">";
+                    out += "<strong>" + filterData[0].prefecture + "</strong>";
+                    out += '<span class="badge badge-pill badge-light" id="badge_pref' +
+                        filterData[0].prefecture_id +
+                        '"></span></a>';;
                     for (let line_idx in filterData) {
                         out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
                             filterData[line_idx].line_id +
                             '" onclick="drawStationList(this,\'' +
                             filterData[line_idx].line_id +
+                            "','" +
+                            filterData[line_idx].line +
                             "')\">";
                         out += "<strong>" + filterData[line_idx].line + "</strong>";
                         out += '<span class="badge badge-pill badge-light" id="badge_line' +
@@ -221,18 +225,17 @@
                 .catch((err) => {});
         }
 
-        function drawStationList(elem, line_id) {
+        function drawStationList(elem, line_id, line) {
             getStationList()
                 .then((data) => {
                     console.log(elem.outerHTML);
                     console.log(data);
                     let filterData = data.filter(value => {
-                        if (value.line_id.indexOf(line_id) !== -1) {
+                        if (value.line.indexOf(line) !== -1) {
                             return value
                         }
                     });
                     let out = elem.parentElement.children[0].outerHTML + elem.outerHTML;
-                    // 駅一覧作成
                     for (let station_idx in filterData) {
                         out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:35px;" id="stationElement' +
                             filterData[station_idx].station_id +
@@ -249,7 +252,6 @@
                             '"></span></a>';
                     }
                     document.getElementById("list").innerHTML = out;
-                    // 路線レイヤー描画
                     drowPolyline(filterData);
                 })
                 .catch((err) => {});
@@ -264,7 +266,6 @@
                         };
                     });
                     let out = "";
-                    // 都道府県
                     out += '<a href="#" class="list-group-item list-group-item-action" id="prefElement' +
                         filterData[0].prefecture_id +
                         '" onclick="drawLine(this,\'' +
@@ -274,17 +275,19 @@
                     out += '<span class="badge badge-pill badge-light" id="badge_pref' +
                         filterData[0].prefecture_id +
                         '"></span></a>';
-                    // 路線
+
                     out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
                         filterData[0].line_id +
                         '" onclick="drawStationList(this,\'' +
                         filterData[0].line_id +
+                        "','" +
+                        filterData[0].line +
                         "')\">";
                     out += "<strong>" + filterData[0].line + "</strong>";
                     out += '<span class="badge badge-pill badge-light" id="badge_line' +
                         filterData[0].line_id +
                         '"></span></a>';
-                    // 乗換
+
                     let transferData = [];
                     filterData[0].transfer_line.split('/').forEach(function(value2) {
                         console.log(value2);
@@ -303,21 +306,27 @@
                         }));
                     });
                     for (let convertTransfer_idx in convertTransferData) {
-                        out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
-                            convertTransferData[convertTransfer_idx][0].line_id +
-                            '" onclick="drawStationList(this,\'' +
-                            convertTransferData[convertTransfer_idx][0].line_id +
-                            "')\">";
-                        out += "<strong>" + convertTransferData[convertTransfer_idx][0].line + "</strong>";
-                        out += '<span class="badge badge-pill badge-light" id="badge_line' +
-                            convertTransferData[convertTransfer_idx][0].line_id +
-                            '"></span></a>';
+                        if (convertTransferData[0][0].transfer_line != "") {
+                            out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
+                                convertTransferData[convertTransfer_idx][0].line_id +
+                                '" onclick="drawStationList(this,\'' +
+                                convertTransferData[convertTransfer_idx][0].line_id +
+                                "','" +
+                                convertTransferData[convertTransfer_idx][0].line +
+                                "')\">";
+                            out += "<strong>" + convertTransferData[convertTransfer_idx][0].line + "</strong>";
+                            out += '<span class="badge badge-pill badge-light" id="badge_line' +
+                                convertTransferData[convertTransfer_idx][0].line_id +
+                                '"></span></a>';
+                        }
                     }
-                    // 駅
+
                     out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:35px;" id="stationElement' +
                         filterData[0].station_id +
                         '" onclick="drawStationList(this,\'' +
                         filterData[0].station_name +
+                        "','" +
+                        filterData[0].line +
                         "')\">";
                     out += "<strong>" + filterData[0].station_name + "</strong>";
                     out += '<span class="badge badge-pill badge-light" id="badge_station' +
@@ -330,57 +339,37 @@
                 .catch((err) => {});
         }
 
-        /**
-         * 現在地取得
-         */
         function getMyPlace() {
             if (!navigator.geolocation) {
-                //Geolocation apiがサポートされていない場合
                 alert("<p>Geolocationはあなたの端末でサポートされておりません</p>");
                 return;
             }
 
             function success(position) {
-                var lat = position.coords.latitude; //緯度
-                var lng = position.coords.longitude; //経度
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
                 drowMap(lat, lng);
             }
 
             function error() {
                 alert("座標位置を取得できません");
             }
-            navigator.geolocation.getCurrentPosition(success, error); //成功と失敗を判断
+            navigator.geolocation.getCurrentPosition(success, error);
         }
 
-        /**
-         * Map描画
-         * 
-         * @param {String} lat - 経度
-         * @param {String} lng - 緯度
-         */
         function drowMap(lat, lng) {
-            // 座標取得
             var latlng = new google.maps.LatLng(lat, lng);
-            // Google Mapsに書き出し
             var map = new google.maps.Map(document.getElementById("map-canvas"), {
-                zoom: 15, // ズーム値
-                center: latlng, // 中心座標
+                zoom: 15,
+                center: latlng,
             });
-            // マーカーの新規出力
             new google.maps.Marker({
                 map: map,
                 position: latlng,
             });
         }
 
-        /**
-         * Polyline作成描画
-         * 
-         * @param {object} lineData - 路線情報オブジェクト
-         */
         function drowPolyline(lineData) {
-
-            // 始発駅の座標を取得
             var latlng = new google.maps.LatLng(lineData[0].lat, lineData[0].lng);
             var opts = {
                 zoom: 10,
@@ -392,7 +381,6 @@
                 lat_lng.push(new google.maps.LatLng(lineData[idx].lat, lineData[idx].lng));
             }
             var map = new google.maps.Map(document.getElementById("map-canvas"), opts);
-            // Polylineの初期設定
             var polylineOpts = {
                 map: map,
                 strokeColor: "#FF0000",
@@ -400,7 +388,6 @@
                 strokeWeight: 3,
                 path: lat_lng
             };
-            // 直前で作成したPolylineOptionsを利用してPolylineを作成
             var polyline = new google.maps.Polyline(polylineOpts);
         }
 
@@ -432,11 +419,11 @@
             form_iframe.addEventListener("load", function() {
                 document.getElementById("addForm").remove();
                 document.getElementById("modal_msg").style.display = "block";
-                window.removeEventListener("beforeunload", ask_before_changing_page, false);
+                //window.removeEventListener("beforeunload", ask_before_changing_page, false);
             });
         });
 
-        window.addEventListener("beforeunload", ask_before_changing_page);
+        //window.addEventListener("beforeunload", ask_before_changing_page);
     </script>
 </body>
 
