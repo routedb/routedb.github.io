@@ -26,13 +26,28 @@
                 return Promise.reject(json.error);
             }
         };
+        const getLine = async(company) => {
+            const url = `https://api.ekispert.jp/v1/json/rail?key=5F6YFMvV7wS2CSFP&corporationName=${company}`;
+            const response = await fetch(url, {
+                method: "get"
+            });
+            const json = response.json()
+            if (response.status == 200) {
+                return Promise.resolve(json);
+            } else {
+                return Promise.reject(json.error);
+            }
+        };
+
 
         function init() {
             getCompany()
                 .then((data) => {
                     console.log(data);
                     let out = "";
-                    for (let idx in data) {}
+                    for (let idx in data) {
+                        console.log(getLine(data[idx]));
+                    }
                     document.getElementById("list").innerHTML = out;
                 })
                 .catch((err) => {
