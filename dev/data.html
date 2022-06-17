@@ -14,7 +14,7 @@
 
 <body onload="init()">
     <script>
-        const getLine = async() => {
+        const getCompany = async() => {
             const url = `https://routedb.github.io/dev/data/tmp_company.json`;
             const response = await fetch(url, {
                 method: "get"
@@ -28,7 +28,7 @@
         };
 
         function init() {
-            getPrefectures()
+            getCompany()
                 .then((data) => {
                     console.log(data);
                     let out = "";
