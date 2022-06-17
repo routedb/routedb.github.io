@@ -46,7 +46,14 @@
                     console.log(data);
                     let out = "";
                     for (let idx in data) {
-                        console.log(getLine(data[idx].company));
+                        getLine(data[idx].company).then((lineData) => {
+                                console.log(lineData);
+                                let out = "";
+                                for (let line_idx in lineData) {}
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            });
                     }
                     document.getElementById("list").innerHTML = out;
                 })
