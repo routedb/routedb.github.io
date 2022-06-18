@@ -13,21 +13,13 @@
 </head>
 
 <body onload="init()">
+    <div id="listJR">
+    </div>
+    <div id="list">
+    </div>
     <script>
-        const getCompany = async() => {
-            const url = `https://routedb.github.io/dev/data/tmp_company.json`;
-            const response = await fetch(url, {
-                method: "get"
-            });
-            const json = response.json()
-            if (response.status == 200) {
-                return Promise.resolve(json);
-            } else {
-                return Promise.reject(json.error);
-            }
-        };
-        const getLine = async(company) => {
-            const url = `https://api.ekispert.jp/v1/json/rail?key=5F6YFMvV7wS2CSFP&corporationName=${company}`;
+        const getLine = async() => {
+            const url = `https://routedb.github.io/dev/data/tmp_company_line.json`;
             const response = await fetch(url, {
                 method: "get"
             });
@@ -39,27 +31,42 @@
             }
         };
 
+        const getLineList = async(Line) => {
+            const url = `https://api.ekispert.jp/v1/json/station?key=5F6YFMvV7wS2CSFP&railName=${Line}&direction=up`;
+            const response = await fetch(url, {
+                method: "get"
+            });
+            const json = response.json()
+            if (response.status == 200) {
+                return Promise.resolve(json);
+            } else {
+                return Promise.reject(json.error);
+            }
+        };
 
         function init() {
-            getCompany()
+            getLine()
                 .then((data) => {
                     console.log(data);
-                    let out = "";
                     for (let idx in data) {
-                        getLine(data[idx].company).then((lineData) => {
-                                console.log(lineData);
-                                let out = "";
-                                for (let line_idx in lineData) {}
+                        console.log(data[idx].company)
+                        console.log("┗" + data[idx].line)
+                        getLineList(data[idx].line).then((lineListData) => {
+                                for (let linelist_idx in lineListData.ResultSet.Point) {
+                                    console.log("┗┗" + lineListData.ResultSet.Point[linelist_idx].Station.Name + "$" +
+                                        lineListData.ResultSet.Point[linelist_idx].Station.Yomi + "$" +
+                                        lineListData.ResultSet.Point[linelist_idx].Prefecture.Name + "$" +
+                                        lineListData.ResultSet.Point[linelist_idx].GeoPoint.lati_d + "$" +
+                                        lineListData.ResultSet.Point[linelist_idx].GeoPoint.longi_d)
+                                }
                             })
                             .catch((err) => {
                                 console.log(err);
                             });
                     }
-                    document.getElementById("list").innerHTML = out;
                 })
-                .catch((err) => {
-                    console.log(err);
-                });
+                .catch((err) => {});
+
         }
     </script>
 </body>
