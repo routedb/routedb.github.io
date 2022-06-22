@@ -107,7 +107,7 @@
         };
 
         const getPrefectures = async() => {
-            const url = `https://routedb.github.io/dev/data/mst_prefecture.json`;
+            const url = `https://routedb.github.io/dev/data/pref.json`;
             const response = await fetch(url, {
                 method: "get"
             });
@@ -120,7 +120,7 @@
         };
 
         const getLine = async() => {
-            const url = `https://routedb.github.io/dev/data/mst_line.json`;
+            const url = `https://routedb.github.io/dev/data/line.json`;
             const response = await fetch(url, {
                 method: "get"
             });
@@ -133,7 +133,7 @@
         };
 
         const getStationList = async() => {
-            const url = `https://routedb.github.io/dev/data/v_mst_station.json`;
+            const url = `https://routedb.github.io/dev/data/station.json`;
             const response = await fetch(url, {
                 method: "get"
             });
@@ -146,7 +146,7 @@
         };
 
         const getStation = async() => {
-            const url = `https://routedb.github.io/dev/data/v_mst_station.json`;
+            const url = `https://routedb.github.io/dev/data/station.json`;
             const response = await fetch(url, {
                 method: "get"
             });
@@ -173,13 +173,13 @@
                     let out = "";
                     for (let prefecture_idx in data) {
                         out += '<a href="#" class="list-group-item list-group-item-action" id="prefElement' +
-                            data[prefecture_idx].prefecture_id +
+                            data[prefecture_idx].pref_cd +
                             '" onclick="drawLine(this,\'' +
-                            data[prefecture_idx].prefecture +
+                            data[prefecture_idx].pref_cd +
                             "')\">";
-                        out += "<strong>" + data[prefecture_idx].prefecture + "</strong>";
+                        out += "<strong>" + data[prefecture_idx].pref + "</strong>";
                         out += '<span class="badge badge-pill badge-light" id="badge_pref' +
-                            data[prefecture_idx].prefecture_id +
+                            data[prefecture_idx].pref_cd +
                             '"></span></a>';
                     }
                     document.getElementById("list").innerHTML = out;
@@ -189,36 +189,35 @@
                 });
         }
 
-        function drawLine(elem, prefecture) {
-            getLine(prefecture)
+        function drawLine(elem, pref_cd) {
+            getLine()
                 .then((data) => {
-                    console.log(elem.outerHTML);
                     console.log(data);
                     let filterData = data.filter(value => {
-                        if (value.prefecture.indexOf(prefecture) !== -1) {
+                        if (value.pref_cd.indexOf(pref_cd) !== -1) {
                             return value
                         }
                     });
                     let out = '<a href="#" class="list-group-item list-group-item-action" id="prefElement' +
-                        filterData[0].prefecture_id +
+                        filterData[0].pref_cd +
                         '" onclick="drawLine(this,\'' +
-                        filterData[0].prefecture +
+                        filterData[0].pref +
                         "')\">";
-                    out += "<strong>" + filterData[0].prefecture + "</strong>";
+                    out += "<strong>" + filterData[0].pref + "</strong>";
                     out += '<span class="badge badge-pill badge-light" id="badge_pref' +
-                        filterData[0].prefecture_id +
-                        '"></span></a>';;
+                        filterData[0].pref_cd +
+                        '"></span></a>';
                     for (let line_idx in filterData) {
                         out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
-                            filterData[line_idx].line_id +
+                            filterData[line_idx].line_sort +
                             '" onclick="drawStationList(this,\'' +
-                            filterData[line_idx].line_id +
+                            filterData[line_idx].line_sort +
                             "','" +
-                            filterData[line_idx].line +
+                            filterData[line_idx].line_name +
                             "')\">";
-                        out += "<strong>" + filterData[line_idx].line + "</strong>";
+                        out += "<strong>" + filterData[line_idx].line_name + "</strong>";
                         out += '<span class="badge badge-pill badge-light" id="badge_line' +
-                            filterData[line_idx].line_id +
+                            filterData[line_idx].line_sort +
                             '"></span></a>';
                     }
                     document.getElementById("list").innerHTML = out;
@@ -226,30 +225,51 @@
                 .catch((err) => {});
         }
 
-        function drawStationList(elem, line_id, line) {
+        function drawStationList(elem, line_sort, line_name) {
             getStationList()
                 .then((data) => {
-                    console.log(elem.outerHTML);
                     console.log(data);
                     let filterData = data.filter(value => {
-                        if (value.line.indexOf(line) !== -1) {
+                        if (value.line_sort.indexOf(line_sort) !== -1) {
                             return value
                         }
                     });
-                    let out = elem.parentElement.children[0].outerHTML + elem.outerHTML;
+                    let out = '<a href="#" class="list-group-item list-group-item-action" id="prefElement' +
+                        filterData[0].pref_cd +
+                        '" onclick="drawLine(this,\'' +
+                        filterData[0].pref_cd +
+                        "')\">";
+                    out += "<strong>" + filterData[0].pref + "</strong>";
+                    out += '<span class="badge badge-pill badge-light" id="badge_pref' +
+                        filterData[0].pref_cd +
+                        '"></span></a>';;
+                    out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
+                        filterData[0].line_sort +
+                        '" onclick="drawStationList(this,\'' +
+                        filterData[0].line_sort +
+                        "','" +
+                        filterData[0].line_name +
+                        "')\">";
+                    out += "<strong>" + filterData[0].line_name + "</strong>";
+                    out += '<span class="badge badge-pill badge-light" id="badge_line' +
+                        filterData[0].line_sort +
+                        '"></span></a>';
                     for (let station_idx in filterData) {
                         out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:35px;" id="stationElement' +
-                            filterData[station_idx].station_id +
+                            filterData[station_idx].station_cd +
                             '" onclick="drawStation(this,\'' +
-                            filterData[station_idx].station_name +
+                            filterData[station_idx].station_cd +
                             "','" +
-                            filterData[station_idx].prefecture +
+                            filterData[station_idx].pref_cd +
                             "','" +
-                            filterData[station_idx].line +
+                            filterData[station_idx].line_sort +
                             "')\">";
+                        if (!!filterData[station_idx].transfer_line_list) {
+                            out += "*";
+                        }
                         out += "<strong>" + filterData[station_idx].station_name + "</strong>";
                         out += '<span class="badge badge-pill badge-light" id="badge_stationList' +
-                            filterData[station_idx].station_id +
+                            filterData[station_idx].station_cd +
                             '"></span></a>';
                     }
                     document.getElementById("list").innerHTML = out;
@@ -258,76 +278,69 @@
                 .catch((err) => {});
         }
 
-        function drawStation(elem, station, prefecture, line) {
+        function drawStation(elem, station_cd, pref_cd, line_sort) {
             getStation()
                 .then((data) => {
                     let filterData = data.filter(value => {
-                        if (value.line.indexOf(line) !== -1 && value.station_name.indexOf(station) !== -1 && value.prefecture.indexOf(prefecture) !== -1) {
+                        if (value.line_sort.indexOf(line_sort) !== -1 && value.station_cd.indexOf(station_cd) !== -1 && value.pref_cd.indexOf(pref_cd) !== -1) {
                             return value
                         };
                     });
                     let out = "";
                     out += '<a href="#" class="list-group-item list-group-item-action" id="prefElement' +
-                        filterData[0].prefecture_id +
+                        filterData[0].pref_cd +
                         '" onclick="drawLine(this,\'' +
-                        filterData[0].prefecture +
+                        filterData[0].pref_cd +
                         "')\">";
-                    out += "<strong>" + filterData[0].prefecture + "</strong>";
+                    out += "<strong>" + filterData[0].pref + "</strong>";
                     out += '<span class="badge badge-pill badge-light" id="badge_pref' +
-                        filterData[0].prefecture_id +
+                        filterData[0].pref_cd +
                         '"></span></a>';
 
                     out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
-                        filterData[0].line_id +
+                        filterData[0].line_sort +
                         '" onclick="drawStationList(this,\'' +
-                        filterData[0].line_id +
+                        filterData[0].line_sort +
                         "','" +
-                        filterData[0].line +
+                        filterData[0].line_name +
                         "')\">";
-                    out += "<strong>" + filterData[0].line + "</strong>";
+                    out += "<strong>" + filterData[0].line_name + "</strong>";
                     out += '<span class="badge badge-pill badge-light" id="badge_line' +
-                        filterData[0].line_id +
+                        filterData[0].line_sort +
                         '"></span></a>';
 
-                    let transferData = [];
-                    filterData[0].transfer_line.split('/').forEach(function(value2) {
-                        console.log(value2);
-                        transferData.push(data.filter(value => {
-                            if (value.line.indexOf(value2) !== -1) {
-                                return value
-                            };
-                        }));
-                    });
-                    let convertTransferData = [];
-                    transferData.forEach(function(arr) {
-                        convertTransferData.push(arr.filter(value => {
-                            if (value.station_name.indexOf(filterData[0].station_name) !== -1 && value.prefecture.indexOf(filterData[0].prefecture) !== -1) {
-                                return value
-                            };
-                        }));
-                    });
-                    for (let convertTransfer_idx in convertTransferData) {
-                        if (convertTransferData[0][0].transfer_line != "") {
-                            out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
-                                convertTransferData[convertTransfer_idx][0].line_id +
-                                '" onclick="drawStationList(this,\'' +
-                                convertTransferData[convertTransfer_idx][0].line_id +
-                                "','" +
-                                convertTransferData[convertTransfer_idx][0].line +
-                                "')\">";
-                            out += "<strong>" + convertTransferData[convertTransfer_idx][0].line + "</strong>";
-                            out += '<span class="badge badge-pill badge-light" id="badge_line' +
-                                convertTransferData[convertTransfer_idx][0].line_id +
-                                '"></span></a>';
+                    if (!!filterData[0].transfer_line_list) {
+                        let arrtransfer = filterData[0].transfer_line_list.split('#');
+                        for (let idx in arrtransfer) {
+                            if (arrtransfer[idx] !== "" && arrtransfer[idx] !== filterData[0].line_name.replace("\u200b", "")) {
+                                let filterDataTransfer = data.filter(value => {
+                                    if (value.line_name.indexOf(arrtransfer[idx]) !== -1) {
+                                        return value
+                                    };
+                                });
+                                console.log(filterDataTransfer);
+
+                                out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:25px;" id="lineElement' +
+                                    filterDataTransfer[0].line_sort +
+                                    '" onclick="drawStationList(this,\'' +
+                                    filterDataTransfer[0].line_sort +
+                                    "','" +
+                                    filterDataTransfer[0].line_name +
+                                    "')\">";
+                                out += "<strong>" + filterDataTransfer[0].line_name + "</strong>";
+                                out += '<span class="badge badge-pill badge-light" id="badge_line' +
+                                    filterDataTransfer[0].line_sort +
+                                    '"></span></a>';
+                            }
                         }
                     }
 
                     out += '<a href="#" class="list-group-item list-group-item-action" style="padding-left:35px;" id="stationElement' +
-                        filterData[0].station_id +
+                        filterData[0].station_cd +
                         '" onclick="drawStationList(this,\'' +
                         filterData[0].station_name +
                         "','" +
-                        filterData[0].line +
+                        filterData[0].line_sort +
                         "')\">";
                     out += "<strong>" + filterData[0].station_name + "</strong>";
                     out += '<span class="badge badge-pill badge-light" id="badge_station' +
