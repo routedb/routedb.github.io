@@ -83,6 +83,13 @@
         var add_sec = 5;
 
         function count_start1() {
+            if (count2 != 300) {
+                count2 = count2 + add_sec;
+                min2 = Math.floor(count2 / 60);
+                sec2 = count2 % 60;
+                var count_down = document.getElementById("default2");
+                count_down.innerHTML = (min2) + "." + ("0" + sec2).slice(-2);
+            }
             clearInterval(interval2);
             start_f2 = false;
             if (start_f1 === false) {
@@ -107,6 +114,13 @@
         }
 
         function count_start2() {
+            if (count1 != 300) {
+                count1 = count1 + add_sec;
+                min1 = Math.floor(count1 / 60);
+                sec1 = count1 % 60;
+                var count_down = document.getElementById("default1");
+                count_down.innerHTML = (min1) + "." + ("0" + sec1).slice(-2);
+            }
             clearInterval(interval1);
             start_f1 = false;
             if (start_f2 === false) {
