@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang=“ja”>
+
+<head>
+    <meta charset=“UTF-8”>
+    <title>CSS</title>
+    <style>
+        body {
+            background: whitesmoke;
+        }
+        
+        .column {
+            width: 100%;
+            text-align: center;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        
+        .info {
+            height: 50vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        h2 {
+            font-size: 15rem;
+        }
+        
+        p {
+            font-size: 2rem;
+            display: flex;
+        }
+        
+        .cat1 {
+            background: black;
+            color: whitesmoke;
+            transform: scale(-1, -1);
+        }
+        
+        .cat2 {
+            background: whitesmoke;
+            color: black;
+        }
+        
+        @media all and (min-width: 1000px) {
+            .wrapper {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="column cat1">
+            <div class="info">
+                <a href="#" onclick="count_start2()" style="color: whitesmoke;text-decoration: none;">
+                    <h2 id="default2">5.00</h2>
+                </a>
+            </div>
+        </div>
+        <div class="column cat2">
+            <div class="info">
+                <a href="#" onclick="count_start1()" style="color: black;text-decoration: none;">
+                    <h2 id="default1">5.00</h2>
+                </a>
+            </div>
+        </div>
+    </div>
+    <script>
+        var count1 = 300;
+        var min1 = 0;
+        var sec1 = 0;
+        var start_f1 = false;
+        var interval1;
+        var count2 = 300;
+        var min2 = 0;
+        var sec2 = 0;
+        var start_f2 = false;
+        var interval2;
+        var add_sec = 5;
+
+        function count_start1() {
+            clearInterval(interval2);
+            start_f2 = false;
+            if (start_f1 === false) {
+                interval1 = setInterval(count_down1, 1000);
+                start_f1 = true;
+            }
+        }
+
+        function count_down1() {
+            if (count1 === 1) {
+                var display1 = document.getElementById("default1");
+                display1.style.color = 'red';
+                display1.innerHTML = "TIME UP!";
+                clearInterval(interval1);
+            } else {
+                count1--;
+                min1 = Math.floor(count1 / 60);
+                sec1 = count1 % 60;
+                var count_down = document.getElementById("default1");
+                count_down.innerHTML = (min1) + "." + ("0" + sec1).slice(-2);
+            }
+        }
+
+        function count_start2() {
+            clearInterval(interval1);
+            start_f1 = false;
+            if (start_f2 === false) {
+                interval2 = setInterval(count_down2, 1000);
+                start_f2 = true;
+            }
+        }
+
+        function count_down2() {
+            if (count2 === 1) {
+                var display2 = document.getElementById("default2");
+                display2.style.color = 'red';
+                display2.innerHTML = "TIME UP!";
+                clearInterval(interval2);
+            } else {
+                count2--;
+                min2 = Math.floor(count2 / 60);
+                sec2 = count2 % 60;
+                var count_down = document.getElementById("default2");
+                count_down.innerHTML = (min2) + "." + ("0" + sec2).slice(-2);
+            }
+        }
+    </script>
+</body>
+
+</html>
