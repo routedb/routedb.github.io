@@ -4,6 +4,7 @@ const state = {
   selectedPrefCode: '',
   selectedLineKey: '',
   selectedStationGroupCode: '',
+  selectedLineLabelOverride: '',
   loading: false,
   pendingFocus: null,
 };
@@ -28,196 +29,68 @@ function getPrefectures() { return state.data?.prefectures || []; }
 function getLines(prefCode) { return state.data?.linesByPrefecture?.[prefCode] || []; }
 function getLineMeta(lineKey) { return state.data?.lineMeta?.[lineKey] || null; }
 function getStations(lineKey) { return state.data?.stationsByLine?.[lineKey] || []; }
-function splitStationGroupCodes(stationGroupCode = '') {
-  return String(stationGroupCode).split('/').map(v => v.trim()).filter(Boolean);
+function getCurrentLineDisplayName() {
+  return state.selectedLineLabelOverride || getLineMeta(state.selectedLineKey)?.displayName || state.selectedLineKey;
 }
 
-let stationGroupIndexCache = null;
-let stationNameRecordIndexCache = null;
-let stationNameGraphIndexCache = null;
-let stationComponentCodesCache = null;
-
-function getStationGroupIndex() {
-  if (stationGroupIndexCache) return stationGroupIndexCache;
-  stationGroupIndexCache = {};
-  const stationsByLine = state.data?.stationsByLine || {};
-  Object.entries(stationsByLine).forEach(([lineKey, stations]) => {
-    const lineMeta = getLineMeta(lineKey);
-    stations.forEach((station) => {
-      splitStationGroupCodes(station.stationGroupCode).forEach((groupCode) => {
-        stationGroupIndexCache[groupCode] ||= [];
-        stationGroupIndexCache[groupCode].push({
-          lineKey,
-          lineId: lineMeta?.lineId || null,
-          lineName: lineMeta?.lineName || '',
-          operatorName: lineMeta?.operatorName || '',
-          displayName: lineMeta?.displayName || lineKey,
-          prefectureCodes: lineMeta?.prefectureCodes || [],
-          generalLineName: lineMeta?.generalLineName || lineMeta?.lineName || '',
-          stationGroupCode: station.stationGroupCode,
-          stationName: station.stationName,
-          prefectureCode: station.prefectureCode,
-        });
-      });
-    });
-  });
-  return stationGroupIndexCache;
+function buildClusterKeyForStation(station) {
+  if (!station) return '';
+  return `${station.prefectureName}|${station.stationName}`;
 }
 
-function getStationNameRecordIndex() {
-  if (stationNameRecordIndexCache) return stationNameRecordIndexCache;
-  stationNameRecordIndexCache = {};
-  const stationsByLine = state.data?.stationsByLine || {};
-  Object.entries(stationsByLine).forEach(([lineKey, stations]) => {
-    const lineMeta = getLineMeta(lineKey);
-    stations.forEach((station) => {
-      const key = `${station.prefectureCode}::${station.stationName}`;
-      stationNameRecordIndexCache[key] ||= [];
-      stationNameRecordIndexCache[key].push({
-        lineKey,
-        lineMeta,
-        station,
-        splitCodes: splitStationGroupCodes(station.stationGroupCode),
-      });
-    });
-  });
-  return stationNameRecordIndexCache;
-}
-
-function getStationNameGraphIndex() {
-  if (stationNameGraphIndexCache) return stationNameGraphIndexCache;
-  const recordIndex = getStationNameRecordIndex();
-  stationNameGraphIndexCache = {};
-  Object.entries(recordIndex).forEach(([key, records]) => {
-    const graph = {};
-    records.forEach((record) => {
-      const codes = record.splitCodes;
-      codes.forEach((code) => {
-        graph[code] ||= new Set();
-        graph[code].add(code);
-      });
-      for (let i = 0; i < codes.length; i += 1) {
-        for (let j = i + 1; j < codes.length; j += 1) {
-          graph[codes[i]] ||= new Set();
-          graph[codes[j]] ||= new Set();
-          graph[codes[i]].add(codes[j]);
-          graph[codes[j]].add(codes[i]);
-        }
-      }
-    });
-    stationNameGraphIndexCache[key] = graph;
-  });
-  return stationNameGraphIndexCache;
-}
-
-function getStationComponentCodes(prefCode, stationName, seedGroupCode) {
-  const cacheKey = `${prefCode}::${stationName}::${seedGroupCode}`;
-  if (stationComponentCodesCache?.[cacheKey]) return stationComponentCodesCache[cacheKey];
-  stationComponentCodesCache ||= {};
-  const graph = getStationNameGraphIndex()[`${prefCode}::${stationName}`] || {};
-  const seeds = splitStationGroupCodes(seedGroupCode);
-  const visited = new Set();
-  const queue = [...seeds];
-  while (queue.length > 0) {
-    const code = queue.shift();
-    if (!code || visited.has(code)) continue;
-    visited.add(code);
-    const neighbors = graph[code] ? Array.from(graph[code]) : [];
-    neighbors.forEach((neighbor) => {
-      if (!visited.has(neighbor)) queue.push(neighbor);
-    });
-  }
-  if (visited.size === 0) {
-    seeds.forEach((code) => visited.add(code));
-  }
-  stationComponentCodesCache[cacheKey] = visited;
-  return visited;
+function getStationTransferCluster(station) {
+  if (!station) return null;
+  const clusterKey = buildClusterKeyForStation(station);
+  return state.data?.stationTransferMasterByCluster?.[clusterKey] || null;
 }
 
 function getCurrentStation(lineKey, stationGroupCode) {
   return getStations(lineKey).find((item) => item.stationGroupCode === stationGroupCode) || null;
 }
 
-function getStationComponentRecords(lineKey, stationGroupCode) {
-  const currentStation = getCurrentStation(lineKey, stationGroupCode);
-  if (!currentStation) return { currentStation: null, componentCodes: new Set(), componentRecords: [] };
-  const prefCode = currentStation.prefectureCode || state.selectedPrefCode || '';
-  const stationName = currentStation.stationName || '';
-  const componentCodes = getStationComponentCodes(prefCode, stationName, stationGroupCode);
-  const allRecords = getStationNameRecordIndex()[`${prefCode}::${stationName}`] || [];
-  const componentRecords = allRecords.filter((record) =>
-    record.splitCodes.some((code) => componentCodes.has(code))
-  );
-  return { currentStation, componentCodes, componentRecords };
-}
-
-function chooseBetterDirect(previous, candidate, currentStationName) {
-  if (!previous) return candidate;
-  const previousSameName = previous.targetStationName === currentStationName ? 1 : 0;
-  const candidateSameName = candidate.targetStationName === currentStationName ? 1 : 0;
-  const previousComposite = splitStationGroupCodes(previous.targetStationGroupCode || '').length;
-  const candidateComposite = splitStationGroupCodes(candidate.targetStationGroupCode || '').length;
-  if (candidateSameName !== previousSameName) return candidateSameName > previousSameName ? candidate : previous;
-  if (candidateComposite !== previousComposite) return candidateComposite < previousComposite ? candidate : previous;
-  return candidate.displayName.localeCompare(previous.displayName, 'ja') < 0 ? candidate : previous;
+function normalizeMasterItem(item, scope) {
+  return {
+    lineKey: item.lineKey || '',
+    lineName: item.lineName || '',
+    operatorName: item.operatorName || '',
+    displayName: item.displayName || '',
+    prefectureCodes: item.prefectureCodes || [],
+    targetStationName: item.targetStationName || '',
+    targetStationGroupCode: item.targetStationGroupCode || '',
+    distanceM: Number.isFinite(item.distanceM) ? item.distanceM : (item.distanceM == null ? null : Number(item.distanceM)),
+    displayText: scope === 'nearby_700m'
+      ? `${item.displayName}：${item.targetStationName}${item.distanceM != null ? `(${item.distanceM}m)` : ''}`
+      : item.displayName,
+    scope,
+  };
 }
 
 function getTransfers(lineKey, stationGroupCode) {
-  const { currentStation, componentRecords } = getStationComponentRecords(lineKey, stationGroupCode);
-  if (!currentStation) return [];
-  const currentStationName = currentStation.stationName || '';
-  const resultMap = new Map();
-
-  componentRecords.forEach((record) => {
-    const meta = record.lineMeta || getLineMeta(record.lineKey);
-    if (!meta || record.lineKey === lineKey) return;
-    const candidate = {
-      lineKey: record.lineKey,
-      lineId: meta.lineId || null,
-      lineName: meta.lineName || '',
-      operatorName: meta.operatorName || '',
-      displayName: meta.displayName || record.lineKey,
-      prefectureCodes: meta.prefectureCodes || [],
-      generalLineName: meta.generalLineName || meta.lineName || '',
-      targetStationGroupCode: record.station.stationGroupCode,
-      targetStationName: record.station.stationName,
-    };
-    const previous = resultMap.get(candidate.lineKey);
-    resultMap.set(candidate.lineKey, chooseBetterDirect(previous, candidate, currentStationName));
-  });
-
-  return Array.from(resultMap.values()).sort((a, b) => a.displayName.localeCompare(b.displayName, 'ja'));
-}
-
-function chooseBetterNearby(previous, candidate) {
-  if (!previous) return candidate;
-  if ((candidate.distanceM || 999999) !== (previous.distanceM || 999999)) {
-    return (candidate.distanceM || 999999) < (previous.distanceM || 999999) ? candidate : previous;
-  }
-  return candidate.displayName.localeCompare(previous.displayName, 'ja') < 0 ? candidate : previous;
+  const station = getCurrentStation(lineKey, stationGroupCode);
+  const cluster = getStationTransferCluster(station);
+  if (!cluster) return [];
+  const currentDisplayName = getCurrentLineDisplayName();
+  return (cluster.direct || [])
+    .map((item) => normalizeMasterItem(item, 'direct'))
+    .filter((item) => item.displayName && item.displayName !== currentDisplayName)
+    .sort((a, b) => a.displayName.localeCompare(b.displayName, 'ja'));
 }
 
 function getNearbyTransfers(lineKey, stationGroupCode) {
-  const { componentRecords } = getStationComponentRecords(lineKey, stationGroupCode);
-  const directLineKeys = new Set(getTransfers(lineKey, stationGroupCode).map((item) => item.lineKey));
-  const resultMap = new Map();
-
-  componentRecords.forEach((record) => {
-    const nearbyList = state.data?.nearbyTransfersByLineStation?.[`${record.lineKey}::${record.station.stationGroupCode}`] || [];
-    nearbyList.forEach((item) => {
-      if (item.lineKey === lineKey) return;
-      if (directLineKeys.has(item.lineKey)) return;
-      const previous = resultMap.get(item.lineKey);
-      resultMap.set(item.lineKey, chooseBetterNearby(previous, item));
+  const station = getCurrentStation(lineKey, stationGroupCode);
+  const cluster = getStationTransferCluster(station);
+  if (!cluster) return [];
+  const currentDisplayName = getCurrentLineDisplayName();
+  const directNames = new Set((cluster.direct || []).map((item) => item.displayName));
+  return (cluster.nearby_700m || [])
+    .map((item) => normalizeMasterItem(item, 'nearby_700m'))
+    .filter((item) => item.displayName && item.displayName !== currentDisplayName && !directNames.has(item.displayName))
+    .sort((a, b) => {
+      const ad = a.distanceM ?? 999999;
+      const bd = b.distanceM ?? 999999;
+      if (ad !== bd) return ad - bd;
+      return a.displayName.localeCompare(b.displayName, 'ja');
     });
-  });
-
-  return Array.from(resultMap.values()).sort((a, b) => {
-    if ((a.distanceM || 999999) !== (b.distanceM || 999999)) {
-      return (a.distanceM || 999999) - (b.distanceM || 999999);
-    }
-    return a.displayName.localeCompare(b.displayName, 'ja');
-  });
 }
 
 function buildRowHtml(row) {
@@ -230,6 +103,7 @@ function buildRowHtml(row) {
     attrs.push(`data-value="${escapeHtml(row.onClick.value || '')}"`);
     attrs.push(`data-extra="${escapeHtml(row.onClick.extra || '')}"`);
     attrs.push(`data-target-station="${escapeHtml(row.onClick.targetStation || '')}"`);
+    attrs.push(`data-label-override="${escapeHtml(row.onClick.labelOverride || '')}"`);
   } else {
     attrs.push('disabled');
   }
@@ -281,10 +155,9 @@ function renderFixedRows() {
   let stationRow = null;
 
   if (state.selectedLineKey) {
-    const lineMeta = getLineMeta(state.selectedLineKey);
     rowsStatic.push({
       level: 1,
-      label: lineMeta ? lineMeta.displayName : state.selectedLineKey,
+      label: getCurrentLineDisplayName(),
       variant: 'selected-line',
       onClick: { action: 'back-line', value: state.selectedLineKey }
     });
@@ -296,12 +169,13 @@ function renderFixedRows() {
       level: 1,
       label: line.displayName,
       variant: 'transfer-line',
-      onClick: {
+      onClick: line.lineKey ? {
         action: 'transfer-line',
         value: line.lineKey,
-        extra: line.prefectureCodes.join(','),
-        targetStation: line.targetStationGroupCode || state.selectedStationGroupCode
-      }
+        extra: (line.prefectureCodes || []).join(','),
+        targetStation: line.targetStationGroupCode || '',
+        labelOverride: line.displayName,
+      } : null,
     }));
 
     const nearbyTransfers = getNearbyTransfers(state.selectedLineKey, state.selectedStationGroupCode);
@@ -309,12 +183,13 @@ function renderFixedRows() {
       level: 1,
       label: line.displayText,
       variant: 'nearby-transfer-line',
-      onClick: {
+      onClick: line.lineKey ? {
         action: 'transfer-line',
         value: line.lineKey,
-        extra: line.prefectureCodes.join(','),
-        targetStation: line.stationGroupCode || ''
-      }
+        extra: (line.prefectureCodes || []).join(','),
+        targetStation: line.targetStationGroupCode || '',
+        labelOverride: line.displayName,
+      } : null,
     }));
 
     const station = getCurrentStation(state.selectedLineKey, state.selectedStationGroupCode);
@@ -405,8 +280,8 @@ async function selectPref(prefCode) {
     state.selectedPrefCode = prefCode;
     state.selectedLineKey = '';
     state.selectedStationGroupCode = '';
+    state.selectedLineLabelOverride = '';
     state.pendingFocus = null;
-    stationComponentCodesCache = null;
     const pref = getPrefectures().find((i) => i.prefectureCode === prefCode);
     els.footer.textContent = pref ? `${pref.prefectureName} の路線一覧` : '路線一覧';
     els.list.scrollTop = 0;
@@ -417,6 +292,7 @@ async function selectLine(lineKey) {
   await withLoading(() => {
     state.selectedLineKey = lineKey;
     state.selectedStationGroupCode = '';
+    state.selectedLineLabelOverride = '';
     state.pendingFocus = null;
     const line = getLineMeta(lineKey);
     els.footer.textContent = line ? `${line.displayName} の駅一覧` : '駅一覧';
@@ -434,7 +310,7 @@ async function selectStation(stationGroupCode) {
   });
 }
 
-async function goToTransferLine(lineKey, prefCodesText, targetStationGroupCode) {
+async function goToTransferLine(lineKey, prefCodesText, targetStationGroupCode, labelOverride) {
   await withLoading(() => {
     const currentPrefCode = state.selectedPrefCode;
     const allowed = prefCodesText ? prefCodesText.split(',').filter(Boolean) : [];
@@ -442,15 +318,17 @@ async function goToTransferLine(lineKey, prefCodesText, targetStationGroupCode) 
     state.selectedPrefCode = targetPrefCode;
     state.selectedLineKey = lineKey;
     state.selectedStationGroupCode = '';
+    state.selectedLineLabelOverride = labelOverride || '';
     state.pendingFocus = targetStationGroupCode ? `station:${targetStationGroupCode}` : null;
     const line = getLineMeta(lineKey);
+    const lineLabel = labelOverride || line?.displayName || lineKey;
     if (targetStationGroupCode) {
       const station = getCurrentStation(lineKey, targetStationGroupCode);
       els.footer.textContent = station
-        ? `${line ? line.displayName : '路線'} の駅一覧（${station.stationName} にフォーカス）`
-        : `${line ? line.displayName : '路線'} の駅一覧`;
+        ? `${lineLabel} の駅一覧（${station.stationName} にフォーカス）`
+        : `${lineLabel} の駅一覧`;
     } else {
-      els.footer.textContent = line ? `${line.displayName} の駅一覧` : '駅一覧';
+      els.footer.textContent = `${lineLabel} の駅一覧`;
     }
     els.list.scrollTop = 0;
   });
@@ -460,9 +338,9 @@ function resetToPrefList() {
   state.selectedPrefCode = '';
   state.selectedLineKey = '';
   state.selectedStationGroupCode = '';
+  state.selectedLineLabelOverride = '';
   state.loading = false;
   state.pendingFocus = null;
-  stationComponentCodesCache = null;
   els.footer.textContent = '都道府県一覧';
   els.list.scrollTop = 0;
   render();
@@ -477,6 +355,7 @@ document.body.addEventListener('click', async (event) => {
   const value = btn.dataset.value || '';
   const extra = btn.dataset.extra || '';
   const targetStation = btn.dataset.targetStation || '';
+  const labelOverride = btn.dataset.labelOverride || '';
 
   if (action === 'pref') return selectPref(value);
   if (action === 'line') return selectLine(value);
@@ -484,6 +363,7 @@ document.body.addEventListener('click', async (event) => {
   if (action === 'back-pref') {
     state.selectedLineKey = '';
     state.selectedStationGroupCode = '';
+    state.selectedLineLabelOverride = '';
     state.pendingFocus = null;
     els.footer.textContent = '路線一覧';
     els.list.scrollTop = 0;
@@ -496,7 +376,7 @@ document.body.addEventListener('click', async (event) => {
     els.list.scrollTop = 0;
     return render();
   }
-  if (action === 'transfer-line') return goToTransferLine(value, extra, targetStation);
+  if (action === 'transfer-line') return goToTransferLine(value, extra, targetStation, labelOverride);
 });
 
 render();
