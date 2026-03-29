@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鉄道データ閲覧</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="app-header">
+    <button id="app-title" class="app-title" type="button">都道府県 → 路線名 → 駅名</button>
+  </header>
+
+  <main class="app-main">
+    <section id="fixed-tree" class="tree-fixed" aria-live="polite"></section>
+    <section id="list-tree" class="tree-list" aria-live="polite"></section>
+  </main>
+
+  <footer class="app-footer">
+    <span id="footer-text">埋め込みデータを使用中</span>
+  </footer>
+
+  <script src="embedded_data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
